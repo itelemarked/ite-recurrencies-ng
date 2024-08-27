@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
@@ -6,6 +6,7 @@ import { PeriodUnit, toPeriodUnit } from "../types/PeriodUnit";
 import { TimeString, toTimeString } from "../types/TimeString";
 import { DateString, toDateString } from "../types/DateString";
 import { OffsetString, toOffsetString } from "../types/OffsetString";
+import { PositiveInteger } from "../types/PositiveInteger";
 
 // interface IDatum {
 //   dateString: DateString,
@@ -113,57 +114,158 @@ import { OffsetString, toOffsetString } from "../types/OffsetString";
 
 
 
+
+// export class Datum {
+//   // DEPENDS ON DAYJS LIBRARY!
+
+//   private dayjsDate: dayjs.Dayjs
+
+//   constructor(dateString: string, timeString: string = '00:00:00.000', offsetString: string = '+00:00') {
+//     dayjs.extend(utc)
+//     dayjs.extend(timezone) 
+
+//     const dateStr = toDateString(dateString)
+//     const timeStr = toTimeString(timeString)
+//     const offsetStr = toOffsetString(offsetString)
+//     this.dayjsDate = dayjs(`${dateStr}T${timeStr}${offsetStr}`).utc()
+//   }
+
+//   static TEST() {
+//     const d1 = new Datum('2024-03-01')
+//     const d2 = new Datum('2024-02-28')
+
+//     console.log(d1.dayjsDate.format())
+//   }
+
+//   format(offset: string = '+00:00', s?: string): string {
+//     return this.dayjsDate.tz(offset).format(s)
+//   }
+
+//   add(nb: number, unit: PeriodUnit): Datum {
+//     const newDate = this.dayjsDate.add(nb, unit)
+//     const newDateString = newDate.utc().format('YYYY-MM-DD')
+//     const newTimeString = newDate.utc().format('HH:mm:ss.SSS')
+//     return new Datum(newDateString, newTimeString)
+//   }
+
+//   valueOf(): number {
+//     return this.dayjsDate.valueOf()
+//   }
+
+//   clone(): Datum {
+//     const newDateString = this.dayjsDate.utc().format('YYYY-MM-DD')
+//     const newTimeString = this.dayjsDate.utc().format('HH:mm:ss.SSS')
+//     return new Datum(newDateString, newTimeString)
+//   }
+
+//   static now(): Datum {
+//     const nowDate = dayjs().utc()
+//     const dateStr = nowDate.format('YYYY-MM-DD')
+//     const timeStr = nowDate.format('HH:mm:ss.SSS')
+//     return new Datum(dateStr, timeStr)
+//   }
+
+//   static diff(d1: Datum, d2: Datum, unit: PeriodUnit = 'milliseconds'): number {
+//     // result = d1 - d2 (positive if d1 > d2)
+//     const date1 = dayjs(d1.valueOf())
+//     const date2 = dayjs(d2.valueOf())
+//     return date1.diff(date2, unit)
+//   }
+
+// }
+
+
+interface IDatum {
+  toString(opts?: {format?: string, offset?: string}): string,
+  valueOf(): number,
+  add(nb: number, unit: PeriodUnit): IDatum,
+  clone(): IDatum
+}
+
   
-export class Datum {
+export class Datum implements IDatum {
   // DEPENDS ON DAYJS LIBRARY!
 
-  private dayjsDate: dayjs.Dayjs
+  private _dayjsDate: dayjs.Dayjs
 
-  constructor(dateString: string, timeString: string = '00:00:00.000', offsetString: string = '+00:00') {
+  constructor(isoString: string | number) {
     dayjs.extend(utc)
-    dayjs.extend(timezone) 
-
-    const dateStr = toDateString(dateString)
-    const timeStr = toTimeString(timeString)
-    const offsetStr = toOffsetString(offsetString)
-    this.dayjsDate = dayjs(`${dateStr}T${timeStr}${offsetStr}`).utc()
+    dayjs.extend(timezone)
+    
+    if(dayjs(isoString).format() === 'Invalid Date') throw new Error(`Custom Error: Datum constructor invalid argument: "${isoString}"`)
+    this._dayjsDate = dayjs.utc(isoString)
   }
 
-  static TEST() {
-    const d1 = new Datum('2024-03-01')
-    const d2 = new Datum('2024-02-28')
+  // TODO: convert to dayjs format?
+  toString({format = 'YYYY-MM-DDTHH:mm:ss.SSSZ', offset = '+00:00'}: {format?: string, offset?: string} = {}): string {
+    try {
+      this._dayjsDate.tz(offset)
+    }
+    catch {
+      throw new Error(`Custom Error: Invalid timezone offset: "${offset}"`)
+    }
 
-    console.log(d1.dayjsDate.format())
-  }
+    const conversions = {
+      'Year4': 'YYYY',
+      'Month2': 'MM',
+      'Day2': 'DD',
+      'Hours2': 'HH',
+      'Minutes2': 'mm',
+      'Seconds2': 'ss',
+      'Milliseconds3': 'SSS',
+      'Offset': 'Z'
+    }
 
-  format(offset: string = '+00:00', s?: string): string {
-    return this.dayjsDate.tz(offset).format(s)
-  }
-
-  add(nb: number, unit: PeriodUnit): Datum {
-    const newDate = this.dayjsDate.add(nb, unit)
-    const newDateString = newDate.format('YYYY-MM-DD')
-    const newTimeString = newDate.format('HH:mm:ss.SSS')
-    return new Datum(newDateString, newTimeString)
+    return this._dayjsDate.tz(offset).format(format)
   }
 
   valueOf(): number {
-    return this.dayjsDate.valueOf()
+    return this._dayjsDate.valueOf()
   }
 
+  // TODO: convert to dayjs unit?
+  add(nb: number, unit: PeriodUnit): Datum {
+
+    const converted = (unit: PeriodUnit): dayjs.ManipulateType => {
+      switch(unit) {
+        case 'milliseconds': return 'millisecond'
+        case 'seconds': return 'second'
+        case 'minutes': return 'minute'
+        case 'hours': return 'hour'
+        case 'days': return 'day'
+        case 'weeks': return 'week'
+        case 'months': return 'month'
+        case 'years': return 'year'
+      }
+    }
+
+    return new Datum(this._dayjsDate.add(nb, converted(unit)).valueOf())
+  }
+
+  clone(): Datum {
+    return new Datum(this._dayjsDate.valueOf())
+  }
 
   static now(): Datum {
-    const nowDate = dayjs().utc()
-    const dateStr = nowDate.format('YYYY-MM-DD')
-    const timeStr = nowDate.format('HH:mm:ss.SSS')
-    return new Datum(dateStr, timeStr)
+    return new Datum(dayjs().valueOf())
   }
 
-  static diff(d1: Datum, d2: Datum, unit: PeriodUnit = 'milliseconds'): number {
+  static diff(datum1: Datum, datum2: Datum, unit: PeriodUnit = 'milliseconds'): number {
     // result = d1 - d2 (positive if d1 > d2)
-    const date1 = dayjs(d1.valueOf())
-    const date2 = dayjs(d2.valueOf())
-    return date1.diff(date2, unit)
+    const d1 = dayjs(datum1.valueOf())
+    const d2 = dayjs(datum2.valueOf())
+    return d1.diff(d2, unit)
+  }
+
+  static TEST() {
+    const d1 = new Datum('2024-03-01T14:30+02:00')
+    const d2 = new Datum('2024-03-01T12:30:00.900Z')
+    const d3 = new Datum(d2.toString())
+    const d4 = new Datum('2024-02-28T13:00:01:123')
+    const d5 = new Datum('2024-03-01T13:00')
+
+    console.log(d4.toString({format: 'HH:mm:ss.SSS'}))
+    // console.log(Datum.diff(d4, d5, 'days'))
   }
 
 }

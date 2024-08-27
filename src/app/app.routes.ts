@@ -3,7 +3,7 @@ import { HomePage } from './modules/home/home.page';
 import { RecurrenciesPage } from './modules/recurrencies/recurrencies.page';
 import { recurrenciesRoutes } from './modules/recurrencies/recurrencies.routes'
 
-const ORIGIN = '/home'
+const ORIGIN = '/recurrencies'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },

@@ -1,9 +1,10 @@
 
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, InputSignal, OnChanges, OnInit, SimpleChanges, computed, input } from '@angular/core';
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { PeriodUnit } from '../types/PeriodUnit';
+import { Recurrency } from '../models/Recurrency';
 
 @Component({
   selector: 'app-recurrencies-list-item',
@@ -14,7 +15,7 @@ import { PeriodUnit } from '../types/PeriodUnit';
       <ion-item lines="none">
         <ion-label>
           <h2>{{ title }}</h2>
-          <p>Last event: {{ lastEvent }}</p>
+          <p>Last event: {{ lastEventString }}</p>
           <p>Period: {{ periodString }}</p>
           <p>Expires: {{ expiryString }} ({{ remainingDaysString }})</p>
         </ion-label>
@@ -58,6 +59,7 @@ export class RecurrenciesListItemComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('onChanges')
     this.periodString = this.getPeriodString(this.periodNb, this.periodUnit)
   }
 
@@ -66,3 +68,34 @@ export class RecurrenciesListItemComponent implements OnChanges {
   }
 
 }
+
+// export class RecurrencyComponent {
+//   // INPUTS
+//   recurrency: InputSignal<Recurrency> = input.required()
+
+//   // SETUPS
+//   private breakpointWarning = 0.6    // Warning if 0.6 or above
+//   private breakpointCritical = 0.8   // Critical if 0.8 or above
+
+//   // TEMPLATE VARS
+//   periodString = computed(() => `${this.recurrency().periodNb} ${this.recurrency().periodUnit}` )
+//   expiryString = '25.11.2024'
+//   remainingDaysString = '32 days left'
+//   progress = 0.8
+//   progressColor = 'danger'
+
+
+//   constructor() {
+//     addIcons({createOutline, trashOutline})
+//   }
+
+//   ngOnChanges(changes: SimpleChanges): void {
+//     console.log('onChanges')
+//     this.periodString = this.getPeriodString(this.periodNb, this.periodUnit)
+//   }
+
+//   getPeriodString(periodNb: number, periodUnit: PeriodUnit): string {
+//     return `${periodNb.toString()} ${periodUnit}`
+//   }
+
+// }
