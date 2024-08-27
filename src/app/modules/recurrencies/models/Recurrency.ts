@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Datum } from "./Datum";
 import { PeriodUnit, toPeriodUnit } from "../types/PeriodUnit";
 import { PositiveInteger, toPositiveInteger } from "../types/PositiveInteger";
@@ -7,33 +5,22 @@ import { DateString, toDateString } from "../types/DateString";
 
 
 export interface IRecurrency {
-  id: string,
-  title: string,
-  lastEvent: Datum,
-  periodNb: PositiveInteger,
-  periodUnit: PeriodUnit,
+  id(): string,
+  title(): string,
+  lastEvent(): Datum,
+  periodNb(): PositiveInteger,
+  periodUnit(): PeriodUnit,
+  expiry(): Datum,
+  progress(): number,
+  remainingPeriod(unit: PeriodUnit): number,
+  setTitle(val: string): Recurrency,
+  setLastEvent(val: string): Recurrency,
+  setPeriodNb(val: number, master: 'lastEvent' | 'expiry'): Recurrency,
+  setPeriodUnit(val: string, master: 'lastEvent' | 'expiry'): Recurrency,
+  setExpiry(val: string, master: 'lastEvent' | 'period'): Recurrency
 }
 
-// export class Recurrency implements IRecurrency {
-
-//   private _periodUnit: PeriodUnit
-
-//   get periodUnit(): PeriodUnit {
-//     return this._periodUnit;
-//   }
-
-//   set periodUnit(val: string) {
-//     this._periodUnit = toPeriodUnit(val)
-//     // do something else
-//   }
-
-//   constructor(periodUnit: string) {
-//     this._periodUnit = toPeriodUnit(periodUnit)
-//   }
-
-// }
-
-const SETUP = {
+export const SETUP = {
   time: '23:59:59.999',
   offset: '+02:00'
 }
@@ -49,14 +36,9 @@ export class Recurrency {
   constructor(title: string, lastEvent: string, periodNb: number, periodUnit: string, id?: string) {
     this._id = id ?? this._generatedId()
     this._title = title
-    this._lastEvent = new Datum(lastEvent, SETUP.time, SETUP.offset)
+    this._lastEvent = new Datum(`${lastEvent}T${SETUP.time}${SETUP.offset}`)
     this._periodNb = toPositiveInteger(periodNb)
     this._periodUnit = toPeriodUnit(periodUnit)
-  }
-
-  static TEST() {
-    const rec = new Recurrency('EC', '2024-08-22', 94, 'days')
-    // console.log(d.add(-47, 'days').format())
   }
 
   private _generatedId(): string {
@@ -102,79 +84,121 @@ export class Recurrency {
   }
 
   remainingPeriod(unit: PeriodUnit): number {
+    // returns an integer, which is rounded to the floor: e.g 1.9 will result in 1 (days, weeks, ...)
     const expiry = this.expiry()
     const now = Datum.now()
     return Datum.diff(expiry, now, unit)
   }
 
-  setTitle(val: string): Recurrency {
-    this._title = val
+  setTitle(val: string): Recurrency {    
+    return new Recurrency(
+      val,
+      this._lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+      this._periodNb,
+      this._periodUnit,
+      this._id
+    )
   }
 
   setLastEvent(val: string): Recurrency {
-    const lastEvent = new Datum(val, SETUP.time, SETUP.offset)
-    this._lastEvent = lastEvent
+    return new Recurrency(
+      this._title,
+      val,
+      this._periodNb,
+      this._periodUnit,
+      this._id
+    )
   }
 
   setPeriodNb(val: number, master: 'lastEvent' | 'expiry'): Recurrency {
-    const periodNb = toPositiveInteger(val)
-    this._periodNb = periodNb
     
     switch(master) {
       case 'lastEvent':
         {
-          return
+          return new Recurrency(
+            this._title,
+            this._lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+            val,
+            this._periodUnit,
+            this._id
+          )
         }
       case 'expiry':
         {
-          const expiry = this.expiry()
-          const lastEvent = expiry.add(-periodNb, this._periodUnit)
-          this._lastEvent = lastEvent
-          return
+          const lastEvent = this.expiry().add(-1, 'milliseconds').add(-val, this._periodUnit)
+          return new Recurrency(
+            this._title,
+            lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+            val,
+            this._periodUnit,
+            this._id
+          )
         }
     }
   }
 
   setPeriodUnit(val: string, master: 'lastEvent' | 'expiry'): Recurrency {
-    const periodUnit = toPeriodUnit(val)
-    this._periodUnit = periodUnit
     
     switch(master) {
       case 'lastEvent':
         {
-          return
+          return new Recurrency(
+            this._title,
+            this._lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+            this._periodNb,
+            val,
+            this._id
+          )
         }
       case 'expiry':
         {
-          const expiry = this.expiry()
-          const lastEvent = expiry.add(-this._periodNb, periodUnit)
-          this._lastEvent = lastEvent
-          return
+          const lastEvent = this.expiry().add(-1, 'milliseconds').add(-this._periodNb, toPeriodUnit(val))
+          return new Recurrency(
+            this._title,
+            lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+            this._periodNb,
+            val,
+            this._id
+          )
         }
     }
   }
 
   setExpiry(val: string, master: 'lastEvent' | 'period'): Recurrency {
+    const expiry = new Datum(`${val}T00:00:00${SETUP.offset}`)
     switch (master) {
       case 'lastEvent':
         {
-          const title = this._title
-          const lastEvent = this._lastEvent.format(SETUP.offset, 'YYYY-MM-DD')
-          const periodNb = Datum.diff(new Datum(val, SETUP.time, SETUP.offset), this._lastEvent, this._periodUnit)
-          const periodUnit = this._periodUnit
-          const id = this._id
-          return new Recurrency(title, lastEvent, periodNb, periodUnit, id)
+          const periodNb = Datum.diff(expiry.add(-1, 'milliseconds'), this._lastEvent, this._periodUnit)
+          return new Recurrency(
+            this._title,
+            this._lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+            periodNb,
+            this._periodUnit,
+            this._id
+          )
         }
       case 'period':
-        {
-          const title = this._title
-          const lastEvent = this._lastEvent.add(-this._periodNb, this._periodUnit).format(SETUP.offset, 'YYYY-MM-DD')
-          const periodNb = this._periodNb
-          const periodUnit = this._periodUnit
-          const id = this._id
-          return new Recurrency(title, lastEvent, periodNb, periodUnit, id)
-        }
+        const lastEvent = expiry.add(-1, 'milliseconds').add(-this._periodNb, this._periodUnit)
+        return new Recurrency(
+          this._title,
+          lastEvent.toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+          this._periodNb,
+          this._periodUnit,
+          this._id
+        )
     }
   }
 
+  static TEST() {
+    // console.log(d1.expiry().toString({format: 'DD.MM.YYYY HH:mm:ss.SSS Z', offset: SETUP.offset}))
+    // console.log(d1.remainingPeriod('days'))
+
+    const d2 = new Recurrency('aaa', '2024-02-28', 94, 'days')
+    const d3 = d2.setExpiry('2024-03-02', 'lastEvent')
+    // console.log(d3.lastEvent().toString({format: 'DD.MM.YYYY HH:mm:ss.SSS Z', offset: SETUP.offset}))
+    // console.log(d3.periodNb())
+
+    // TODO: test all setter methods (setExpiry() already done...)
+  }
 }

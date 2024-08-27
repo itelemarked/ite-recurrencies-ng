@@ -37,7 +37,7 @@ export class RecurrenciesListPage {
   ]
 
   constructor() {
-    Datum.TEST()
+    Recurrency.TEST()
   }
 
 }
