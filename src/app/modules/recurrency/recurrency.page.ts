@@ -10,7 +10,7 @@ import { IonButton, IonContent, IonHeader, IonRouterOutlet, IonTitle, IonToolbar
   `,
   styles: ``,
 })
-export class RecurrenciesPage {
+export class RecurrencyPage {
 
   constructor() {}
 

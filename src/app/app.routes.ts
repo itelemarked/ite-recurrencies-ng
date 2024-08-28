@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './modules/home/home.page';
-import { RecurrenciesPage } from './modules/recurrencies/recurrencies.page';
-import { recurrenciesRoutes } from './modules/recurrencies/recurrencies.routes'
+import { RecurrenciesPage } from './modules/recurrency/recurrency.page';
+import { recurrenciesRoutes } from './modules/recurrency/recurrency.routes'
 
 const ORIGIN = '/recurrencies'
 

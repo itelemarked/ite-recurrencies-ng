@@ -1,7 +1,7 @@
 import { Datum } from "./Datum";
-import { PeriodUnit, toPeriodUnit } from "../types/PeriodUnit";
-import { PositiveInteger, toPositiveInteger } from "../types/PositiveInteger";
-import { DateString, toDateString } from "../types/DateString";
+import { PeriodUnit, toPeriodUnit } from "./types/PeriodUnit";
+import { PositiveInteger, toPositiveInteger } from "./types/PositiveInteger";
+import { DateString, toDateString } from "./types/DateString";
 
 
 export interface IRecurrency {
@@ -25,7 +25,7 @@ export const SETUP = {
   offset: '+02:00'
 }
 
-export class Recurrency {
+export class Recurrency implements IRecurrency {
 
   private _id: string
   private _title: string

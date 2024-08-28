@@ -1,5 +1,5 @@
-import { PeriodUnit } from "../types/PeriodUnit";
-import { PositiveInteger, toPositiveInteger } from "../types/PositiveInteger";
+import { PeriodUnit } from "./types/PeriodUnit";
+import { PositiveInteger, toPositiveInteger } from "./types/PositiveInteger";
 import { Datum } from "./Datum";
 import { Recurrency, SETUP } from "./Recurrency";
 
