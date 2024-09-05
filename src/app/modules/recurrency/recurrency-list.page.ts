@@ -18,54 +18,54 @@ import { RecurrencyListItemEditModal } from './recurrency-list-item-edit.modal';
       <ion-toolbar>
         <ion-title>RecurrenciesListPage</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="onOpenEditModal()">
+          <!-- <ion-button (click)="onOpenEditModal()">
             <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-          </ion-button>
+          </ion-button> -->
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-      <div *ngFor="let recurrency of (recurrencies$ | async)">
+      <!-- <div *ngFor="let recurrency of (recurrencies$ | async)">
         <app-recurrencies-list-item
           [recurrency]="recurrency"
           (edit)="onOpenEditModal(recurrency)"
           (delete)="onDelete(recurrency)"
         ></app-recurrencies-list-item>
-      </div>
+      </div> -->
     </ion-content>
   `,
   styles: ``,
 })
 export class RecurrencyListPage {
 
-  recurrencies$: Observable<Recurrency[]>
+  // recurrencies$: Observable<Recurrency[]>
 
-  constructor(private recurrencyService: RecurrencyService, private modalCtrl: ModalController) {
-    addIcons({addOutline})
-    this.recurrencies$ = this.recurrencyService.getRecurrencies$()
-  }
+  // constructor(private recurrencyService: RecurrencyService, private modalCtrl: ModalController) {
+  //   addIcons({addOutline})
+  //   this.recurrencies$ = this.recurrencyService.get$()
+  // }
 
-  onDelete(recurrency: Recurrency) {
-    this.recurrencyService.remove(recurrency)
-  }
+  // onDelete(recurrency: Recurrency) {
+  //   this.recurrencyService.remove(recurrency)
+  // }
 
-  onEdit() {
-    console.log('onEdit!')
-  }
+  // onEdit() {
+  //   console.log('onEdit!')
+  // }
 
-  async onOpenEditModal(recurrency?: Recurrency) {
-    const modal = await this.modalCtrl.create({
-      component: RecurrencyListItemEditModal,
-      componentProps: {recurrency}
-    });
-    modal.present();
+  // async onOpenEditModal(recurrency?: Recurrency) {
+  //   const modal = await this.modalCtrl.create({
+  //     component: RecurrencyListItemEditModal,
+  //     componentProps: {recurrency}
+  //   });
+  //   modal.present();
 
-    // const { data, role } = await modal.onWillDismiss();
+  //   // const { data, role } = await modal.onWillDismiss();
 
-    // if (role === 'confirm') {
-    //   this.message = `Hello, ${data}!`;
-    // }
-  }
+  //   // if (role === 'confirm') {
+  //   //   this.message = `Hello, ${data}!`;
+  //   // }
+  // }
 
 }

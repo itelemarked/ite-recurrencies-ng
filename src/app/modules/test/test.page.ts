@@ -5,6 +5,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, Ion
 import { Recurrency } from '../recurrency/Recurrency';
 import { BehaviorSubject, of } from 'rxjs';
 import { RecurrencyService } from '../recurrency/recurrency.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-test',
@@ -57,20 +58,26 @@ export class TestPage implements OnInit {
   user$ = this._user$.asObservable()
 
   constructor(
-    private recService: RecurrencyService
+    private recService: RecurrencyService,
+    private auth: AuthService
   ) {
-    this.recService.get$(this.user$).subscribe(console.log)
+    // this.recService.get$(this.user$).subscribe(console.log)
 
-    setTimeout(() => {
-      this._user$.next({id: '0yuA0RLZFJdbRKtVSfW4y5HSQMq1'})
-    }, 3000);
+    // setTimeout(() => {
+    //   this._user$.next({id: '0yuA0RLZFJdbRKtVSfW4y5HSQMq1'})
+    // }, 3000);
   
-    const newRec = {
-      title: 'new Recurrency 6',
-      lastEvent: '2000-01-01',
-      periodNb: 99,
-      periodUnit: 'daaays'
-    }
+    // const newRec = {
+    //   title: 'new Recurrency 6',
+    //   lastEvent: '2000-01-01',
+    //   periodNb: 99,
+    //   periodUnit: 'daaays'
+    // }
+
+    // this.auth.login('aaa@aaa.com', '111111')
+    // .then(() => console.log('logged-in!'))
+    // .catch(() => console.log('mmmmh, some error here...'))
+    // this.auth.user$.subscribe(console.log)
 
     // this.store.delete('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/iBHVgbuDm9NnfY1wAEjg')
   }
