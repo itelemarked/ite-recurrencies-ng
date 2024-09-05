@@ -1,6 +1,10 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonModal, IonDatetime, IonInput } from '@ionic/angular/standalone';
+import { Recurrency } from '../recurrency/Recurrency';
+import { BehaviorSubject, of } from 'rxjs';
+import { RecurrencyService } from '../recurrency/recurrency.service';
 
 @Component({
   selector: 'app-test',
@@ -49,13 +53,26 @@ export class TestPage implements OnInit {
 
   counter = computed(() => this.settings().count)
 
-  constructor() {
+  _user$ = new BehaviorSubject({id: '0yuA0RLZFJdbRKtVSfW4y5HSQMq'})
+  user$ = this._user$.asObservable()
+
+  constructor(
+    private recService: RecurrencyService
+  ) {
+    this.recService.get$(this.user$).subscribe(console.log)
+
     setTimeout(() => {
-      console.log('timeout')
-      this.settings.set({
-        count: 1000
-      })
+      this._user$.next({id: '0yuA0RLZFJdbRKtVSfW4y5HSQMq1'})
     }, 3000);
+  
+    const newRec = {
+      title: 'new Recurrency 6',
+      lastEvent: '2000-01-01',
+      periodNb: 99,
+      periodUnit: 'daaays'
+    }
+
+    // this.store.delete('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/iBHVgbuDm9NnfY1wAEjg')
   }
 
   ngOnInit(): void {
