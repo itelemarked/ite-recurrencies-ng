@@ -2,6 +2,7 @@ import { Datum } from "./Datum";
 import { PeriodUnit, toPeriodUnit } from "./types/PeriodUnit";
 import { PositiveInteger, toPositiveInteger } from "./types/PositiveInteger";
 import { DateString, toDateString } from "./types/DateString";
+import { SettingsService } from "../settings/settings.service";
 
 
 export interface IRecurrency {
@@ -37,6 +38,8 @@ export class Recurrency implements IRecurrency {
     this._id = id ?? this._generatedId()
     this._title = title
     this._lastEvent = new Datum(`${lastEvent}T${SETUP.time}${SETUP.offset}`)
+    // const settingsService: SettingsService
+    // this._lastEvent = new Datum(`${lastEvent}T${SETUP.time}${settingsService.timezone()}`)
     this._periodNb = toPositiveInteger(periodNb)
     this._periodUnit = toPeriodUnit(periodUnit)
   }

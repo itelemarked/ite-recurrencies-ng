@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+
+ion-popover.ite-popover {
+  /* --width: 90%!important; */
+}
+
+ion-modal.ite-choose-date-modal {
+  --height: auto;
+  --width: 320px;
+  --backdrop-opacity: 0.6!important;
+}

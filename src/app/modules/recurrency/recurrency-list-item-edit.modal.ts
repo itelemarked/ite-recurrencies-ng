@@ -1,7 +1,8 @@
 import { Component, computed, Input, input, InputSignal, model, OnInit } from '@angular/core';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonList, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
-import { RecurrenciesService } from './recurrency.service';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonList, IonTitle, IonToolbar, ModalController, PopoverController } from '@ionic/angular/standalone';
+import { RecurrencyService } from './recurrency.service';
 import { Recurrency, SETUP } from './Recurrency';
+import { ChooseDateModal } from './choose-date.modal';
 
 @Component({
   selector: 'app-recurrencies-edit',
@@ -36,9 +37,10 @@ import { Recurrency, SETUP } from './Recurrency';
             labelPlacement="stacked"
             placeholder="Enter lastEvent"
             [value]="lastEventString()"
+            (click)="onChooseLastEventDate()"
           ></ion-input>
         </ion-item>
-        <ion-item>
+        <!-- <ion-item>
           <ion-input
             label="Period number"
             labelPlacement="stacked"
@@ -61,7 +63,7 @@ import { Recurrency, SETUP } from './Recurrency';
             placeholder="Enter expiry date"
             [value]="expiryString()"
           ></ion-input>
-        </ion-item>
+        </ion-item> -->
         <ion-button
           class="ion-padding-top"
           expand="full"
@@ -81,17 +83,8 @@ export class RecurrencyListItemEditModal implements OnInit {
   // TEMPLATE VARS
   title = model<string>()
   lastEventString = model<string>()
-  periodNbString = model<string>()
-  periodUnitString = model<string>()
-  expiryString = model<string>()
-  // lastEventString = model(() => this.recurrency?.lastEvent().toString({format: 'DD.MM.YYYY', offset: SETUP.offset}))
-  // periodNbString = model(() => this.recurrency?.periodNb().toString())
-  // periodUnitString = model(() => this.recurrency?.periodUnit())
-  // expiryString = model(() => this.recurrency?.expiry().toString({format: 'DD.MM.YYYY', offset: SETUP.offset}))
-  
-  isCreateMode = computed(() => this.recurrency === undefined)
 
-  constructor(private modalCtrl: ModalController, private recurrenciesService: RecurrenciesService) {}
+  constructor(private modalCtrl: ModalController, private popoverCtrl: PopoverController, private recurrencyService: RecurrencyService) {}
 
   ngOnInit(): void {
     this.title.set(this.recurrency?.title() || 'default title')
@@ -103,17 +96,22 @@ export class RecurrencyListItemEditModal implements OnInit {
   }
 
   onConfirm() {
-    // if(this.isCreateMode()) {
-    //   const title = this.title()!
-    //   const lastEvent = '2022-01-01'
-    //   const periodNb = 99
-    //   const periodUnit = 'days'
-    //   this.recurrenciesService.add(new Recurrency(title, lastEvent, periodNb, periodUnit))
-    // } else {
-
-    // }
-    console.log(this.title())
     this.modalCtrl.dismiss()
+  }
+
+  async onChooseLastEventDate() {
+    const modal = await this.modalCtrl.create({
+      component: ChooseDateModal,
+      componentProps: {},
+      cssClass: ['ite-choose-date-modal']
+    });
+    modal.present();
+
+    // const { data, role } = await modal.onWillDismiss();
+
+    // if (role === 'confirm') {
+    //   this.message = `Hello, ${data}!`;
+    // }
   }
 
 }

@@ -2,11 +2,11 @@ import dayjs, { Dayjs } from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
-import { PeriodUnit, toPeriodUnit } from "../types/PeriodUnit";
-import { TimeString, toTimeString } from "../types/TimeString";
-import { DateString, toDateString } from "../types/DateString";
-import { OffsetString, toOffsetString } from "../types/OffsetString";
-import { PositiveInteger } from "../types/PositiveInteger";
+import { PeriodUnit, toPeriodUnit } from "./types/PeriodUnit";
+import { TimeString, toTimeString } from "./types/TimeString";
+import { DateString, toDateString } from "./types/DateString";
+import { OffsetString, toOffsetString } from "./types/OffsetString";
+import { PositiveInteger } from "./types/PositiveInteger";
 
 // interface IDatum {
 //   dateString: DateString,
@@ -255,6 +255,10 @@ export class Datum implements IDatum {
     const d1 = dayjs(datum1.valueOf())
     const d2 = dayjs(datum2.valueOf())
     return d1.diff(d2, unit)
+  }
+
+  static getUserOffset(): string {
+    return dayjs().format('Z')
   }
 
   static TEST() {
