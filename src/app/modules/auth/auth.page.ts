@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonText, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AuthLoginComponent } from './auth-login.component';
@@ -35,19 +35,19 @@ import { AuthLogoutComponent } from './auth-logout.component';
 
     <ion-content class="ion-padding" [forceOverscroll]="false">
 
-      <ng-container *ngIf="!(isLoggedIn | async) && loginSignup === 'login'">
+      <ng-container *ngIf="!isLoggedIn() && loginSignup === 'login'">
         <app-auth-login
           (toggle)="loginSignup = 'signup'"
         ></app-auth-login>
       </ng-container>
 
-      <ng-container *ngIf="!(isLoggedIn | async) && loginSignup === 'signup'">
+      <ng-container *ngIf="!isLoggedIn() && loginSignup === 'signup'">
         <app-auth-signup
           (toggle)="loginSignup = 'login'"
         ></app-auth-signup>
       </ng-container>
 
-      <ng-container *ngIf="isLoggedIn | async">
+      <ng-container *ngIf="isLoggedIn()">
         <app-auth-logout></app-auth-logout>
       </ng-container>
 
@@ -67,20 +67,15 @@ import { AuthLogoutComponent } from './auth-logout.component';
     .flex {
       display: flex;
     }
+    
 
   `,
 })
 export class AuthPage {
 
-  isLoggedIn = this._initIsLoggedIn()
-  loginSignup: 'login' | 'signup' = 'signup'
+  private _authService = inject(AuthService)
 
-  constructor(private auth: AuthService) {}
-  
-  private _initIsLoggedIn(): Observable<boolean> {
-    return this.auth.user$.pipe(
-      map(usr => !!usr)
-    )
-  }
+  isLoggedIn = computed(() => this._authService.userSig() !== null)
+  loginSignup: 'login' | 'signup' = 'signup'  
 
 } 

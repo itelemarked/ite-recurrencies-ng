@@ -1,12 +1,14 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonModal, IonDatetime, IonInput } from '@ionic/angular/standalone';
 import { Recurrency } from '../recurrency/Recurrency';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, map, of } from 'rxjs';
 import { RecurrencyService } from '../recurrency/recurrency.service';
 import { AuthService } from '../auth/auth.service';
 import { environment } from '../../../environments/environment';
+import { SettingsService } from '../settings/settings.service';
+import { toSignal } from '@angular/core/rxjs-interop'
 
 @Component({
   selector: 'app-test',
@@ -22,51 +24,36 @@ import { environment } from '../../../environments/environment';
     <ion-content [forceOverscroll]="false">
 
       <p>TestPage works</p>
-      <p>value: {{ inputValue }}</p>
-      <ion-button (click)="isModalOpen = true">open modal</ion-button>
-      <p>Counter: {{ counter() }}</p>
-
-      <ion-modal [isOpen]="isModalOpen">
-        <ng-template>
-          <ion-header>
-            <ion-toolbar>
-              <ion-title>Modal</ion-title>
-            </ion-toolbar>
-          </ion-header>
-          <ion-content class="ion-padding">
-            <ion-input [(ngModel)]="inputValue"></ion-input>
-            <ion-button (click)="isModalOpen = false">ok</ion-button>
-          </ion-content>
-        </ng-template>
-      </ion-modal>
     
     </ion-content>
   `,
   styles: ``,
 })
-export class TestPage implements OnInit {
+export class TestPage {
 
-  isModalOpen = false
-  inputValue = 99
+  private _settingsService = inject(SettingsService)
+  private _recurrencyService = inject(RecurrencyService)
 
-  settings = signal({
-    count: 999
-  })
-
-  counter = computed(() => this.settings().count)
-
-  _user$ = new BehaviorSubject({id: '0yuA0RLZFJdbRKtVSfW4y5HSQMq'})
-  user$ = this._user$.asObservable()
-
-  constructor(
-    private recService: RecurrencyService,
-    private auth: AuthService
-  ) {
-    console.log('Production: ' + environment.production)
+  constructor() {
+    // const rec = new Recurrency('abcd', '2022-12-06', 99, 'days')
+    // setTimeout(() => {
+    //   this._recurrencyService.add(rec)
+    // }, 2000);
   }
 
-  ngOnInit(): void {
-    
-  }
+  // ngOnInit(): void {
+  //   this.recService.recurrencies$.subscribe(res => {
+  //     console.log(res.map(r => ({title: r.title(), lastEvent: r.lastEvent().toString()})))
+  //   })
+
+  //   // setTimeout(() => {
+  //   //   const newRec = new Recurrency('aaa', '2020-12-20', 99, 'days', 'xyzabcd')
+  //   //   this.recService.add(newRec).then(_ => console.log('Add.then()'))
+  //   // }, 2000);
+
+  //   // setTimeout(() => {
+  //   //   this.auth.login('aaa@aaa.com', '111111')
+  //   // }, 4000);
+  // }
 
 }

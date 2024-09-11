@@ -1,27 +1,27 @@
-import { computed, inject, Injectable, Signal, signal } from "@angular/core";
-import { BehaviorSubject, map, Observable, switchMap } from "rxjs";
-import { Recurrency, SETUP } from "./Recurrency";
-import { IStore } from "../../core/stores/store.interface";
-import { FirebaseStoreService } from "../../core/stores/firebase-store.service";
-import { PeriodUnit } from "./types/PeriodUnit";
+import { inject, Injectable, Signal } from "@angular/core";
+import { combineLatestWith, lastValueFrom, map, Observable, of, switchMap, take, zipWith } from "rxjs";
+import { IRecurrency, Recurrency } from "./Recurrency";
+import { User } from "../auth/User";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { AuthService } from "../auth/auth.service";
+import { ISettings, SettingsService } from "../settings/settings.service";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 
 export interface IRecurrencyData {
-  firebaseId: string,
   title: string,
   lastEvent: string,
   periodNb: number,
   periodUnit: string
 }
 
-function fromData(data: IRecurrencyData): Recurrency {
-  return new Recurrency(data.title, data.lastEvent, data.periodNb, data.periodUnit, data.firebaseId)
+function fromData(id: string, data: IRecurrencyData, offset?: string): Recurrency {
+  return new Recurrency(data.title, data.lastEvent, data.periodNb, data.periodUnit, id, offset)
 }
-
-function toData(recurrency: Recurrency): IRecurrencyData {
+  
+function toData(recurrency: Recurrency, offset: string = '+00:00'): IRecurrencyData {
   return {
-    firebaseId: recurrency.id(),
     title: recurrency.title(),
-    lastEvent: recurrency.lastEvent().toString({format: 'YYYY-MM-DD', offset: SETUP.offset}),
+    lastEvent: recurrency.lastEvent().toString({format: 'YYYY-MM-DD', offset}),
     periodNb: recurrency.periodNb(),
     periodUnit: recurrency.periodUnit()
   }
@@ -31,85 +31,55 @@ function toData(recurrency: Recurrency): IRecurrencyData {
 @Injectable({providedIn: 'root'})
 export class RecurrencyService {
 
-  private store: IStore = inject(FirebaseStoreService)
+  private _firestore = inject(AngularFirestore)
+  private _authService = inject(AuthService)
+  private _settingsService = inject(SettingsService)
+
+  recurrenciesSig = toSignal(this._getRecurrencies$(), {initialValue: []})
+
+  async add(recurrency: Recurrency) {
+    const userSig = this._authService.userSig
+    const settingsSig = this._settingsService.settingsSig
+
+    await this._firestore.collection<IRecurrencyData>(`users/${userSig()?.id()}/recurrencies`).doc(recurrency.id()).set(toData(recurrency, settingsSig()?.timezone))
+  }
   
-  get$(user$: Observable<{id: string}>): Observable<Recurrency[]> {
+
+  private _getRecurrencies$() {
+    const user$ = toObservable(this._authService.userSig)
+
+    const getSettings$ = (user: User | null) => {
+      return this._firestore.doc<ISettings | null>(`users/${user?.id()}/settings/0`).valueChanges().pipe(
+        map(res => {
+          if(res === undefined) return null
+          return res
+        }),
+        map(res => {
+          const result: [User | null, ISettings | null] = [user, res]
+          return result
+        })
+      )
+    }
+
+    const getRecurrencies$ = (user: User | null, settings: ISettings | null) => {
+      return this._firestore.collection<IRecurrencyData>(`users/${user?.id()}/recurrencies`).snapshotChanges().pipe(
+        map(res => res.map(r => {
+          const id = r.payload.doc.id
+          const data = r.payload.doc.data()
+          return fromData(id, data, settings?.timezone)
+        }))
+      )
+    }
+
     return user$.pipe(
-      switchMap(usr => this.store.get$<IRecurrencyData[]>(`users/${usr.id}/recurrencies`)),
-      map(res => res === null ? []: res.map(fromData))
+      switchMap( user => getSettings$(user) ),
+      switchMap( ([user, settings]) => getRecurrencies$(user, settings) )
     )
   }
 
-  // TODO
-  // set() {}
-  // delete() {}
+  
+
 
 }
 
 
-
-
-// let RECURRENCIES: IRecurrencyData[] = [
-//   {id: '0.3229625687065407', title: 'PC-7', lastEvent: '2024-08-22', periodNb: 94, periodUnit: 'days'},
-//   {id: '0.764443601617917', title: 'EC', lastEvent: '2024-08-22', periodNb: 66, periodUnit: 'days'}
-// ]
-
-
-
-
-// interface IRecurrencyService {
-//   getRecurrencies$(): Observable<Recurrency[]>,
-//   add(recurrency: Recurrency): Promise<void>,
-//   update(recurrency: Recurrency): Promise<void>,
-//   remove(recurrency: Recurrency): Promise<void>,
-// }
-
-
-// @Injectable({providedIn: 'root'})
-// export class RecurrencyService {
-
-//   private _recurrencies$ = new BehaviorSubject<Recurrency[]>([])
-//   // private _recurrencies: Signal<Recurrency[]> = signal([])
-
-//   constructor() {
-//     this._recurrencies$.next(RECURRENCIES.map(r => fromData(r)))
-//   }
-
-//   getRecurrencies$(): Observable<Recurrency[]> {
-//     return this._recurrencies$.asObservable()
-//   }
-
-//   add(recurrency: Recurrency): Promise<void> {
-//     return new Promise(resolve => {
-//       setTimeout(() => {
-//         RECURRENCIES.push(toData(recurrency))
-//         this._recurrencies$.next(RECURRENCIES.map(r => fromData(r)))
-//         resolve()
-//       }, 500);
-//     })
-//   }
-
-//   remove(recurrency: Recurrency): Promise<void> {
-//     return new Promise(resolve => {
-//       setTimeout(() => {
-//         RECURRENCIES = RECURRENCIES.filter(r => fromData(r).id() !== recurrency.id())
-//         this._recurrencies$.next(RECURRENCIES.map(r => fromData(r)))
-//         resolve()
-//       }, 500);
-//     })
-//   }
-
-//   update(recurrency: Recurrency): Promise<void> {
-//     return new Promise(resolve => {
-//       setTimeout(() => {
-//         RECURRENCIES = RECURRENCIES.map(r => {
-//           const rec = fromData(r)
-//           return rec.id() === recurrency.id() ? toData(recurrency) : toData(rec)
-//         })
-//         this._recurrencies$.next(RECURRENCIES.map(r => fromData(r)))
-//         resolve()
-//       }, 500);
-//     })
-//   }
-
-// }

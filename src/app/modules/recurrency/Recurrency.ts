@@ -28,16 +28,18 @@ export const SETUP = {
 
 export class Recurrency implements IRecurrency {
 
+  private LAST_EVENT_TIME = '23:59:59.999'
+
   private _id: string
   private _title: string
   private _lastEvent: Datum
   private _periodNb: PositiveInteger
   private _periodUnit: PeriodUnit
 
-  constructor(title: string, lastEvent: string, periodNb: number, periodUnit: string, id?: string) {
+  constructor(title: string, lastEvent: string, periodNb: number, periodUnit: string, id?: string, offset: string = '+00:00') {
     this._id = id ?? this._generatedId()
     this._title = title
-    this._lastEvent = new Datum(`${lastEvent}T${SETUP.time}${SETUP.offset}`)
+    this._lastEvent = new Datum(`${lastEvent}T${this.LAST_EVENT_TIME}${offset}`)
     // const settingsService: SettingsService
     // this._lastEvent = new Datum(`${lastEvent}T${SETUP.time}${settingsService.timezone()}`)
     this._periodNb = toPositiveInteger(periodNb)
