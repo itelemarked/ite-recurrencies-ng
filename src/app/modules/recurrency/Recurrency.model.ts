@@ -1,57 +1,24 @@
-import { DateString } from "./DateString.type";
+import { DateString } from "./types/DateString.type";
 import { Datum } from "./Datum.model";
-import { OffsetString, toOffsetString } from "./OffsetString.type";
-import { PeriodUnit, toPeriodUnit } from "./PeriodUnit.type";
-import { PositiveInteger, toPositiveInteger } from "./PositiveInteger.type";
+import { OffsetString, toOffsetString } from "./types/OffsetString.type";
+import { PeriodUnit, toPeriodUnit } from "./types/PeriodUnit.type";
+import { PositiveInteger, toPositiveInteger } from "./types/PositiveInteger.type";
+import { IRecurrency, IRecurrencyData, IRecurrencyOptions } from "./types/Recurrency.interface";
+import { IDatum } from "./types/Datum.interface";
 
-
-export interface IRecurrency {
-  id(): string,
-  title(): string,
-  lastEvent(): Datum,
-  periodNb(): PositiveInteger,
-  periodUnit(): PeriodUnit,
-  expiry(): Datum,
-  progress(): number,
-  remainingPeriod(unit: PeriodUnit): number,
-  setTitle(val: string): Recurrency,
-  setLastEvent(val: string): Recurrency,
-  setPeriodNb(val: number, master: 'lastEvent' | 'expiry'): Recurrency,
-  setPeriodUnit(val: string, master: 'lastEvent' | 'expiry'): Recurrency,
-  setExpiry(val: string, master: 'lastEvent' | 'period'): Recurrency
+export const SETUP = {
+  offset: '+01:00'
 }
 
-export interface IRecurrencyData {
-  title: string,
-  lastEvent: string,
-  periodNb: number,
-  periodUnit: string,
-  id?: string
-}
-
-export interface IRecurrencyOptions {
-  offset?: string
-}
 
 export class Recurrency implements IRecurrency {
 
   private _id: string
   private _title: string
-  private _lastEvent: DateString
+  private _lastEvent: IDatum
   private _periodNb: PositiveInteger
   private _periodUnit: PeriodUnit
   private _offset: OffsetString
-
-  // private constructor(title: string, lastEvent: string, periodNb: number, periodUnit: string, id?: string, offset: string = '+00:00') {
-  //   const LAST_EVENT_TIME = '23:59:59.999'
-    
-  //   this._id = id ?? this._generatedId()
-  //   this._title = title
-  //   this._lastEvent = Datum.fromIsoString(`${lastEvent}T${LAST_EVENT_TIME}${offset}`)
-  //   this._periodNb = toPositiveInteger(periodNb)
-  //   this._periodUnit = toPeriodUnit(periodUnit)
-  //   this._offset = offset
-  // }
 
   private constructor({ title, lastEvent, periodNb, periodUnit, id }: IRecurrencyData, { offset }: IRecurrencyOptions) {
     const LAST_EVENT_TIME = '23:59:59.999'
@@ -97,13 +64,14 @@ export class Recurrency implements IRecurrency {
     return this._title
   }
 
-  // lastEvent(): Datum {
+  lastEvent(): IDatum {
+    return this._lastEvent.clone()
+  }
+
+  // lastEvent({format = 'YYYY-MM-DDTHH:mm:ss.SSSZ'}: {format?: string} = {}): string {
   //   return this._lastEvent.clone()
   // }
 
-  lastEvent({format = 'YYYY-MM-DDTHH:mm:ss.SSSZ'}: {format?: string} = {}): string {
-    return this._lastEvent.clone()
-  }
 
   periodNb(): PositiveInteger {
     return this._periodNb
@@ -113,7 +81,7 @@ export class Recurrency implements IRecurrency {
     return this._periodUnit
   }
 
-  expiry(): Datum {
+  expiry(): IDatum {
     return this._lastEvent.add(this._periodNb, this._periodUnit).add(1, 'milliseconds')
   }
 

@@ -4,8 +4,8 @@ import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLab
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { PeriodUnit } from './types/PeriodUnit.type';
-import { Recurrency, SETUP } from './types/Recurrency.model';
-import { Datum } from './types/Datum.model';
+import { Recurrency, SETUP } from './Recurrency.model';
+import { Datum } from './Datum.model';
 
 @Component({
   selector: 'app-recurrencies-list-item',

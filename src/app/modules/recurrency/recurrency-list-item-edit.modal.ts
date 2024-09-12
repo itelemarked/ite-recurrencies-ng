@@ -1,7 +1,7 @@
 import { Component, computed, Input, input, InputSignal, model, OnInit } from '@angular/core';
 import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonList, IonTitle, IonToolbar, ModalController, PopoverController } from '@ionic/angular/standalone';
 import { RecurrencyService } from './recurrency.service';
-import { Recurrency, SETUP } from './types/Recurrency.model';
+import { Recurrency, SETUP } from './Recurrency.model';
 import { ChooseDateModal } from './choose-date.modal';
 
 @Component({

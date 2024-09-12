@@ -1,21 +1,17 @@
 import { inject, Injectable, Signal } from "@angular/core";
 import { combineLatestWith, lastValueFrom, map, Observable, of, switchMap, take, zipWith } from "rxjs";
-import { IRecurrency, Recurrency } from "./types/Recurrency.model";
+import { Recurrency } from "./Recurrency.model";
 import { User } from "../auth/User";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AuthService } from "../auth/auth.service";
-import { ISettings, SettingsService } from "../settings/settings.service";
+import { SettingsService } from "../settings/settings.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { IRecurrencyData, IRecurrencyOptions } from "./types/Recurrency.interface";
+import { ISettings } from "../settings/settings.interface";
 
-export interface IRecurrencyData {
-  title: string,
-  lastEvent: string,
-  periodNb: number,
-  periodUnit: string
-}
 
-function fromData(id: string, data: IRecurrencyData, offset?: string): Recurrency {
-  return new Recurrency(data.title, data.lastEvent, data.periodNb, data.periodUnit, id, offset)
+function fromData(data: IRecurrencyData, opts: IRecurrencyOptions): Recurrency {
+  return Recurrency.from(data, opts)
 }
   
 function toData(recurrency: Recurrency, offset: string = '+00:00'): IRecurrencyData {
@@ -26,7 +22,6 @@ function toData(recurrency: Recurrency, offset: string = '+00:00'): IRecurrencyD
     periodUnit: recurrency.periodUnit()
   }
 }
-
 
 @Injectable({providedIn: 'root'})
 export class RecurrencyService {
@@ -66,7 +61,7 @@ export class RecurrencyService {
         map(res => res.map(r => {
           const id = r.payload.doc.id
           const data = r.payload.doc.data()
-          return fromData(id, data, settings?.timezone)
+          return fromData(data, {offset: settings?.timezone})
         }))
       )
     }
