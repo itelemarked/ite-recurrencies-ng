@@ -3,9 +3,9 @@ import { Component, computed, input, Input, InputSignal, OnChanges, OnInit, outp
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
-import { PeriodUnit } from './types/PeriodUnit';
-import { Recurrency, SETUP } from './Recurrency';
-import { Datum } from './Datum';
+import { PeriodUnit } from './types/PeriodUnit.type';
+import { Recurrency, SETUP } from './types/Recurrency.model';
+import { Datum } from './types/Datum.model';
 
 @Component({
   selector: 'app-recurrencies-list-item',

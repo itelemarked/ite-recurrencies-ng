@@ -1,6 +1,6 @@
 import { inject, Injectable, Signal } from "@angular/core";
 import { combineLatestWith, lastValueFrom, map, Observable, of, switchMap, take, zipWith } from "rxjs";
-import { IRecurrency, Recurrency } from "./Recurrency";
+import { IRecurrency, Recurrency } from "./types/Recurrency.model";
 import { User } from "../auth/User";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AuthService } from "../auth/auth.service";

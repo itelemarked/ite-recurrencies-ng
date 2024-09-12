@@ -1,28 +1,32 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 
-import { PeriodUnit, toPeriodUnit } from "./types/PeriodUnit";
-import { TimeString, toTimeString } from "./types/TimeString";
-import { DateString, toDateString } from "./types/DateString";
-import { OffsetString, toOffsetString } from "./types/OffsetString";
-import { PositiveInteger } from "./types/PositiveInteger";
+import { PeriodUnit } from "./PeriodUnit.type";
 
 
 interface IDatum {
   toString(opts?: {format?: string, offset?: string}): string,
   valueOf(): number,
-  add(nb: number, unit: PeriodUnit): IDatum,
-  clone(): IDatum
+  add(nb: number, unit: PeriodUnit): Datum,
+  clone(): Datum,
+}
+
+interface IDatumStatic {
+  fromIsoString(isoString: string): Datum
+  fromMilliseconds(ms: number): Datum
+  now(): Datum,
+  diff(datum1: Datum, datum2: Datum, unit?: PeriodUnit): number,
+  getUserOffset(): string 
 }
 
   
 export class Datum implements IDatum {
+  
   // DEPENDS ON DAYJS LIBRARY!
-
   private _dayjsDate: dayjs.Dayjs
 
-  constructor(isoString: string | number) {
+  private constructor(isoString: string | number) {
     dayjs.extend(utc)
     dayjs.extend(timezone)
     
@@ -30,7 +34,7 @@ export class Datum implements IDatum {
     this._dayjsDate = dayjs.utc(isoString)
   }
 
-  // TODO: convert to dayjs format?
+  
   toString({format = 'YYYY-MM-DDTHH:mm:ss.SSSZ', offset = '+00:00'}: {format?: string, offset?: string} = {}): string {
     try {
       this._dayjsDate.tz(offset)
@@ -39,16 +43,17 @@ export class Datum implements IDatum {
       throw new Error(`Custom Error: Invalid timezone offset: "${offset}"`)
     }
 
-    const conversions = {
-      'Year4': 'YYYY',
-      'Month2': 'MM',
-      'Day2': 'DD',
-      'Hours2': 'HH',
-      'Minutes2': 'mm',
-      'Seconds2': 'ss',
-      'Milliseconds3': 'SSS',
-      'Offset': 'Z'
-    }
+    // TODO?: convert to dayjs format? or use the dayjs ones???
+    // const conversions = {
+    //   '/Year4/': 'YYYY',
+    //   '/Month2/': 'MM',
+    //   '/Day2/': 'DD',
+    //   '/Hours2/': 'HH',
+    //   '/Minutes2/': 'mm',
+    //   '/Seconds2/': 'ss',
+    //   '/Milliseconds3/': 'SSS',
+    //   '/Offset/': 'Z'
+    // }
 
     return this._dayjsDate.tz(offset).format(format)
   }
@@ -57,7 +62,6 @@ export class Datum implements IDatum {
     return this._dayjsDate.valueOf()
   }
 
-  // TODO: convert to dayjs unit?
   add(nb: number, unit: PeriodUnit): Datum {
 
     const converted = (unit: PeriodUnit): dayjs.ManipulateType => {
@@ -78,6 +82,14 @@ export class Datum implements IDatum {
 
   clone(): Datum {
     return new Datum(this._dayjsDate.valueOf())
+  }
+
+  static fromIsoString(isoString: string): Datum {
+    return new Datum(isoString)
+  }
+
+  static fromMilliseconds(ms: number): Datum {
+    return new Datum(ms)
   }
 
   static now(): Datum {

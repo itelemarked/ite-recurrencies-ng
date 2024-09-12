@@ -1,8 +1,8 @@
 import { inject, Injectable, Signal, signal } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Observable, map, of, switchMap, tap } from "rxjs";
-import { Recurrency } from "../../modules/recurrency/Recurrency";
-import { PeriodUnit } from "../../modules/recurrency/types/PeriodUnit";
+import { Recurrency } from "../../modules/recurrency/types/Recurrency.model";
+import { PeriodUnit } from "../../modules/recurrency/types/PeriodUnit.type";
 import { IStore } from "./store.interface";
 
 

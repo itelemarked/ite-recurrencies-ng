@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, OnInit, signal } from '@angular/co
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonModal, IonDatetime, IonInput } from '@ionic/angular/standalone';
-import { Recurrency } from '../recurrency/Recurrency';
+import { Recurrency } from '../recurrency/types/Recurrency.model';
 import { BehaviorSubject, map, of } from 'rxjs';
 import { RecurrencyService } from '../recurrency/recurrency.service';
 import { AuthService } from '../auth/auth.service';
