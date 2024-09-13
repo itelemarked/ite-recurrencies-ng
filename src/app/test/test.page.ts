@@ -37,9 +37,6 @@ export class TestPage {
 
   constructor() {
     effect(() => console.log(this.settingsService.get$()()))
-    setTimeout(() => {
-      this.authService.login('aaa@aaa.com', '111111')
-    }, 2000);
   }
 
   getPath$(): Observable<string | undefined> {
@@ -48,6 +45,7 @@ export class TestPage {
       map(usr => !!usr ? `users/${usr.id()}/settings/0`: undefined)
     )
   }
+  
 
   // constructor() {
   //   const path$ = toSignal(this.getPath$(), {initialValue: undefined})

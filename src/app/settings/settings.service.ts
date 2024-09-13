@@ -1,12 +1,15 @@
 import { Injectable, Signal, computed, inject, signal } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { Observable, map, of, switchMap } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { Observable, map, of, switchMap } from "rxjs";
+
 import { ISettings } from "./settings.interface";
-import { AuthService } from "../auth/auth.service";
-import { StoreDocumentAngularfire } from "../_models/StoreDocumentAngularfire";
 import { IUser } from "../_interfaces/IUser";
 import { IStoreDocument } from "../_interfaces/IStoreDocument";
+
+import { AuthService } from "../auth/auth.service";
+import { StoreDocumentAngularfire } from "../_models/StoreDocumentAngularfire";
+import { use } from "../_utils/global";
 
 
 
@@ -15,12 +18,15 @@ export class SettingsService implements IStoreDocument<ISettings> {
   
   private _authService = inject(AuthService)
 
+  // wrap the required storeClass into a store variable
   private storePath = computed(() => {
     const usr = this._authService.userSig()
     return !!usr ? `users/${usr.id()}/settings/0`: undefined
   })
+  private storeClass = use(StoreDocumentAngularfire<ISettings>)
+  private store = new this.storeClass(this.storePath)
 
-  private store = new StoreDocumentAngularfire<ISettings>(this.storePath)
+  
 
   get$() {
     return this.store.get$()

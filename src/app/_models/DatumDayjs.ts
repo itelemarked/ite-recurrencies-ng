@@ -5,16 +5,16 @@ import { PeriodUnit } from "../_types/PeriodUnit";
 import { IDatum } from "../_interfaces/IDatum";
 
 
-interface IDatumStatic {
-  fromIsoString(isoString: string): Datum
-  fromMilliseconds(ms: number): Datum
-  now(): Datum,
-  diff(datum1: Datum, datum2: Datum, unit?: PeriodUnit): number,
-  getUserOffset(): string 
-}
+// interface IDatumStatic {
+//   fromIsoString(isoString: string): Datum
+//   fromMilliseconds(ms: number): Datum
+//   now(): Datum,
+//   diff(datum1: Datum, datum2: Datum, unit?: PeriodUnit): number,
+//   getUserOffset(): string 
+// }
 
   
-export class Datum implements IDatum {
+export class DatumDayjs implements IDatum {
   
   /**
    * DEPENDS ON DAYJS LIBRARY!
@@ -33,7 +33,7 @@ export class Datum implements IDatum {
    * 
    * Constructor is private. Instanciation of a Datum object with new Datum() will throw an error. Use Datum.fromIsoString() or Datum.fromMilliseconds() to create a Datum object. 
    */
-  private constructor(isoStringOrMs: string | number) {
+  constructor(isoStringOrMs: string | number) {
     dayjs.extend(utc)
     dayjs.extend(timezone)
     
@@ -47,7 +47,7 @@ export class Datum implements IDatum {
    * @returns Datum
    */
   static fromIsoString(isoString: string): IDatum {
-    return new Datum(isoString)
+    return new DatumDayjs(isoString)
   }
 
   /**
@@ -56,7 +56,7 @@ export class Datum implements IDatum {
    * @returns Datum
    */
   static fromMilliseconds(ms: number): IDatum {
-    return new Datum(ms)
+    return new DatumDayjs(ms)
   }
 
   
@@ -101,15 +101,15 @@ export class Datum implements IDatum {
       }
     }
 
-    return new Datum(this._dayjsDate.add(nb, converted(unit)).valueOf())
+    return new DatumDayjs(this._dayjsDate.add(nb, converted(unit)).valueOf())
   }
 
   clone(): IDatum {
-    return new Datum(this._dayjsDate.valueOf())
+    return new DatumDayjs(this._dayjsDate.valueOf())
   }
 
   static now(): IDatum {
-    return new Datum(dayjs().valueOf())
+    return new DatumDayjs(dayjs().valueOf())
   }
 
   static diff(datum1: IDatum, datum2: IDatum, unit: PeriodUnit = 'milliseconds'): number {

@@ -1,16 +1,18 @@
-import { Datum } from "./Datum";
+
 import { OffsetString, toOffsetString } from "../_types/OffsetString";
 import { PeriodUnit, toPeriodUnit } from "../_types/PeriodUnit";
 import { PositiveInteger, toPositiveInteger } from "../_types/PositiveInteger";
 import { IRecurrency, IRecurrencyData, IRecurrencyOptions } from "../_interfaces/IRecurrency";
 import { IDatum } from "../_interfaces/IDatum";
+import { use } from "../_utils/global";
+import { DatumDayjs } from "./DatumDayjs";
 
 export const SETUP = {
   offset: '+01:00'
 }
 
-
 export class Recurrency implements IRecurrency {
+  private _datum = use<typeof DatumDayjs>(DatumDayjs)
 
   private _id: string
   private _title: string
@@ -24,7 +26,7 @@ export class Recurrency implements IRecurrency {
     const offsetString = !!offset ? toOffsetString(offset) : toOffsetString('+00:00')
     
     this._title = title
-    this._lastEvent = Datum.fromIsoString(`${lastEvent}T${LAST_EVENT_TIME}${offsetString}`)
+    this._lastEvent = this._datum.fromIsoString(`${lastEvent}T${LAST_EVENT_TIME}${offsetString}`)
     this._periodNb = toPositiveInteger(periodNb)
     this._periodUnit = toPeriodUnit(periodUnit)
     this._id = id ?? this._generatedId()
@@ -92,17 +94,17 @@ export class Recurrency implements IRecurrency {
     // if "now" is same as expiry, result = 1
     // if "now" is after expiry, result > 1
 
-    const now = Datum.now()
+    const now = this._datum.now()
     const lastEvent = this._lastEvent
     const expiry = this.expiry()
-    return Datum.diff(now, lastEvent) / Datum.diff(expiry, lastEvent)
+    return this._datum.diff(now, lastEvent) / this._datum.diff(expiry, lastEvent)
   }
 
   remainingPeriod(unit: PeriodUnit): number {
     // returns an integer, which is rounded to the floor: e.g 1.9 will result in 1 (days, weeks, ...)
     const expiry = this.expiry()
-    const now = Datum.now()
-    return Datum.diff(expiry, now, unit)
+    const now = this._datum.now()
+    return this._datum.diff(expiry, now, unit)
   }
 
   setTitle(val: string): Recurrency {
@@ -156,11 +158,11 @@ export class Recurrency implements IRecurrency {
   }
 
   setExpiry(val: string, master: 'lastEvent' | 'period'): Recurrency {
-    const expiry = Datum.fromIsoString(`${val}T00:00:00${this._offset}`)
+    const expiry = this._datum.fromIsoString(`${val}T00:00:00${this._offset}`)
     switch (master) {
       case 'lastEvent':
         {
-          const periodNb = Datum.diff(expiry.add(-1, 'milliseconds'), this._lastEvent, this._periodUnit)
+          const periodNb = this._datum.diff(expiry.add(-1, 'milliseconds'), this._lastEvent, this._periodUnit)
           const newProps = {...this._getProps(), periodNb}  
           const opts = this._getOptions()
           return new Recurrency(newProps, opts)

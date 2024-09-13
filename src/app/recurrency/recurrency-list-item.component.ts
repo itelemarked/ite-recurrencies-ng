@@ -4,7 +4,9 @@ import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLab
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Recurrency, SETUP } from '../_models/Recurrency';
-import { Datum } from '../_models/Datum';
+import { DatumDayjs } from '../_models/DatumDayjs';
+import { use } from '../_utils/global';
+import { IDatum } from '../_interfaces/IDatum';
 
 @Component({
   selector: 'app-recurrencies-list-item',
@@ -36,6 +38,9 @@ import { Datum } from '../_models/Datum';
   styles: ``,
 })
 export class RecurrencyListItemComponent {
+
+  private _datum = use<typeof DatumDayjs>(DatumDayjs)
+  
   // INPUTS
   recurrency: InputSignal<Recurrency> = input.required()
 
@@ -53,7 +58,7 @@ export class RecurrencyListItemComponent {
   expiryString = computed(() => this.recurrency().expiry().toString({format: 'DD.MM.YYYY', offset: SETUP.offset}))
   progress = computed(() => this.recurrency().progress())
   remainingDaysString = computed(() => {
-    const diffDays = Datum.diff(this.recurrency().expiry(), Datum.now(), 'days')
+    const diffDays = this._datum.diff(this.recurrency().expiry(), this._datum.now(), 'days')
     return diffDays.toString() + ' days left'
   })
   progressColor = computed(() => {
