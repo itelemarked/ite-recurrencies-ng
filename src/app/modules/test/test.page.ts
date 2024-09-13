@@ -45,6 +45,7 @@ export class TestPage {
     setTimeout(() => {
       this.authService.login('aaa@aaa.com', '111111')
     }, 2000);
+    const rmk = 'this line was added on github'
   }
 
   getPath$(): Observable<string | undefined> {
