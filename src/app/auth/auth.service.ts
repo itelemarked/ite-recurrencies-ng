@@ -1,5 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, inject, signal } from "@angular/core";
-import { User } from "./User";
+import { User } from "../_models/User";
 import { Observable, map, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { toSignal } from "@angular/core/rxjs-interop";

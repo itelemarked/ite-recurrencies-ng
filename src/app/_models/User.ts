@@ -1,5 +1,6 @@
+import { IUser } from "../_types/User.interface";
 
-export class User {
+export class User implements IUser {
 
   private _id: string;
   private _email: string;

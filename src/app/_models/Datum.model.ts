@@ -1,9 +1,10 @@
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import { PeriodUnit } from "../_types/PeriodUnit.type";
+import { IDatum } from "../_types/Datum.interface";
 
-import { PeriodUnit } from "./types/PeriodUnit.type";
-import { IDatum } from "./types/Datum.interface";
+
 
 
 interface IDatumStatic {

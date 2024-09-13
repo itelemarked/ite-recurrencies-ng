@@ -1,18 +1,13 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonModal, IonDatetime, IonInput } from '@ionic/angular/standalone';
-import { Recurrency } from '../recurrency/Recurrency.model';
-import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
-import { RecurrencyService } from '../recurrency/recurrency.service';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { environment } from '../../../environments/environment';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop'
-import { Datum } from '../recurrency/Datum.model';
+import { toObservable } from '@angular/core/rxjs-interop'
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { ISettings } from '../settings/settings.interface';
-import { FirebaseDocumentStore } from '../../core/stores/firebase-store.model';
 import { SettingsService } from '../settings/settings.service';
+import { ISettings } from '../settings/settings.interface';
 
 @Component({
   selector: 'app-test',

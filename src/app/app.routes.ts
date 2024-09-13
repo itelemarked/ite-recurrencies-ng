@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './modules/home/home.page';
-import { RecurrencyPage } from './modules/recurrency/recurrency.page';
-import { recurrenciesRoutes } from './modules/recurrency/recurrency.routes'
-import { TestPage } from './modules/test/test.page';
-import { AuthPage } from './modules/auth/auth.page';
+import { HomePage } from './home/home.page';
+import { TestPage } from './test/test.page';
+import { AuthPage } from './auth/auth.page';
+import { RecurrencyPage } from './recurrency/recurrency.page';
+import { recurrenciesRoutes } from './recurrency/recurrency.routes';
 
 const ORIGIN = '/auth'
 

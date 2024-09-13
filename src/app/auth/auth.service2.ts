@@ -1,14 +1,16 @@
 import { Injectable, Signal, WritableSignal, computed, inject, signal } from "@angular/core";
-import { User } from "./User";
+
 import { Observable, map } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { IUser } from "../_types/User.interface";
+import { User } from "../_models/User";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
   // user$: Observable<User | null> = this._initUser()
 
-  private _user: WritableSignal<User | null> = signal(null)
+  private _user: WritableSignal<IUser | null> = signal(null)
   user = computed(() => this._user())
 
   constructor(private auth: AngularFireAuth) {

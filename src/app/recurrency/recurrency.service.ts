@@ -1,12 +1,12 @@
 import { inject, Injectable, Signal } from "@angular/core";
 import { combineLatestWith, lastValueFrom, map, Observable, of, switchMap, take, zipWith } from "rxjs";
-import { Recurrency } from "./Recurrency.model";
-import { User } from "../auth/User";
+import { Recurrency } from "../_models/Recurrency.model";
+import { IRecurrencyData, IRecurrencyOptions } from "../_types/Recurrency.interface";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AuthService } from "../auth/auth.service";
 import { SettingsService } from "../settings/settings.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { IRecurrencyData, IRecurrencyOptions } from "./types/Recurrency.interface";
+import { User } from "../_models/User";
 import { ISettings } from "../settings/settings.interface";
 
 

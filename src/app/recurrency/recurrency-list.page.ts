@@ -2,12 +2,7 @@ import { Component } from '@angular/core';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
 import { RecurrencyListItemComponent } from './recurrency-list-item.component';
 import { CommonModule } from '@angular/common';
-import { Recurrency } from './Recurrency.model';
-import { RecurrencyService } from './recurrency.service';
-import { Observable } from 'rxjs';
-import { addIcons } from 'ionicons';
-import { addOutline } from 'ionicons/icons';
-import { RecurrencyListItemEditModal } from './recurrency-list-item-edit.modal';
+
 
 @Component({
   selector: 'app-recurrencies-list',

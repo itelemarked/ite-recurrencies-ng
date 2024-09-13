@@ -1,10 +1,11 @@
 import { Signal, effect, inject, signal } from "@angular/core";
 import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/compat/firestore";
-import { IDocumentStore } from "./store.interface";
 import { Observable, of, switchMap } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { IStoreDocument } from "../_types/StoreDocument.interface";
 
-export class FirebaseDocumentStore<T> implements IDocumentStore<T> {
+
+export class StoreDocumentAngularfire<T> implements IStoreDocument<T> {
 
   private _firestore = inject(AngularFirestore)
   private _value$: Signal<T | undefined>
@@ -16,16 +17,6 @@ export class FirebaseDocumentStore<T> implements IDocumentStore<T> {
     )
     this._value$ = toSignal(valueObs, {initialValue: undefined})
   }
-
-  // get$<T>(): Signal<T | undefined> {
-  //   const pathSig = toSignal(
-  //     this._pathObs$.pipe(
-  //       switchMap(path => !!path ? this._firestore.doc<T>(path).valueChanges() : of(undefined))
-  //     ),
-  //     {initialValue: undefined}
-  //   )
-  //   return pathSig
-  // }
 
   get$(): Signal<T | undefined> {
     return this._value$
