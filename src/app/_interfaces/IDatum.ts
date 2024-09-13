@@ -1,4 +1,4 @@
-import { PeriodUnit } from "./PeriodUnit.type";
+import { PeriodUnit } from "../_types/PeriodUnit";
 
 export interface IDatum {
   /**

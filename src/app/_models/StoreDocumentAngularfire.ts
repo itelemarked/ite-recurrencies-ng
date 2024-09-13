@@ -2,7 +2,7 @@ import { Signal, effect, inject, signal } from "@angular/core";
 import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/compat/firestore";
 import { Observable, of, switchMap } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { IStoreDocument } from "../_types/StoreDocument.interface";
+import { IStoreDocument } from "../_interfaces/IStoreDocument";
 
 
 export class StoreDocumentAngularfire<T> implements IStoreDocument<T> {

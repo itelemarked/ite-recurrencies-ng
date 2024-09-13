@@ -1,10 +1,9 @@
-import { DateString } from "../_types/DateString.type";
-import { Datum } from "./Datum.model";
-import { OffsetString, toOffsetString } from "../_types/OffsetString.type";
-import { PeriodUnit, toPeriodUnit } from "../_types/PeriodUnit.type";
-import { PositiveInteger, toPositiveInteger } from "../_types/PositiveInteger.type";
-import { IRecurrency, IRecurrencyData, IRecurrencyOptions } from "../_types/Recurrency.interface";
-import { IDatum } from "../_types/Datum.interface";
+import { Datum } from "./Datum";
+import { OffsetString, toOffsetString } from "../_types/OffsetString";
+import { PeriodUnit, toPeriodUnit } from "../_types/PeriodUnit";
+import { PositiveInteger, toPositiveInteger } from "../_types/PositiveInteger";
+import { IRecurrency, IRecurrencyData, IRecurrencyOptions } from "../_interfaces/IRecurrency";
+import { IDatum } from "../_interfaces/IDatum";
 
 export const SETUP = {
   offset: '+01:00'

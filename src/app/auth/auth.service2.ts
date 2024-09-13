@@ -2,7 +2,7 @@ import { Injectable, Signal, WritableSignal, computed, inject, signal } from "@a
 
 import { Observable, map } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { IUser } from "../_types/User.interface";
+import { IUser } from "../_interfaces/IUser";
 import { User } from "../_models/User";
 
 @Injectable({providedIn: 'root'})

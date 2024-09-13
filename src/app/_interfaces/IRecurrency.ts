@@ -1,6 +1,6 @@
-import { IDatum } from "./Datum.interface"
-import { PeriodUnit } from "./PeriodUnit.type"
-import { PositiveInteger } from "./PositiveInteger.type"
+import { PeriodUnit } from "../_types/PeriodUnit"
+import { PositiveInteger } from "../_types/PositiveInteger"
+import { IDatum } from "./IDatum"
 
 
 export interface IRecurrencyData {

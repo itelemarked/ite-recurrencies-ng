@@ -3,10 +3,10 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Observable, map, of, switchMap } from "rxjs";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { ISettings } from "./settings.interface";
-import { IStoreDocument } from "../_types/StoreDocument.interface";
 import { AuthService } from "../auth/auth.service";
 import { StoreDocumentAngularfire } from "../_models/StoreDocumentAngularfire";
-import { IUser } from "../_types/User.interface";
+import { IUser } from "../_interfaces/IUser";
+import { IStoreDocument } from "../_interfaces/IStoreDocument";
 
 
 
