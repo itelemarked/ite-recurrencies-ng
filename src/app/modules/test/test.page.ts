@@ -42,6 +42,7 @@ export class TestPage {
 
   constructor() {
     effect(() => console.log(this.settingsService.get$()()))
+    const rmk = 'this line was added on github, yeah!'
   }
 
   getPath$(): Observable<string | undefined> {
