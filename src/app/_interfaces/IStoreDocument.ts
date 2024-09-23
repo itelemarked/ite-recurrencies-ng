@@ -1,7 +1,8 @@
 import { Signal } from "@angular/core";
+import { Observable } from "rxjs";
 
 export interface IStoreDocument<T> {
-  get$(): Signal<T | undefined>
-  // set(path: string, item: T): Promise<void>
-  // delete(path: string): Promise<void>
+  get$(): Observable<T | null>
+  // set(path: string, item: T): Promise<T>
+  // delete(path: string): Promise<T>
 }

@@ -1,38 +1,52 @@
 import { Injectable, Signal, WritableSignal, computed, inject, signal } from "@angular/core";
-import { User } from "../_models/User";
 import { Observable, map, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { IStoreAuth } from "../_interfaces/IStoreAuth";
+import { IUser } from "../_interfaces/IUser";
 
 @Injectable({providedIn: 'root'})
-export class AuthService {
+export class AuthService implements IStoreAuth {
 
   private _angularFireAuth = inject(AngularFireAuth)
 
-  private _user$ = this._initUser()
+  private _userObs$ = this._angularFireAuth.authState.pipe(
+    map(res => !!res ? { id: res.uid, email: res.email! } as IUser : null)
+  )
 
-  userSig = toSignal(this._user$, {initialValue: null})
+  private _userSig$ = toSignal(this._userObs$, {initialValue: null})
 
-  async signup(email: string, password: string): Promise<void> {
+  private async _signup(email: string, password: string): Promise<void> {
     await this._angularFireAuth.createUserWithEmailAndPassword(email, password)
     return
   }
 
-  async login(email: string, password: string): Promise<void> {
+  private async _login(email: string, password: string): Promise<void> {
     await this._angularFireAuth.signInWithEmailAndPassword(email, password)
     return
   }
 
-  async logout(): Promise<void> {
+  private async _logout(): Promise<void> {
     return this._angularFireAuth.signOut()
   }
 
 
+  // PUBLIC
 
-  private _initUser() {
-    return this._angularFireAuth.authState.pipe(
-      map(res => res === null ? null : new User(res.uid, res.email!))
-    )
+  get user$() {
+    return this._userSig$
+  }
+
+  signup(email: string, password: string) {
+    return this._signup(email, password)
+  }
+
+  login(email: string, password: string): Promise<void> {
+    return this._login(email, password)
+  }
+
+  logout(): Promise<void> {
+    return this._logout()
   }
 
 }
