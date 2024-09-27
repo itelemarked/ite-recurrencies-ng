@@ -31,8 +31,3 @@ export function toRecurrency(data: IRecurrencyData & {id?: string}): IRecurrency
   }
   return data as IRecurrency
 }
-
-
-// export interface IRecurrencyOptions {
-//   offset?: string
-// }

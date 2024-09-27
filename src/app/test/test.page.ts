@@ -2,7 +2,7 @@ import { Component, effect, ElementRef, inject, OnInit, signal, viewChild } from
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonModal, IonDatetime, IonInput } from '@ionic/angular/standalone';
-import { combineLatestWith, delay, firstValueFrom, from, fromEvent, interval, lastValueFrom, map, mergeMap, Observable, of, switchMap, take, tap } from 'rxjs';
+import { combineLatestWith, concatMap, delay, firstValueFrom, from, fromEvent, interval, lastValueFrom, map, mergeMap, Observable, of, switchMap, take, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { toObservable } from '@angular/core/rxjs-interop'
 import { AngularFireAuth } from '@angular/fire/compat/auth';
@@ -12,7 +12,9 @@ import { RecurrencyService } from '../recurrency/recurrency.service';
 import { toPeriodUnit } from '../_types/PeriodUnit';
 import { toPositiveInteger } from '../_types/PositiveInteger';
 import { toDateString } from '../_types/DateString';
-import { toRecurrency } from '../_interfaces/IRecurrency';
+import { IRecurrencyData, toRecurrency } from '../_interfaces/IRecurrency';
+import { IUser } from '../_interfaces/IUser';
+import { openDB } from 'idb';
 
 @Component({
   selector: 'app-test',
@@ -28,7 +30,7 @@ import { toRecurrency } from '../_interfaces/IRecurrency';
     <ion-content [forceOverscroll]="false">
 
       <p>TestPage works</p>
-      <ion-button #btn (click)="clickCounter.set(clickCounter() + 1)">Click me</ion-button>
+      <ion-button #btn>Click me</ion-button>
     
     </ion-content>
   `,
@@ -36,122 +38,74 @@ import { toRecurrency } from '../_interfaces/IRecurrency';
 })
 export class TestPage {
 
-  private rec = inject(RecurrencyService)
-
-  constructor() {
-    // this.testSave()
-    // this.testRemove()
-
-  }
-
-  recService = inject(RecurrencyService)
-
-  toRecurrencyTest() {
-    toRecurrency({
-      id: 'aaa',
-      title: 'aaa',
-      lastEvent: '2022-02-02',
-      periodNb: 99,
-      periodUnit: 'daysss'
-    })
-  }
-
-  testRemove() {
-    setTimeout(() => {
-      this.recService.remove('abcdefgh')
-      .then(val => {
-        console.log(`removed resolved:`)
-        console.log(val)
-      })
-      .catch(err => {
-        console.log(`removed rejected`)
-        console.log(err)
-      })
-    }, 6000);
-  }
-
-  testSave() {
-    setTimeout(() => {
-      this.recService.save({
-        id: 'abcdefgh',
-        title: 'bbb',
-        lastEvent: toDateString('2022-01-01'),
-        periodNb: toPositiveInteger(100),
-        periodUnit: toPeriodUnit('days')
-      })
-      .then(val => {
-        console.log(`saved resolved:`)
-        console.log(val)
-      })
-      .catch(err => {
-        console.log(`saved rejected`)
-        console.log(err)
-      })
-    }, 3000);
-  }
-
-
-
   btn = viewChild('btn', {read: ElementRef})
-  clickCounter = signal(-1)
-  obs2$ = toObservable(this.clickCounter).pipe(map(val => `From obs2$: ${val}`))
+  auth = inject(AngularFireAuth)
+  
 
-  testSwitchObservables() {
-    const obs1$ = interval(8000).pipe(map(val => `From obs1$: ${val}`))
-    // const obs2$ = fromEvent(this.btn()?.nativeElement, 'click').pipe(map(_ => `  From obs2$: clicked`))
-    const obs2$ = this.obs2$
-    const obs3$ = interval(1000).pipe(delay(8100), map(val => `From obs3$: ${val}`))
-
-    // const switch$ = obs1$.pipe(
-    //   tap(console.log),
-    //   switchMap(_ => obs2$),
-    //   tap(console.log),
-    //   switchMap(_ => obs3$),
-    // )
-
-    const combine$ = obs1$.pipe(
-      tap(_ => console.log(`--- obs$1 fired! ---`)),
-      combineLatestWith(obs2$.pipe(tap(_ => console.log(`--- obs$2 fired! ---`)) )),
-      map( ([e1, e2]) => [e1, e2]),
-      combineLatestWith(obs3$),
-      map( ([e12, e3]) => [...e12, e3])
-    )
-
-    // obs2$.subscribe(console.log)
-    // switch$.pipe(take(10)).subscribe(console.log)
-    combine$.pipe(take(20)).subscribe( ([e1, e2, e3]) => console.log(`${e3}, [${e1}, ${e2}]`))
+  constructor() { 
+    this.createDb()
+    // this.demo2()
+    // this.demo3()
+    // this.demo4()
+    // this.demo4a().then(console.log).catch(console.log)
   }
 
+  createDb() {
+    openDB('db1', 1, {
+      upgrade(db) {
+        db.createObjectStore('users/abcd/recurrencies');
+        db.createObjectStore('users');
+      },
+    });
+  }
 
-  testMergeMap() {
-    // const obs1$ = interval(5000).pipe(
-    //   tap(_ => console.log('obs1$ fires')),
-    //   map(val => `From obs1$: ${val}`)
-    // )
+  demo1() {
+    openDB('db1', 1, {
+      upgrade(db) {
+        db.createObjectStore('store1');
+        db.createObjectStore('store2');
+      },
+    });
+    openDB('db2', 1, {
+      upgrade(db) {
+        db.createObjectStore('store3', { keyPath: 'id' });
+        db.createObjectStore('store4', { autoIncrement: true });
+      },
+    });
+  }
 
-    const obs2$ = interval(1000).pipe(
-      // delay(5100), 
-      tap(_ => console.log('obs2$ fires')),
-      map(val => `From obs2$: ${val}`)
-    )
+  async demo2() {
+    const db1 = await openDB('db1', 1);
+    db1.add('store1', 'hello world', 'message');
+    db1.add('store1', true, 'delivered');
+    db1.close();
+  }
 
-    // const obs3$ = from(new Promise<string>((resolve, reject) => {
-    //   setTimeout(() => {
-    //     reject('abcd')
-    //   }, 3000);
-    // }))
+  async demo3() {
+    const db1 = await openDB('db1', 1);
+    db1
+      .add('store1', {title: 'hello again!!'}, 'new message')
+      .then(result => {
+        console.log('success!', result);
+      })
+      .catch(err => {
+        console.error('error man: ', err);
+      });
+    db1.close();
+  }
 
-    // obs1$.pipe(
-    //   switchMap(val => obs2$),
-    //   take(20),
-    // ).subscribe()
+  async demo4() {
+    const db2 = await openDB('db2', 1);
+    db2.add('store3', { id: 'cat001', strength: 10, speed: 10 });
+    db2.add('store3', { id: 'cat002', strength: 11, speed: 9 });
+    db2.add('store4', { id: 'cat003', strength: 8, speed: 12 });
+    db2.add('store4', { id: 'cat004', strength: 12, speed: 13 });
+    db2.close();
+  }
 
-    // obs3$.subscribe({
-    //   next: () => console.log(`Promise resolved`),
-    // })
-
-    const promise1 = firstValueFrom(obs2$)
-    promise1.then(val => console.log(val))
+  async demo4a() {
+    const db2 = await openDB('db2', 1);
+    return db2.delete('users/abcd/recurrencies', 'cat002')
   }
 
 }

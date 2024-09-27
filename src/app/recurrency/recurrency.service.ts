@@ -14,7 +14,8 @@ import { toPeriodUnit } from "../_types/PeriodUnit";
 
 
 @Injectable({providedIn: 'root'})
-export class RecurrencyService implements IStoreCollection<IRecurrency> {
+// export class RecurrencyService implements IStoreCollection<IRecurrency> {
+export class RecurrencyService {
 
   private _firestore = inject(AngularFirestore)
   private _auth = inject(AuthService)
@@ -42,7 +43,18 @@ export class RecurrencyService implements IStoreCollection<IRecurrency> {
     return recurrenciesSig$
   }
 
-
+    /**
+   * It adds (no id provided, or the recurrency id doesn't match any data id) or update (the recurrency id already exists on the server) the passed recurrency.
+   * 
+   * Resolved when:
+   * - the recurrency has been successfully saved on the server. (NB: it doesn't resolve if the value is cached for a later automatic save, e.g if the server or the wifi is not available yet)
+   * 
+   * Rejected if:
+   * - no user is currently logged in (User === null)
+   * 
+   * @param recurrency - the recurrency (with or without id) to be saved.
+   * @returns a Promise wich resolve with the recurrency saved. If no id was provided, one has been created upon saving to the server
+   */
   private async _save(recurrency: IRecurrency) {
     const observable$ = this._user$.pipe(
       mergeMap(usr => {
@@ -62,23 +74,43 @@ export class RecurrencyService implements IStoreCollection<IRecurrency> {
   }
 
   // TODO: working, but need a bit of refactoring...!!
+  /**
+   * It removes the recurrency with the specified id, and resolves with this recurrency.
+   * If the recurrency with corresponding id is not found on the backend, or if no user is currently logged in, the promise resolves with 'undefined'
+   * Note that the promise resolves only when 'online!'
+   * 
+   * @param id - the id of the recurrency to remove
+   * @returns - a promise resolved with the "IRecurrency" which has been removed from the backend (Note that it won't resolve while offline!)
+   */
   private async _remove(id: string) {
-    const observable$ = this._user$.pipe(
-      mergeMap(usr => {
-        if (usr === null) return throwError(() => new Error(`User is null`))
-        return of(usr)
-      }),
-      mergeMap(usr => {
-        return this._firestore.collection<IRecurrency>(`users/${usr.id}/recurrencies`).doc<IRecurrency>(id).get().pipe(
-          map(rec => ({user: usr, rec: {id, ...rec.data()!} }))
-        )
-      }),
-      mergeMap(({user, rec}) => {
-        return from(this._firestore.collection<IRecurrency & {id: string}>(`users/${user.id}/recurrencies`).doc(id).delete()).pipe(map(_ => rec ))
-      })
+
+    const getRecurrencyById$ = (usr: IUser | null, id: string) => {
+      if (usr === null) return of(undefined)
+      return this._firestore.collection<IRecurrencyData>(`users/${usr.id}/recurrencies`).doc<IRecurrencyData>(id).get().pipe(
+        map( recDoc => recDoc.data() ),
+        map( data => data === undefined ? undefined : toRecurrency({...data, id}) )
+      )
+    }
+
+    const recurrency$ = this._user$.pipe(
+      switchMap(usr => getRecurrencyById$(usr, id)),
+      take(1),
+      
     )
 
-    return firstValueFrom(observable$)
+    return firstValueFrom(recurrency$)
+    
+    // const observable$ = this._user$.pipe(
+    //   switchMap(usr => {
+    //     if (usr === null) return throwError(() => new Error(`User is null`))
+    //     return getRecurrency$(usr, id)
+    //   }),
+    //   map(({user, rec}) => {
+    //     return from(this._firestore.collection<IRecurrency & {id: string}>(`users/${user.id}/recurrencies`).doc(id).delete()).pipe(map(_ => rec ))
+    //   })
+    // )
+
+    // return firstValueFrom(observable$)
   }
 
   // PUBLIC
