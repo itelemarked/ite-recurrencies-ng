@@ -19,7 +19,7 @@ export interface IRecurrencyData {
   periodUnit: string
 }
 
-export function toRecurrency(data: IRecurrencyData & {id?: string}): IRecurrency {
+export function toRecurrency(data: IRecurrencyData, id?: string): IRecurrency {
   const { lastEvent, periodNb, periodUnit } = data
   try {
     toDateString(lastEvent)
@@ -29,5 +29,5 @@ export function toRecurrency(data: IRecurrencyData & {id?: string}): IRecurrency
   catch(err: any) {
     throw new Error(`Error: Custom type error, toRecurrency()... ${err}`, { cause: 'toRecurrency()' })
   }
-  return data as IRecurrency
+  return {...data, id} as IRecurrency
 }

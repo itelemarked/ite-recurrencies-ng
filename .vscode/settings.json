@@ -1,0 +1,6 @@
+{
+  "javascript.autoClosingTags": false,
+  "typescript.autoClosingTags": false,
+  "auto-close-tag.enableAutoCloseSelfClosingTag": false,
+  "git-graph.dialog.addTag.pushToRemote": true
+}
