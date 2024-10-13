@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { CounterComponent } from '../counter/counter.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, CounterComponent],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -13,8 +14,7 @@ import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/a
     </ion-header>
 
     <ion-content>
-      <p>Home works!</p>
-      <ion-button>button</ion-button>
+      <app-counter></app-counter>
     </ion-content>
   `,
   styles: ``,

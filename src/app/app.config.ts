@@ -1,14 +1,21 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngrx/store';
 
 import { routes } from './app.routes';
 import { provideIonicAngular } from '@ionic/angular/standalone';
-import { provideStore } from '@ngrx/store';
+import { CounterEffects, counterReducer } from './modules/counter/counter.store';
+import { provideEffects } from '@ngrx/effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideIonicAngular({}),
-    provideStore()
-  ]
+    provideStore({
+        counter: counterReducer
+    }),
+    provideEffects([
+      CounterEffects
+    ])
+]
 };
