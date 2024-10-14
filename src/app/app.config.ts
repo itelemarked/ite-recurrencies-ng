@@ -4,7 +4,7 @@ import { provideStore } from '@ngrx/store';
 
 import { routes } from './app.routes';
 import { provideIonicAngular } from '@ionic/angular/standalone';
-import { CounterEffects, counterReducer } from './modules/counter/counter.store';
+import { CounterEffects, counterReducer } from './modules/counter-ngrx/counter.store';
 import { provideEffects } from '@ngrx/effects';
 
 export const appConfig: ApplicationConfig = {

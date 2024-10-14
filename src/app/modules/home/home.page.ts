@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { CounterComponent } from '../counter/counter.component';
+import { CounterComponent } from '../counter-with-services/counter.component';
 
 @Component({
   selector: 'app-home',
