@@ -73,7 +73,7 @@ import { AuthLogoutComponent } from './auth-logout.component';
 export class AuthPage {
 
   isLoggedIn = this._initIsLoggedIn()
-  loginSignup: 'login' | 'signup' = 'signup'
+  loginSignup: 'login' | 'signup' = 'login'
 
   constructor(private auth: AuthService) {}
   
