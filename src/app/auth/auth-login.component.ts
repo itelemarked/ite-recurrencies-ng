@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton,
@@ -51,7 +51,7 @@ import { AuthService } from './auth.service';
       <ion-button
         class="ion-padding-top"
         expand="block"
-        (click)="onLoginClick()"
+        (click)="onLogin()"
       >Login</ion-button>
     </div>
 
@@ -85,15 +85,18 @@ import { AuthService } from './auth.service';
 })
 export class AuthLoginComponent {
 
+  // DEPENDENCIES
+  authService = inject(AuthService)
+
+  // OUTPUTS
   toggle = output()
 
+  // TEMPLATE VARS
   emailValue = ''
   passwordValue = ''
-  
-  constructor(private auth: AuthService) {}
 
-  onLoginClick() {
+  onLogin() {
     // TODO: validate email and password
-    this.auth.login(this.emailValue, this.passwordValue)
+    this.authService.login(this.emailValue, this.passwordValue)
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import {
   IonButton,
 } from '@ionic/angular/standalone';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   ],
   template: `
     <div class="centered">
-      Logged in as: {{ userEmail$() }}
+      Logged in as: *** email ***
     </div>
 
     <div>
@@ -24,7 +24,7 @@ import { CommonModule } from '@angular/common';
         expand="block"
         fill="outline"
         color="danger"
-        (click)="auth.logout()"
+        (click)="onLogout()"
       >logout</ion-button>
     </div>
   `,
@@ -42,9 +42,9 @@ import { CommonModule } from '@angular/common';
 })
 export class AuthLogoutComponent {
 
-  // TEMPLATE VARS:
-  // userEmail$ = this.auth.user$.pipe(map(res => !!res ? res.email : ''))
-  userEmail$ = computed(() => this.auth.user$())
-  
-  constructor(public auth: AuthService) {}
+  authService = inject(AuthService)
+
+  onLogout() {
+    this.authService.logout()
+  }
 }

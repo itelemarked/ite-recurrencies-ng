@@ -35,22 +35,19 @@ import { AuthLogoutComponent } from './auth-logout.component';
 
     <ion-content class="ion-padding" [forceOverscroll]="false">
 
-      <!-- <ng-container *ngIf="!(isLoggedIn$ | async) && loginSignup === 'login'"> -->
-      <ng-container *ngIf="!isLoggedIn$() && loginSignup === 'login'">
+      <ng-container *ngIf="!(isLoggedIn$ | async) && loginSignup === 'login'">
         <app-auth-login
           (toggle)="loginSignup = 'signup'"
         ></app-auth-login>
       </ng-container>
 
-      <!-- <ng-container *ngIf="!(isLoggedIn$ | async) && loginSignup === 'signup'"> -->
-      <ng-container *ngIf="!isLoggedIn$() && loginSignup === 'signup'">
+      <ng-container *ngIf="!(isLoggedIn$ | async) && loginSignup === 'signup'">
         <app-auth-signup
           (toggle)="loginSignup = 'login'"
         ></app-auth-signup>
       </ng-container>
 
-      <!-- <ng-container *ngIf="isLoggedIn$ | async"> -->
-      <ng-container *ngIf="isLoggedIn$()">
+      <ng-container *ngIf="isLoggedIn$ | async">
         <app-auth-logout></app-auth-logout>
       </ng-container>
 
@@ -79,7 +76,7 @@ export class AuthPage {
   private _authService = inject(AuthService)
 
   // isLoggedIn$ = this._authService.user$.pipe(map(usr => usr !== null))
-  isLoggedIn$ = computed(() => this._authService.user$())
-  loginSignup: 'login' | 'signup' = 'signup'  
+  isLoggedIn$ = this._authService.user$
+  loginSignup: 'login' | 'signup' = 'login'  
 
 } 

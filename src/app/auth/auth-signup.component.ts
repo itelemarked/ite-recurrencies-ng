@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from './auth.service';
 import {
   IonButton,
   IonInput,
@@ -24,7 +25,7 @@ import {
       <ion-input
         type="email"
         email
-        ngModel
+        [(ngModel)]="emailValue"
         label="Email"
         label-placement="stacked"
         fill="outline"
@@ -37,7 +38,7 @@ import {
       <ion-input
         type="password"
         [minlength]="6"
-        ngModel
+        [(ngModel)]="passwordValue"
         label="Password"
         label-placement="stacked"
         fill="outline"
@@ -50,7 +51,7 @@ import {
       <ion-input
         type="password"
         [minlength]="6"
-        ngModel
+        [(ngModel)]="confirmPasswordValue"
         label="Confirm password"
         label-placement="stacked"
         fill="outline"
@@ -60,7 +61,7 @@ import {
     </div>
 
     <div>
-      <ion-button class="ion-padding-top" expand="block">Signup</ion-button>
+      <ion-button class="ion-padding-top" expand="block" (click)="onSignup()">Signup</ion-button>
     </div>
 
     <div class="flex ion-justify-content-center ion-align-items-center">
@@ -92,8 +93,16 @@ import {
   `,
 })
 export class AuthSignupComponent {
+  authService = inject(AuthService)
 
   toggle = output()
 
-  constructor() {}
+  emailValue = ''
+  passwordValue = ''
+  confirmPasswordValue = ''
+
+  onSignup() {
+    // TODO: validate email and password
+    this.authService.signup(this.emailValue, this.passwordValue)
+  }
 }

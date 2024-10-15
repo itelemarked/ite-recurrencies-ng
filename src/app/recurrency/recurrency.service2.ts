@@ -1,12 +1,10 @@
 import { inject, Injectable } from "@angular/core";
-import { IRecurrency, IRecurrencyData, toRecurrency } from "../_interfaces/IRecurrency";
-import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
-import { AuthService } from "../auth/auth.service";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { IRecurrency, toRecurrency } from "../_interfaces/IRecurrency";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { IUser } from "../_interfaces/IUser";
-import { combineLatest, firstValueFrom, from, map, mergeMap, of, switchMap, take } from "rxjs";
+import { firstValueFrom, from, map, of, switchMap, take } from "rxjs";
 import { IStoreCollection2 } from "../_interfaces/IStoreCollection2";
-import { AuthService2 } from "../auth/auth.service2";
+import { AuthService } from "../auth/auth.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -14,7 +12,7 @@ import { AuthService2 } from "../auth/auth.service2";
 export class RecurrencyService2 implements IStoreCollection2<IRecurrency> {
 
   private afStore = inject(AngularFirestore)
-  private authService = inject(AuthService2)
+  private authService = inject(AuthService)
   private ref$ = this.authService.user$.pipe(
     map(usr => this.afStore.collection<IRecurrency>(`users/${usr?.id}/recurrencies`))
   ) 
@@ -127,28 +125,4 @@ export class RecurrencyService2 implements IStoreCollection2<IRecurrency> {
 
 }
 
-  // save(recurrency: IRecurrency) {
-  //   // const add$ = this.ref$.pipe(
-  //   //   switchMap(ref => {
-  //   //     return from(ref.add(recurrency))
-  //   //   }),
-  //   //   map(res => {
-  //   //     return {
-  //   //       ...res.
-  //   //       id: res.id,
-  //   //     }
-  //   //   })
-  //   // )
 
-  //   // if(recurrency.id === undefined) {
-
-  //   // }
-    
-  //   const r = toRecurrency({
-  //     title: 'aaa',
-  //     lastEvent: '2020-01-01',
-  //     periodNb: 99,
-  //     periodUnit: 'days'
-  //   }, 'aaa')
-  //   return Promise.resolve({value: r, key: 'aaa'})
-  // }
