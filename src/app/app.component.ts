@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
-import { HelloComponent } from './hello.component';
+import { IonApp, IonButton, IonRouterOutlet } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HelloComponent],
+  imports: [
+    IonApp,
+    IonRouterOutlet
+  ],
   template: `
-    <app-hello
-      [name]="name"
-    ></app-hello>
+    <ion-app>
+      <ion-router-outlet></ion-router-outlet>
+    </ion-app>
   `,
   styles: ``
 })
