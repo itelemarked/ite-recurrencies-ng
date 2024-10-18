@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { TestingPage } from './testing/forms--custom-ng-input/testing.page';
+import { TestingPage } from './testing/testing.page';
 
-const ORIGIN = '/forms--custom-ng-input'
+const ORIGIN = '/testing'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
-  { path: 'forms--custom-ng-input', component: TestingPage },
+  { path: 'testing', component: TestingPage },
 
   { path: '**', redirectTo: ORIGIN, pathMatch: 'full' }
 ];

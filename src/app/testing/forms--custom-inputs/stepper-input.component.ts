@@ -18,7 +18,7 @@ import {
     {
       provide: NG_VALUE_ACCESSOR,
       multi:true,
-      useExisting: StepperInput
+      useExisting: StepperInputComponent
     },
   ],
   template: `
@@ -62,7 +62,7 @@ import {
     }
   `
 })
-export class StepperInput implements ControlValueAccessor {
+export class StepperInputComponent implements ControlValueAccessor {
 
   quantity = 0
   increment = input(1)
