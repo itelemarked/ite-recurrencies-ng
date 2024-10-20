@@ -7,6 +7,7 @@ import { AuthSignupComponent } from './auth-signup.component';
 import { AuthService } from './auth.service';
 import { Observable, map } from 'rxjs';
 import { AuthLogoutComponent } from './auth-logout.component';
+import { AuthLoginSignupComponent } from './auth-login-signup.component';
 
 @Component({
   selector: 'app-auth',
@@ -24,6 +25,7 @@ import { AuthLogoutComponent } from './auth-logout.component';
     CommonModule,
     AuthLoginComponent,
     AuthSignupComponent,
+    AuthLoginSignupComponent,
     AuthLogoutComponent
   ],
   template: `
@@ -35,7 +37,7 @@ import { AuthLogoutComponent } from './auth-logout.component';
 
     <ion-content class="ion-padding" [forceOverscroll]="false">
 
-      <ng-container *ngIf="!(isLoggedIn | async) && loginSignup === 'login'">
+      <!-- <ng-container *ngIf="!(isLoggedIn | async) && loginSignup === 'login'">
         <app-auth-login
           (toggle)="loginSignup = 'signup'"
         ></app-auth-login>
@@ -45,6 +47,10 @@ import { AuthLogoutComponent } from './auth-logout.component';
         <app-auth-signup
           (toggle)="loginSignup = 'login'"
         ></app-auth-signup>
+      </ng-container> -->
+
+      <ng-container *ngIf="!(isLoggedIn | async)">
+        <app-auth-login-signup></app-auth-login-signup>
       </ng-container>
 
       <ng-container *ngIf="isLoggedIn | async">
@@ -73,7 +79,7 @@ import { AuthLogoutComponent } from './auth-logout.component';
 export class AuthPage {
 
   isLoggedIn = this._initIsLoggedIn()
-  loginSignup: 'login' | 'signup' = 'login'
+  loginSignup: 'login' | 'signup' = 'signup'
 
   constructor(private auth: AuthService) {}
   

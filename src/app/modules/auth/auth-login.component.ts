@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, output, signal } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import {
   IonButton,
   IonIcon,
@@ -26,59 +26,58 @@ import { eye } from 'ionicons/icons';
     ReactiveFormsModule
   ],
   template: `
-    <form class="ite-form" [formGroup]="form" (ngSubmit)="onSubmit($event)">
+    <form class="form" [formGroup]="form" (ngSubmit)="onSubmit($event)">
+
       <div>
         <ion-input
-          class="ite-input"
+          class="input"
           type="email"
           label="Email"
           label-placement="stacked"
           fill="outline"
           mode="md"
           placeholder="Enter email"
-          [errorText]="emailErrorText"
-          formControlName="emailCtl"
-        ></ion-input>
+          [formControl]="emailCtl"
+        />
+        <div class="m-1 px text-xs">
+           <ion-text color="danger" class="block" *ngIf="emailCtl.touched && emailCtl.hasError('required')">Enter an email...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="emailCtl.touched && emailCtl.hasError('email')">Invalid email...</ion-text>
+        </div>
       </div>
 
       <div class="ion-padding-top">
-        <div style="position: relative;">
-          <ion-input
-            class="ite-input"
-            [type]="passwordCtlType()"
-            label="Password"
-            label-placement="stacked"
-            fill="outline"
-            mode="md"
-            placeholder="Enter password"
-            [errorText]="passwordErrorText"
-            formControlName="passwordCtl"
-          >
-          </ion-input>
-          <div style="position: absolute; top: 0; right: 0; height: 100%; z-index: 3; display: flex; align-items: center;">
-            <ion-button fill="clear" color="medium" (click)="onToggleShowPassword()">
-              <ion-icon slot="icon-only" name="eye"></ion-icon>
-            </ion-button>
-          </div>
+        <ion-input
+          class="input"
+          type="password"
+          label="Password"
+          label-placement="stacked"
+          fill="outline"
+          mode="md"
+          placeholder="Enter password"
+          [formControl]="passwordCtl"
+        >
+        </ion-input>
+        <div class="m-1 px text-xs">
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('required')">Enter a password...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('minLength')">Is not at least 6 characters long...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('lowerCaseCharacter')">Lower case character missing...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('upperCaseCharacter')">Upper case character missing...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('specialCharacter')">Special character missing...</ion-text>
+           <ion-text color="danger" class="block" *ngIf="passwordCtl.touched && passwordCtl.hasError('numericCharacter')">Numeric character missing...</ion-text>
         </div>
       </div>
 
       <div>
-        <ion-button
-          type="submit"
-          class="ion-padding-top"
-          expand="block"
-        >Login</ion-button>
+        <ion-button type="submit" class="ion-padding-top" expand="block" [disabled]="form.untouched || form.invalid">
+          Login
+        </ion-button>
       </div>
 
       <div class="flex ion-justify-content-center ion-align-items-center">
         <span>No account yet?</span>
-        <ion-button
-          fill="clear"
-          [strong]="true"
-          color="primary"
-          (click)="toggleLoginSignup.emit()"
-          >Signup</ion-button
+        <ion-button fill="clear" [strong]="true" color="primary" (click)="toggleLoginSignup.emit()">
+          Signup
+        </ion-button
         >
       </div>
     </form>
@@ -94,96 +93,62 @@ import { eye } from 'ionicons/icons';
       --border-radius: 5px;
     }
 
-    .flex {
-      display: flex;
-    }
-
-
-    .ite-form.ng-submitted .ite-input.ng-invalid {
-      --border-color: var(--highlight-color-invalid);
-    }
-
   `,
 })
+
 export class AuthLoginComponent {
 
   // DEPENDENCIES
-
   auth = inject(AuthService)
-  formBuilder = inject(FormBuilder)
 
 
   // OUTPUTS
-
-  toggleLoginSignup = output()
   login = output()
+  toggleLoginSignup = output()
 
 
   // VARS
-
-  form = this.formBuilder.group({
-    emailCtl: ['', [Validators.required, Validators.email]],
-    passwordCtl: ['', [Validators.required, Validators.minLength(6)]]
+  emailCtl = new FormControl('', {
+    validators: [Validators.required, Validators.email],
+    // updateOn: 'blur'
+  })
+  passwordCtl = new FormControl('', {
+    validators: [
+      Validators.required,
+      minLengthValidator(6),
+      hasRegex(/[0-9]+/, 'numericCharacter'),
+      hasRegex(/[a-z]+/, 'lowerCaseCharacter'),
+      hasRegex(/[A-Z]+/, 'upperCaseCharacter'),
+      hasRegex(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/, 'specialCharacter'),
+    ],
+    // updateOn: 'blur'
   })
 
-  emailErrorText = this.getEmailErrorText()
-
-  passwordErrorText = this.getPasswordErrorText()
-
-  showPassword = signal(false)
-
-  passwordCtlType = computed(() => this.showPassword() ? 'text' : 'password')
+  form = new FormGroup({
+    emailCtl: this.emailCtl,
+    passwordCtl: this.passwordCtl
+  })
 
 
   // INIT
-
-  constructor() {
-    addIcons({ eye })
-    // this.form.valueChanges.subscribe((val) => {
-    //   console.log(`a value has changed`)
-    //   console.log(val)
-    // })
-  }
+  constructor() {}
 
 
   // UTILS
 
-  getEmailErrorText() {
-    const ctl = this.form.get('emailCtl')!
-    if (ctl.hasError('required')) return 'Enter an email...'
-    if (ctl.hasError('email')) return 'Enter a valid email...'
-    return ''
-  }
-
-  getPasswordErrorText() {
-    const ctl = this.form.get('passwordCtl')!
-    if (ctl.hasError('required')) return 'Enter an password...'
-    if (ctl.hasError('minlength')) return 'Must be at least 6 characters long...'
-    return ''
-  }
-
 
   // ACTIONS
-
-  onEmailChange() {
-    this.emailErrorText = this.getEmailErrorText()
-  }
-
-  onPasswordChange() {
-    this.passwordErrorText = this.getPasswordErrorText()
-  }
-
-  onToggleShowPassword() {
-    const show = this.showPassword()
-    this.showPassword.set(!show)
-  }
-
-  onSubmit(e: SubmitEvent) {
-    e.preventDefault()
-    this.form.markAllAsTouched()
-
-    if (this.form.invalid) return
-    this.login.emit()
-  }
-
+  onSubmit(e: SubmitEvent) {}
 }
+
+
+const minLengthValidator = (min: number): ValidatorFn => (control: AbstractControl) => {
+  if (control.value.length >= min) return null
+  return { minLength: true }
+}
+
+const hasRegex = (regex: RegExp, errorKey: string) => (control: AbstractControl) => {
+  const isValid = regex.test(control.value)
+  return isValid ? null : { [errorKey]: true }
+} 
+
