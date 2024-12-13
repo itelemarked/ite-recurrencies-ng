@@ -4,7 +4,12 @@ import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/a
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton],
+  imports: [
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent
+  ],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -13,8 +18,7 @@ import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/a
     </ion-header>
 
     <ion-content>
-      <p>Home works!</p>
-      <ion-button>button</ion-button>
+      <p>Recurrencies version 1.1</p>
     </ion-content>
   `,
   styles: ``,
