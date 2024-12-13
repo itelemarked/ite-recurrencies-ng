@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonText, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { AuthLoginComponent } from './auth-login.component';
-import { AuthSignupComponent } from './auth-signup.component';
+import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AuthService } from './auth.service';
 import { Observable, map } from 'rxjs';
 import { AuthLogoutComponent } from './auth-logout.component';
@@ -17,14 +15,8 @@ import { AuthLoginSignupComponent } from './auth-login-signup.component';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
-    IonInput,
-    IonItem,
-    IonText,
     FormsModule,
     CommonModule,
-    AuthLoginComponent,
-    AuthSignupComponent,
     AuthLoginSignupComponent,
     AuthLogoutComponent
   ],
