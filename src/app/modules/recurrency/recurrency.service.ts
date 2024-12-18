@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { RecurrencyData } from "./interfaces/RecurrencyData";
-import { delay, Observable, of } from "rxjs";
+import { BehaviorSubject, delay } from "rxjs";
 import { Recurrency, toRecurrency } from "./interfaces/Recurrency";
 
 const DATAS: RecurrencyData[] = [
@@ -34,8 +34,12 @@ const DATAS: RecurrencyData[] = [
 @Injectable({providedIn: 'root'})
 export class RecurrencyService {
 
-  getAll$(): Observable<Recurrency[]> {
-    return of(DATAS.map(d => toRecurrency(d))).pipe(delay(300))
+  private _recurrencies$: BehaviorSubject<Recurrency[]> = new BehaviorSubject(DATAS.map(d => toRecurrency(d)))
+
+  getAll$() {
+    return this._recurrencies$.asObservable().pipe(delay(300))
   }
+
+  constructor() {}
 
 }

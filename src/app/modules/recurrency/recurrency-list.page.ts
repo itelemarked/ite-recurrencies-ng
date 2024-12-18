@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { RecurrencyListItemComponent } from './list-item.component';
-import { Recurrency, toRecurrency } from './interfaces/Recurrency';
-import { addDay, tzDate } from '@formkit/tempo';
+import { RecurrencyListItemComponent } from './recurrency-list-item.component';
+import { Recurrency } from './interfaces/Recurrency';
 import { RecurrencyService } from './recurrency.service';
 import { CommonModule } from '@angular/common';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -25,8 +25,7 @@ import { CommonModule } from '@angular/common';
     </ion-header>
 
     <ion-content>
-      <p>Recurrencies List Page works!</p>
-      <ng-container *ngFor="let recurrency of recurrencies">
+      <ng-container *ngFor="let recurrency of (recurrencies$ | async)">
         <app-recurrency-list-item
           [recurrency]="recurrency"
         ></app-recurrency-list-item>
@@ -37,10 +36,13 @@ import { CommonModule } from '@angular/common';
 })
 export class ListPage {
 
-  recurrencies!: Recurrency[]
+  recurrencies$ = this.recurrencyService.getAll$()
+  // .pipe(
+  //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
+  // )
 
   constructor(private recurrencyService: RecurrencyService) {
-    this.recurrencyService.getAll$().subscribe(r => this.recurrencies = r)
+    const d1 = new Date(`2024-11-01T01:02:03.456Z`)
+    const d2 = new Date(`2025-12-01T01:02:03.456Z`)
   }
-
 } 

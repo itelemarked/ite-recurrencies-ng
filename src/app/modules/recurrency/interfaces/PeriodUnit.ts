@@ -1,5 +1,5 @@
-// const periodUnits = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'] as const
-const periodUnits = ['days', 'weeks', 'months', 'years'] as const
+const periodUnits = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'] as const
+// const periodUnits = ['days', 'weeks', 'months', 'years'] as const
 
 export type PeriodUnit = typeof periodUnits[number]
 

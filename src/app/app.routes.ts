@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './modules/home/home.page';
-import { ListPage } from './modules/recurrency/list.page';
+import { ListPage } from './modules/recurrency/recurrency-list.page';
 
 const ORIGIN = '/home'
 

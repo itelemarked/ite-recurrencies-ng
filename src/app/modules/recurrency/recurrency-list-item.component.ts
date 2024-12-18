@@ -4,7 +4,7 @@ import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLab
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Recurrency } from './interfaces/Recurrency';
-import { add, diffDays, format } from './utils/utils-date';
+import { add, diff, format } from './utils/utils-date';
 
 
 @Component({
@@ -19,6 +19,7 @@ import { add, diffDays, format } from './utils/utils-date';
           <p>Last event: {{ lastEventString() }}</p>
           <p>Period: {{ periodString() }}</p>
           <p>Expires: {{ expiryString() }} ({{ daysLeftString() }} days left...)</p>
+          <p>Progress: {{ progress() }}</p>
         </ion-label>
       </ion-item>
       
@@ -46,7 +47,7 @@ export class RecurrencyListItemComponent {
     return format(this.expiryDate(), 'short', 'fr-CH')
   })
   daysLeftString = computed(() => {
-    return diffDays(this.expiryDate(), this.nowDate())
+    return diff(this.expiryDate(), this.nowDate(), 'days')
   })
   progress = computed(() => {
     return (this.nowDate().valueOf() - this.lastEventDate().valueOf()) / (this.expiryDate().valueOf() - this.lastEventDate().valueOf())
