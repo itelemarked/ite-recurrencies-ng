@@ -3,8 +3,9 @@ import { Component, computed, input } from '@angular/core';
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
+
 import { Recurrency } from './interfaces/Recurrency';
-import { add, diff, format } from './utils/utils-date';
+import { add } from './utils/utils-date';
 
 
 @Component({
@@ -38,16 +39,19 @@ import { add, diff, format } from './utils/utils-date';
   styles: ``,
 })
 export class RecurrencyListItemComponent {
+  // INPUT
   recurrency = input.required<Recurrency>()
 
+  // TEMPLATE VARIABLES
   title = computed(() => this.recurrency().title)
-  lastEventString = computed(() => format(this.recurrency().lastEvent, 'short', 'fr-CH'))
+  // lastEventString = computed(() => format(this.recurrency().lastEvent, 'short', 'fr-CH'))
+  lastEventString = computed(() => 'xx.xx.xxxx')
   periodString = computed(() => this.recurrency().periodNb + ' ' + this.recurrency().periodUnit)
   expiryString = computed(() => {
-    return format(this.expiryDate(), 'short', 'fr-CH')
+    // return format(this.expiryDate(), 'short', 'fr-CH')
   })
   daysLeftString = computed(() => {
-    return diff(this.expiryDate(), this.nowDate(), 'days')
+    // return diff(this.expiryDate(), this.nowDate(), 'days')
   })
   progress = computed(() => {
     return (this.nowDate().valueOf() - this.lastEventDate().valueOf()) / (this.expiryDate().valueOf() - this.lastEventDate().valueOf())
@@ -58,10 +62,12 @@ export class RecurrencyListItemComponent {
     return 'danger'
   })
 
+  // INIT
   constructor() {
     addIcons({createOutline, trashOutline})
   }
 
+  // HELPERS
   private lastEventDate(): Date {
     return this.recurrency().lastEvent
   }

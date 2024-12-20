@@ -5,6 +5,9 @@ import { Recurrency } from './interfaces/Recurrency';
 import { RecurrencyService } from './recurrency.service';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs';
+import { expiry } from './utils/utils.recurrency';
+import { TEST } from './utils/utils-date';
+import { addDay } from '@formkit/tempo';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -42,7 +45,9 @@ export class ListPage {
   // )
 
   constructor(private recurrencyService: RecurrencyService) {
-    const d1 = new Date(`2024-11-01T01:02:03.456Z`)
-    const d2 = new Date(`2025-12-01T01:02:03.456Z`)
+    TEST()
+    // this.recurrencyService.getById$('PUU').subscribe(console.log)
+    // const d1 = new Date(`2024-11-01T01:02:03.456Z`)
+    // const d2 = new Date(`2025-12-01T01:02:03.456Z`)
   }
 } 
