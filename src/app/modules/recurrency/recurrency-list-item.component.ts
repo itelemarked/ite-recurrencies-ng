@@ -4,8 +4,8 @@ import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLab
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 
-import { Recurrency } from './interfaces/Recurrency';
-import { add } from './utils/utils-date';
+import { Recurrency } from './types/Recurrency.type';
+import { add } from './utils/Date.utils';
 
 
 @Component({

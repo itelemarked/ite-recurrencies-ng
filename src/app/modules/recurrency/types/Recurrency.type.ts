@@ -1,15 +1,19 @@
-import { tzDate } from "@formkit/tempo";
-import { DateString, toDateString } from "./DateString";
-import { PeriodUnit, toPeriodUnit } from "./PeriodUnit";
-import { PositiveInteger, toPositiveInteger } from "./PositiveInteger";
-import { RecurrencyData } from "./RecurrencyData";
-import { timezoneDate } from "../utils/utils-date";
+import { PeriodUnit, toPeriodUnit } from "./PeriodUnit.type";
+import { PositiveInteger, toPositiveInteger } from "./PositiveInteger.type";
+import { timezoneDate } from "../utils/Date.utils";
 
-export interface Recurrency {
+export type Recurrency = {
   title: string,
   lastEvent: Date,
   periodNb: PositiveInteger,
   periodUnit: PeriodUnit
+}
+
+type RecurrencyData = {
+  title: string,
+  lastEvent: string,
+  periodNb: number,
+  periodUnit: string
 }
 
 export function toRecurrency(data: RecurrencyData): Recurrency {

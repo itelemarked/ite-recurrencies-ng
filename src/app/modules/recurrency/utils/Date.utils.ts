@@ -1,11 +1,10 @@
-import * as TEMPO from "@formkit/tempo";
-import { PeriodUnit } from "../interfaces/PeriodUnit";
-import { RecurrencyService } from "../recurrency.service";
+
+import { PeriodUnit } from "../types/PeriodUnit.type";
 import dayjs from "dayjs";
 import utc  from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import updateLocale from "dayjs/plugin/updateLocale"
 import { BehaviorSubject } from "rxjs";
+import { DateString, toDateString } from "../types/DateString.type";
 
 /**
  * 
@@ -57,6 +56,30 @@ function initDayjs(settings: any) {
 
 export function timezoneDate(dateTime: string | Date): Date {
   return dayjs.tz(dateTime).toDate()
+}
+
+
+const isObjectLiteral = (o: any, opts?: { hasKeys: string[] } ) => {
+  const isObjLiteral = o !== null && o !== undefined && Object.getPrototypeOf(o) === Object.prototype
+  if (!isObjLiteral) return false
+  if (opts === undefined) return isObjLiteral
+  const hasKeys = opts.hasKeys.every(key => key in o)
+  return isObjLiteral && hasKeys
+}
+
+export function timezoneDate2(date: Date): Date
+export function timezoneDate2({ dateString, timeString, timezone }: { dateString: DateString, timeString?: string, timezone?: string }): Date
+export function timezoneDate2(...args: any): Date {
+
+  const byDate = (date: Date): Date => date
+  
+  const byOpts = ({ dateString, timeString, timezone }: { dateString: DateString, timeString?: string, timezone?: string }): Date => {
+    const dateTime = `${dateString}T${timeString}`
+    return dayjs(dateTime).tz(timezone, true).toDate()
+  }
+
+  if(!isObjectLiteral(args[0])) return byDate(args[0])
+  return byOpts({dateString: args[0], timeString: args[1], timezone: args[3]})
 }
 
 export function add(date: Date, nb: number, unit: PeriodUnit): Date {
@@ -217,17 +240,83 @@ export function TEST() {
   // console.log(`years: ${add(d1, 2, 'years').toISOString() === '2026-06-01T12:12:12.122Z'}`)
 
   // Testing with timezone Europe/Zurich
-  const d1 = timezoneDate(`2024-06-01 12:12:12.122`) 
-  console.log(`milliseconds: ${endOf(d1, 'milliseconds').toISOString() === '2024-06-01T10:12:12.122Z'}`)
-  console.log(`seconds: ${endOf(d1, 'seconds').toISOString() === '2024-06-01T10:12:12.999Z'}`)
-  console.log(`minutes: ${endOf(d1, 'minutes').toISOString() === '2024-06-01T10:12:59.999Z'}`)
-  console.log(`hours: ${endOf(d1, 'hours').toISOString() === '2024-06-01T10:59:59.999Z'}`)
-  console.log(`days: ${endOf(d1, 'days').toISOString() === '2024-06-01T21:59:59.999Z'}`)
-  console.log(`weeks: ${endOf(d1, 'weeks').toISOString() === '2024-06-02T21:59:59.999Z'}`)
-  console.log(`months: ${endOf(d1, 'months').toISOString() === '2024-06-30T21:59:59.999Z'}`)
-  console.log(`years: ${endOf(d1, 'years').toISOString() === '2024-12-31T22:59:59.999Z'}`)
+  // const d1 = timezoneDate(`2024-06-01 12:12:12.122`) 
+  // console.log(`milliseconds: ${endOf(d1, 'milliseconds').toISOString() === '2024-06-01T10:12:12.122Z'}`)
+  // console.log(`seconds: ${endOf(d1, 'seconds').toISOString() === '2024-06-01T10:12:12.999Z'}`)
+  // console.log(`minutes: ${endOf(d1, 'minutes').toISOString() === '2024-06-01T10:12:59.999Z'}`)
+  // console.log(`hours: ${endOf(d1, 'hours').toISOString() === '2024-06-01T10:59:59.999Z'}`)
+  // console.log(`days: ${endOf(d1, 'days').toISOString() === '2024-06-01T21:59:59.999Z'}`)
+  // console.log(`weeks: ${endOf(d1, 'weeks').toISOString() === '2024-06-02T21:59:59.999Z'}`)
+  // console.log(`months: ${endOf(d1, 'months').toISOString() === '2024-06-30T21:59:59.999Z'}`)
+  // console.log(`years: ${endOf(d1, 'years').toISOString() === '2024-12-31T22:59:59.999Z'}`)
   // console.log(`years: ${endOf(d1, 'years').toISOString()}`)
   // console.log(d1.toISOString())
 
   // const d1 = timezoneDate(`2024-06-01T12:12:12.122`)
+
+  // const d1 = timezoneDate2({ date: toDateString('2024-06-01') })
+
+  class G {
+    x = 1
+  }
+
+  const a = {}
+  const b = {x: 1}
+  const c = () => {}
+  const d = 'aaa'
+  const e = null
+  const f = undefined
+  const g = new G()
+  const h = new Date()
+
+  // console.log(`a: ${typeof a === 'object'}`)     // true
+  // console.log(`b: ${typeof b === 'object'}`)     // true
+  // console.log(`c: ${typeof c === 'object'}`)
+  // console.log(`d: ${typeof d === 'object'}`)
+  // console.log(`e: ${typeof e === 'object'}`)     // true
+  // console.log(`f: ${typeof f === 'object'}`)
+  // console.log(`g: ${typeof g === 'object'}`)     // true
+
+  // console.log(`a: ${'x' in a}`)
+  // console.log(`b: ${'x' in b}`)                  // true
+  // console.log(`c: ${'x' in c}`)
+  // // console.log(`d: ${'x' in d}`)
+  // // console.log(`e: ${'x' in e}`)
+  // // console.log(`f: ${'x' in f}`)
+  // console.log(`g: ${'x' in g}`)                  // true
+
+  // console.log(`a: ${a.hasOwnProperty('x')}`)
+  // console.log(`b: ${b.hasOwnProperty('x')}`)     // true
+  // console.log(`c: ${c.hasOwnProperty('x')}`)
+  // console.log(`d: ${d.hasOwnProperty('x')}`)
+  // // console.log(`e: ${e.hasOwnProperty('x')}`)
+  // // console.log(`f: ${f.hasOwnProperty('x')}`)
+  // console.log(`g: ${g.hasOwnProperty('x')}`)     // true
+
+  // console.log(`a: ${Object.getPrototypeOf(a) === Object.prototype}`)    // true
+  // console.log(`b: ${Object.getPrototypeOf(b) === Object.prototype}`)    // true
+  // console.log(`c: ${Object.getPrototypeOf(c) === Object.prototype}`)
+  // console.log(`d: ${Object.getPrototypeOf(d) === Object.prototype}`)
+  // // console.log(`e: ${Object.getPrototypeOf(e) === Object.prototype}`)
+  // // console.log(`f: ${Object.getPrototypeOf(f) === Object.prototype}`)
+  // console.log(`g: ${Object.getPrototypeOf(g) === Object.prototype}`)
+
+
+
+  // console.log(`a: ${isObjectLiteral(a, { hasKeys: ['x'] })}`) 
+  // console.log(`b: ${isObjectLiteral(b, { hasKeys: ['x'] })}`) 
+  // console.log(`c: ${isObjectLiteral(c, { hasKeys: ['x'] })}`)
+  // console.log(`d: ${isObjectLiteral(d, { hasKeys: ['x'] })}`)
+  // console.log(`e: ${isObjectLiteral(e, { hasKeys: ['x'] })}`) 
+  // console.log(`f: ${isObjectLiteral(f, { hasKeys: ['x'] })}`)
+  // console.log(`g: ${isObjectLiteral(g, { hasKeys: ['x'] })}`) 
+
+  // console.log(`a: ${isObjectLiteral(a)}`) 
+  // console.log(`b: ${isObjectLiteral(b)}`) 
+  // console.log(`c: ${isObjectLiteral(c)}`)
+  // console.log(`d: ${isObjectLiteral(d)}`)
+  // console.log(`e: ${isObjectLiteral(e)}`) 
+  // console.log(`f: ${isObjectLiteral(f)}`)
+  // console.log(`g: ${isObjectLiteral(g)}`) 
+
 }

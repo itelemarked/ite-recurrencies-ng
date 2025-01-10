@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { RecurrencyListItemComponent } from './recurrency-list-item.component';
-import { Recurrency } from './interfaces/Recurrency';
+import { Recurrency } from './types/Recurrency.type';
 import { RecurrencyService } from './recurrency.service';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs';
-import { expiry } from './utils/utils.recurrency';
-import { TEST } from './utils/utils-date';
+import { expiry } from './utils/Recurrency.utils';
+import { TEST } from './utils/Date.utils';
 import { addDay } from '@formkit/tempo';
 
 @Component({

@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
-import { RecurrencyData } from "./interfaces/RecurrencyData";
 import { BehaviorSubject, delay, filter, map, Observable } from "rxjs";
-import { Recurrency, toRecurrency } from "./interfaces/Recurrency";
+import { Recurrency, toRecurrency } from "./types/Recurrency.type";
 
-const DATAS: RecurrencyData[] = [
+const DATAS = [
   {
     title: 'PU',
     lastEvent: '2024-12-10',
