@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { RecurrencyListItemComponent } from './recurrency-list-item.component';
-import { Recurrency } from './types/Recurrency.type';
 import { RecurrencyService } from './recurrency.service';
 import { CommonModule } from '@angular/common';
-import { map } from 'rxjs';
-import { expiry } from './utils/Recurrency.utils';
-import { TEST } from './utils/Date.utils';
-import { addDay } from '@formkit/tempo';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -44,10 +39,5 @@ export class ListPage {
   //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
   // )
 
-  constructor(private recurrencyService: RecurrencyService) {
-    TEST()
-    // this.recurrencyService.getById$('PUU').subscribe(console.log)
-    // const d1 = new Date(`2024-11-01T01:02:03.456Z`)
-    // const d2 = new Date(`2025-12-01T01:02:03.456Z`)
-  }
+  constructor(private recurrencyService: RecurrencyService) {}
 } 

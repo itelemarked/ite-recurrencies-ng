@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { HomePage } from './modules/home/home.page';
 import { ListPage } from './modules/recurrency/recurrency-list.page';
 
-const ORIGIN = '/home'
+const ORIGIN = '/recurrency'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },

@@ -1,5 +1,5 @@
 import { Recurrency } from "../types/Recurrency.type";
-import { add } from "./Date.utils";
+import { add } from "./date/date.utils";
 
 
 export function lastEvent(recurrency: Recurrency) {

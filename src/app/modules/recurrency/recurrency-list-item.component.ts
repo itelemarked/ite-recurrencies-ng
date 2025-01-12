@@ -5,7 +5,7 @@ import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 
 import { Recurrency } from './types/Recurrency.type';
-import { add } from './utils/Date.utils';
+import { add } from './utils/date/date.utils';
 
 
 @Component({
