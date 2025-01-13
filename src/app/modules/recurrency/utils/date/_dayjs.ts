@@ -1,10 +1,17 @@
 import dayjs, { ManipulateType } from "dayjs";
 import utc  from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { PeriodUnit } from "../../types/PeriodUnit.type";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+const LOCALE = navigator.language
+const LOCALE_OPTIONS = {
+  weekStart: 1 // Sets the weekstart to Monday
+}
+dayjs.locale(LOCALE, LOCALE_OPTIONS)
 
 type DayjsUnit = ManipulateType
 
