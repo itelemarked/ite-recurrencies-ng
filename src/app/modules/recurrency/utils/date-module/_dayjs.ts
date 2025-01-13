@@ -1,8 +1,7 @@
 import dayjs, { ManipulateType } from "dayjs";
 import utc  from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import updateLocale from "dayjs/plugin/updateLocale";
-import { PeriodUnit } from "../../types/PeriodUnit.type";
+import { PeriodUnit } from "../../types/PeriodUnit";
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -27,4 +26,5 @@ export const DAYJS_UNIT: Record<PeriodUnit, DayjsUnit> = {
 }
 
 export const DAYJS = dayjs
+
 

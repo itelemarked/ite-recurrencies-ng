@@ -1,8 +1,8 @@
-import { PeriodUnit, toPeriodUnit } from "./PeriodUnit.type";
-import { PositiveInteger, toPositiveInteger } from "./PositiveInteger.type";
-import { toDateString } from "../utils/date/DateString";
-import { toTimeString } from "../utils/date/TimeString";
-import { createTimezoneDate } from "../utils/date/date.utils";
+import { PeriodUnit, toPeriodUnit } from "./PeriodUnit";
+import { PositiveInteger, toPositiveInteger } from "./PositiveInteger";
+import { toDateString } from "./DateString";
+import { createTimezoneDate } from "../utils/date-module/date.utils";
+import { toTimeString } from "./TimeString";
 
 export type Recurrency = {
   title: string,

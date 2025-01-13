@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, delay, filter, map, Observable } from "rxjs";
-import { Recurrency, toRecurrency } from "./types/Recurrency.type";
+import { Recurrency, toRecurrency } from "./types/Recurrency";
 
 const DATAS = [
   {
