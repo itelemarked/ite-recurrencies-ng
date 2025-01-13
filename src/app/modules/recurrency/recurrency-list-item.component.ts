@@ -6,6 +6,7 @@ import { createOutline, trashOutline } from 'ionicons/icons';
 
 import { Recurrency } from './types/Recurrency.type';
 import { add } from './utils/date/date.utils';
+import { toInteger } from './types/Integer.type';
 
 
 @Component({
@@ -74,7 +75,7 @@ export class RecurrencyListItemComponent {
 
   private expiryDate(): Date {
     const { lastEvent, periodNb, periodUnit } = this.recurrency()
-    return add(lastEvent, periodNb + 1, periodUnit)
+    return add(lastEvent, toInteger(periodNb + 1), periodUnit)
   }
 
   private nowDate(): Date {
