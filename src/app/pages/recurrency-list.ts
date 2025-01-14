@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { RecurrencyListItemComponent } from './recurrency-list-item.component';
-import { RecurrencyService } from './recurrency.service';
 import { CommonModule } from '@angular/common';
+
+import { RecurrencyListItemComponent } from '../components/recurrency-list-item.component';
+import { RecurrencyService } from '../services/recurrency.service';
+import { format } from '../utils/date/date.utils';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -32,12 +34,14 @@ import { CommonModule } from '@angular/common';
   `,
   styles: ``,
 })
-export class ListPage {
+export class RecurrencyListPage {
 
   recurrencies$ = this.recurrencyService.getAll$()
   // .pipe(
   //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
   // )
 
-  constructor(private recurrencyService: RecurrencyService) {}
+  constructor(private recurrencyService: RecurrencyService) {
+    
+  }
 } 

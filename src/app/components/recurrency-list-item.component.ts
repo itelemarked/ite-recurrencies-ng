@@ -4,10 +4,11 @@ import { Component, computed, input } from '@angular/core';
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
+import { Recurrency } from '../types/Recurrency';
+import { add } from '../utils/date/date.utils';
+import { toInteger } from '../types/Integer';
 
-import { Recurrency } from './types/Recurrency';
-import { toInteger } from './types/Integer';
-import { DateUtils } from './utils/date-service/date-utils.service';
+
 
 
 @Component({
@@ -65,7 +66,7 @@ export class RecurrencyListItemComponent {
   })
 
   // INIT
-  constructor(private dateUtils: DateUtils) {
+  constructor() {
     addIcons({createOutline, trashOutline})
   }
 
@@ -76,7 +77,7 @@ export class RecurrencyListItemComponent {
 
   private expiryDate(): Date {
     const { lastEvent, periodNb, periodUnit } = this.recurrency()
-    return this.dateUtils.add(lastEvent, toInteger(periodNb + 1), periodUnit)
+    return add(lastEvent, toInteger(periodNb + 1), periodUnit)
   }
 
   private nowDate(): Date {

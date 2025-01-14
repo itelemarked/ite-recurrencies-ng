@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './modules/home/home.page';
-import { ListPage } from './modules/recurrency/recurrency-list.page';
+import { HomePage } from './pages/home.page';
+import { RecurrencyListPage } from './pages/recurrency-list';
 
-const ORIGIN = '/recurrency'
+const ORIGIN = '/recurrency-list'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
   { path: 'home', component: HomePage },
-  { path: 'recurrency', component: ListPage },
+  { path: 'recurrency-list', component: RecurrencyListPage },
 
   { path: '**', redirectTo: ORIGIN, pathMatch: 'full' }
 ];
