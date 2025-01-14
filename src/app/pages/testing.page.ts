@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+
+// import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-testing',
@@ -27,6 +30,11 @@ import { CommonModule } from '@angular/common';
 })
 export class TestingPage {
 
-  constructor() {}
+  // afs = inject(AngularFirestore)
+  firestore = inject(Firestore);
+
+  constructor() {
+    // this.afs.collection('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies').valueChanges().subscribe(console.log)
+  }
 
 } 
