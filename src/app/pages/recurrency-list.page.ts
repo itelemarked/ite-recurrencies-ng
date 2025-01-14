@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 
 import { RecurrencyListItemComponent } from '../components/recurrency-list-item.component';
 import { RecurrencyService } from '../services/recurrency.service';
-import { format } from '../utils/date/date.utils';
 
 @Component({
   selector: 'app-recurrency-list',
