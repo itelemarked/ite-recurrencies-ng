@@ -61,6 +61,8 @@ export function format(date: Date, format: DateFormatOptions, timezone: Timezone
     case 'UTC':
     case 'DD.MM.YY HH:mm:ss.SSS TIMEZONE':
       return dayjs(date).tz(timezone).format(`DD.MM.YY HH:mm:ss.SSS [${timezone}]`)
+    case 'YYYY-MM-DD':
+      return dayjs(date).tz(timezone).format(`YYYY-MM-DD`)
   }
 }
 

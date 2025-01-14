@@ -1,8 +1,9 @@
 import { PeriodUnit, toPeriodUnit } from "./PeriodUnit";
 import { PositiveInteger, toPositiveInteger } from "./PositiveInteger";
 import { toDateString } from "./DateString";
-import { createTimezoneDate } from "../utils/date/date.utils";
+import { createTimezoneDate, format } from "../utils/date/date.utils";
 import { toTimeString } from "./TimeString";
+import { TimezoneString } from "./TimezoneString";
 
 export type Recurrency = {
   id?: string,
@@ -10,13 +11,6 @@ export type Recurrency = {
   lastEvent: Date,
   periodNb: PositiveInteger,
   periodUnit: PeriodUnit
-}
-
-export type RecurrencyData = {
-  title: string,
-  lastEvent: string,
-  periodNb: number,
-  periodUnit: string
 }
 
 export function toRecurrency(data: RecurrencyData, id?: string): Recurrency {
@@ -32,6 +26,26 @@ export function toRecurrency(data: RecurrencyData, id?: string): Recurrency {
     id,
     title,
     lastEvent,
+    periodNb,
+    periodUnit
+  }
+}
+
+
+
+export type RecurrencyData = {
+  title: string,
+  lastEvent: string,
+  periodNb: number,
+  periodUnit: string
+}
+
+export function toRecurrencyData(recurrency: Recurrency, timezone: TimezoneString): RecurrencyData {
+  const { title, lastEvent, periodNb, periodUnit } = recurrency
+
+  return {
+    title,
+    lastEvent: format(lastEvent, 'YYYY-MM-DD', timezone),
     periodNb,
     periodUnit
   }

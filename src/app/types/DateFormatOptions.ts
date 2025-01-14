@@ -2,7 +2,8 @@
 const dateFormats = [
   'UTC', 
   'DD.MM.YYYY',
-  'DD.MM.YY HH:mm:ss.SSS TIMEZONE'
+  'DD.MM.YY HH:mm:ss.SSS TIMEZONE',
+  'YYYY-MM-DD'
 ] as const
 
 export type DateFormatOptions = typeof dateFormats[number]
