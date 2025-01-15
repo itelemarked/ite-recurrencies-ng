@@ -3,6 +3,12 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
 import { CommonModule } from '@angular/common';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { RecurrencyService } from '../services/recurrency.service';
+import { Recurrency } from '../types/Recurrency';
+import { toPositiveInteger } from '../types/PositiveInteger';
+import { toPeriodUnit } from '../types/PeriodUnit';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-testing',
@@ -30,9 +36,16 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 export class TestingPage {
 
   firestore = inject(AngularFirestore)
+  fireauth = inject(AngularFireAuth)
+  recurrencyService = inject(RecurrencyService)
+  userService = inject(UserService)
 
   constructor() {
-    this.firestore.collection('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies').valueChanges().subscribe(console.log)
+    // this.firestore.doc<Recurrency>('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/4BYFilgH2ySD44D4ux0w').delete()
+    // this.recurrencyService.recurrencies$$.subscribe(console.log)
+    // this.fireauth.signInWithEmailAndPassword('aaa@aaa.com', '111111').then(console.log).catch(console.log)
+
+    this.recurrencyService.TEST()
   }
 
 } 

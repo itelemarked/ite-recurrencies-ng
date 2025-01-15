@@ -1,84 +1,139 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, filter, map, Observable } from "rxjs";
-import { Recurrency, toRecurrency } from "../types/Recurrency";
+import { inject, Injectable } from "@angular/core";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { BehaviorSubject, map, of, switchMap } from "rxjs";
 
-let DATAS: Record<string, any> = {
-  'aaaaaa': {
-    title: 'PU',
-    lastEvent: '2024-12-10',
-    periodNb: 132,
-    periodUnit: 'days'
-  },
-  'bbbbbb': {
-    title: 'EC',
-    lastEvent: '2024-12-11',
-    periodNb: 66,
-    periodUnit: 'days'
-  },
-  'cccccc': {
-    title: 'PC-6',
-    lastEvent: '2024-12-09',
-    periodNb: 188,
-    periodUnit: 'days'
-  },
-  'dddddd': {
-    title: 'PC-7',
-    lastEvent: '2024-12-09',
-    periodNb: 94,
-    periodUnit: 'days'
-  },
-}
+import { UserService } from "./user.service";
+import { SettingsService } from "./settings.service";
 
+import { Recurrency, RecurrencyData, toRecurrency, toRecurrencyData } from "../types/Recurrency";
+
+import { endOf } from "../utils/date/date.utils";
+
+
+
+/**
+ * Recurrencies must be updated/emitted when:
+ * a) the user changes (have to fetch data on firestore)
+ * b) the timezone changes (the "lastEvent: Date" time must be updated to the new timezone.)
+ */
 
 @Injectable({providedIn: 'root'})
 export class RecurrencyService {
 
-  private _recurrencies$ = new BehaviorSubject<Recurrency[]>([])
+  // DEPENDENCIES
+  private firestore = inject(AngularFirestore)
+  private userService = inject(UserService)
+  private settingsService = inject(SettingsService)
 
-  getAll$(): Observable<Recurrency[]> {
-    return this._recurrencies$.asObservable()
-  }
-
-  // TODO: replace title by an id...
-  getById$(id: string): Observable<Recurrency | undefined> {
-    return this._recurrencies$.asObservable().pipe(
-      map(recs => recs.find(rec => rec.title === id))
-    )
-  }
-
-  // TODO!!!
-  // set(recurrency: Recurrency): Promise<any> {
-  //   if (recurrency.id === undefined) {
-  //     const id = Math.round(Math.random() * 10000000).toString()
-  //     DATAS[id] = recurrency
-  //   } else {
-  //     DATAS[recurrency.id] = recurrency
-  //   }
-  //   return Promise.resolve(DATAS)
-  // }
+  // PROPERTIES
+  private _recurrencies$$ = new BehaviorSubject<Recurrency[]>([])
+  public recurrencies$$ = this._recurrencies$$.asObservable()
+  public currentRecurrencies = () => this._recurrencies$$.value
 
   constructor() {
-    setTimeout(() => {
-      const recurrencies = this.recurrenciesFromData(DATAS)
-      this._recurrencies$.next(recurrencies)
-    }, 1000);
+    // When user or recurrencies change on firestore (realtime updates), update and emits new recurrencies
+    // Subscription to user$$ is long lasting (no need to unsubscribe)
+    // Using switchMap is convenient, because no need to implement unsubscription of the specific recurrencies path in case user changes
+    this.userService.user$$
+      .pipe(
+        switchMap(user => {
+          return user === null 
+            ? of([])
+            : this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).snapshotChanges().pipe(
+                map(snapshots => snapshots.map(snap => {
+                  const timezone = this.settingsService.currentSettings().timezone
+                  const id = snap.payload.doc.id
+                  const data = snap.payload.doc.data()
+                  return toRecurrency(data, timezone, id)
+                }))
+              )
+        }) 
+      )
+      .subscribe(recs => this._recurrencies$$.next(recs))
+
+    // When timezone change, update and emits new recurrencies
+    // Subscription to settings$$ is long lasting (no need to unsubscribe)
+    this.settingsService.settings$$.subscribe(settings => {
+      const newRecurrencies = this._recurrencies$$.value.map(rec => {
+        const newLastEvent = endOf(rec.lastEvent, 'days', settings.timezone)
+        return { ...rec, lastEvent: newLastEvent }
+      })
+      this._recurrencies$$.next(newRecurrencies)
+    })
+  }
+
+  /**
+   * Adds a data to the database. 
+   * A unique identifier will be automatically generated.
+   * The Recurrency.id field will be ignored.
+   * Rejects if User is not logged in.
+   */
+  async add(recurrency: Recurrency): Promise<Recurrency> {
+    const user = this.userService.currentUser()
+    const timezone = this.settingsService.currentSettings().timezone
+
+    if (user === null) return Promise.reject('User is null')
     
-    // const rec: Recurrency = {
-    //   id: 'aaaaaa',
-    //   title: 'aaa',
-    //   lastEvent: new Date(),
-    //   periodNb: toPositiveInteger(99),
-    //   periodUnit: toPeriodUnit('days')
-    // }
-    // this.set(rec).then(console.log)
+    const firebaseDocRef = await this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).add(toRecurrencyData(recurrency, timezone))
+    const id = firebaseDocRef.id
+    return { ...recurrency, id }
   }
 
-  private recurrenciesFromData(data: Record<string, any>): Recurrency[] {
-    const dataEntries = Object.entries(DATAS)
-    if (dataEntries.length === 0) return []
-    const recurrencies = dataEntries.map(([key, value]) => toRecurrency(value, key))
-    return recurrencies
+  /**
+   * Adds or overwrite a data to the database. The identifier is set to the "recurrency.id" field. 
+   * If the recurrency.id field already exists in the database, the corresponding data will be overwritten.
+   * Rejects if User is not logged in.
+   */
+  async set(recurrency: Required<Recurrency>): Promise<Recurrency> {
+    const user = this.userService.currentUser()
+    const timezone = this.settingsService.currentSettings().timezone
+
+    if (user === null) return Promise.reject('User is null')
+    
+    await this.firestore.doc<RecurrencyData>(`users/${user.uid}/recurrencies/${recurrency.id}`).set(toRecurrencyData(recurrency, timezone))
+    return { ...recurrency }
   }
 
+  /**
+   * Shortcut for add() and set() (Adds or overwerite data to the database).
+   */
+  async save(recurrency: Recurrency): Promise<Recurrency> {
+    return recurrency.id === undefined ? this.add(recurrency) : this.set(recurrency as Required<Recurrency>)
+  }
+
+  /**
+   * Deletes the recurrency specified with the corresponding id.
+   * Rejects if:
+   * - User is not logged in
+   * - No id found on the database (nothing to delete)
+   */
+  async delete(id: string): Promise<void> {
+    const user = this.userService.currentUser()
+    if (user === null) return Promise.reject('User is null!')
+
+    const idToDelete = this.currentRecurrencies().find(rec => rec.id === id) 
+    if(idToDelete === undefined) return Promise.reject('Nothing to delete!')
+
+    return this.firestore.doc<RecurrencyData>(`users/${user.uid}/recurrencies/${id}`).delete()
+  }
+
+  TEST() {
+    setTimeout(() => {
+      // const REC = {
+      //   id: 'aaaa',
+      //   title: 'REC',
+      //   lastEvent: new Date(),
+      //   periodNb: toPositiveInteger(99),
+      //   periodUnit: toPeriodUnit('weeks')
+      // }
+      // const TIMEZONE = this.settingsService.currentSettings().timezone
+      // this.save(REC)
+      //   .then(res => console.log(res))
+      //   .catch(err => console.log(err))
+
+      // this.delete('aaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
+      // this.delete('aaaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
+    }, 2000);
+  }
 
 }

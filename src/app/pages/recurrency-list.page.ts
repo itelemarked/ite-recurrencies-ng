@@ -35,7 +35,7 @@ import { RecurrencyService } from '../services/recurrency.service';
 })
 export class RecurrencyListPage {
 
-  recurrencies$ = this.recurrencyService.getAll$()
+  recurrencies$ = this.recurrencyService.recurrencies$$
   // .pipe(
   //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
   // )
