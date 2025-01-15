@@ -13,10 +13,10 @@ export type Recurrency = {
   periodUnit: PeriodUnit
 }
 
-export function toRecurrency(data: RecurrencyData, id?: string): Recurrency {
+export function toRecurrency(data: RecurrencyData, timezone: TimezoneString, id?: string): Recurrency {
   const dateString = toDateString(data.lastEvent)
   const timeString = toTimeString('23:59:59.999')
-  const lastEvent = createTimezoneDate({dateString, timeString})
+  const lastEvent = createTimezoneDate({dateString, timeString, timezone})
 
   const title = data.title
   const periodNb = toPositiveInteger(data.periodNb)
