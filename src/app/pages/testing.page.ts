@@ -46,6 +46,7 @@ export class TestingPage {
     // this.fireauth.signInWithEmailAndPassword('aaa@aaa.com', '111111').then(console.log).catch(console.log)
 
     this.recurrencyService.TEST()
+    this.userService.TEST()
   }
 
 } 
