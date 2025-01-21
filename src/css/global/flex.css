@@ -1,0 +1,29 @@
+
+/* 
+* INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
+*/
+
+
+
+/********* FLEX ***********/
+
+/* Use flex-1 to allow a flex item to grow and shrink as needed, ignoring its initial size: */
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+/* Use flex-auto to allow a flex item to grow and shrink, taking into account its initial size: */
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+/* Use flex-initial to allow a flex item to shrink but not grow, taking into account its initial size: */
+.flex-initial {
+  flex: 0 1 auto;
+}
+
+/* Use flex-none to prevent a flex item from growing or shrinking: */
+.flex-none {
+  flex: none;
+}
+

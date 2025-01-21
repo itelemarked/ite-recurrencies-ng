@@ -1,0 +1,27 @@
+/* 
+* INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
+*/
+
+.absolute {
+  position: absolute;
+}	
+
+.relative {
+  position: relative;
+}	
+
+.top-0	{
+  top: 0px;
+}
+
+.right-0	{
+  right: 0px;
+}
+
+.bottom-0	{
+  bottom: 0px;
+}
+
+.left-0	{
+  left: 0px;
+}
