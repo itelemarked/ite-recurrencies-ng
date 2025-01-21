@@ -9,6 +9,8 @@ import { toPositiveInteger } from '../types/PositiveInteger';
 import { toPeriodUnit } from '../types/PeriodUnit';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../services/user.service';
+import { Observable } from 'rxjs';
+import { AuthLoginSignup2Component } from '../components/auth-login-signup-2.component';
 
 @Component({
   selector: 'app-testing',
@@ -19,6 +21,7 @@ import { UserService } from '../services/user.service';
     IonToolbar,
     IonTitle,
     IonContent,
+    AuthLoginSignup2Component
   ],
   template: `
     <ion-header>
@@ -28,7 +31,8 @@ import { UserService } from '../services/user.service';
     </ion-header>
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
-      <p>Testing works!</p>
+      <!-- <p>Testing works!</p> -->
+      <app-auth-login-signup-2></app-auth-login-signup-2>
     </ion-content>
   `,
   styles: ``,
@@ -44,6 +48,11 @@ export class TestingPage {
     // this.firestore.doc<Recurrency>('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/4BYFilgH2ySD44D4ux0w').delete()
     // this.recurrencyService.recurrencies$$.subscribe(console.log)
     // this.fireauth.signInWithEmailAndPassword('aaa@aaa.com', '111111').then(console.log).catch(console.log)
+
+    // this.recurrencyService.isLoading$.subscribe({
+    //   next: res => console.log(res),
+    //   complete: (() => console.log('completes'))
+    // })
 
     this.recurrencyService.TEST()
     this.userService.TEST()
