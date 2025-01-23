@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { BehaviorSubject, map, of, switchMap } from "rxjs";
+import { BehaviorSubject, map, of, skip, switchMap, take, tap } from "rxjs";
 
 import { UserService } from "./user.service";
 import { SettingsService } from "./settings.service";
@@ -30,11 +30,15 @@ export class RecurrencyService {
   public recurrencies$$ = this._recurrencies$$.asObservable()
   public currentRecurrencies = () => this._recurrencies$$.value
 
+  private _isLoading$ = new BehaviorSubject<boolean>(true)
+  // Will emit twice in the constructor. We only need the second emission (when the data has been first fetched)
+  public isLoading$ = this._isLoading$.asObservable()
+
   constructor() {
     // When user or recurrencies change on firestore (realtime updates), update and emits new recurrencies
     // Subscription to user$$ is long lasting (no need to unsubscribe)
     // Using switchMap is convenient, because no need to implement unsubscription of the specific recurrencies path in case user changes
-    this.userService.user$$
+    const recurrenciesFromFirestore$$ = this.userService.user$$
       .pipe(
         switchMap(user => {
           return user === null 
@@ -47,9 +51,17 @@ export class RecurrencyService {
                   return toRecurrency(data, timezone, id)
                 }))
               )
-        }) 
+        })
       )
-      .subscribe(recs => this._recurrencies$$.next(recs))
+
+    recurrenciesFromFirestore$$.subscribe(recs => {
+      this._recurrencies$$.next(recs)
+    })
+
+    recurrenciesFromFirestore$$.pipe(take(2), skip(1)).subscribe(_ => {
+      // this._hasLoaded$ will emit at least twice: at the beginning once when subscribing and once when fetched for the first time.
+      this._isLoading$.next(false)
+    })
 
     // When timezone change, update and emits new recurrencies
     // Subscription to settings$$ is long lasting (no need to unsubscribe)
@@ -69,7 +81,7 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async add(recurrency: Recurrency): Promise<Recurrency> {
-    const user = this.userService.currentUser()
+    const user = this.userService.currentUser
     const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
@@ -85,7 +97,7 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async set(recurrency: Required<Recurrency>): Promise<Recurrency> {
-    const user = this.userService.currentUser()
+    const user = this.userService.currentUser
     const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
@@ -108,7 +120,7 @@ export class RecurrencyService {
    * - No id found on the database (nothing to delete)
    */
   async delete(id: string): Promise<void> {
-    const user = this.userService.currentUser()
+    const user = this.userService.currentUser
     if (user === null) return Promise.reject('User is null!')
 
     const idToDelete = this.currentRecurrencies().find(rec => rec.id === id) 
@@ -118,22 +130,26 @@ export class RecurrencyService {
   }
 
   TEST() {
-    setTimeout(() => {
-      // const REC = {
-      //   id: 'aaaa',
-      //   title: 'REC',
-      //   lastEvent: new Date(),
-      //   periodNb: toPositiveInteger(99),
-      //   periodUnit: toPeriodUnit('weeks')
-      // }
-      // const TIMEZONE = this.settingsService.currentSettings().timezone
-      // this.save(REC)
-      //   .then(res => console.log(res))
-      //   .catch(err => console.log(err))
+    // this.isLoading$.subscribe({
+    //   next: res => console.log(res),
+    //   complete: (() => console.log('completes'))
+    // })
+    // setTimeout(() => {
+    //   // const REC = {
+    //   //   id: 'aaaa',
+    //   //   title: 'REC',
+    //   //   lastEvent: new Date(),
+    //   //   periodNb: toPositiveInteger(99),
+    //   //   periodUnit: toPeriodUnit('weeks')
+    //   // }
+    //   // const TIMEZONE = this.settingsService.currentSettings().timezone
+    //   // this.save(REC)
+    //   //   .then(res => console.log(res))
+    //   //   .catch(err => console.log(err))
 
-      // this.delete('aaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
-      // this.delete('aaaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
-    }, 2000);
+    //   // this.delete('aaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
+    //   // this.delete('aaaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
+    // }, 2000);
   }
 
 }

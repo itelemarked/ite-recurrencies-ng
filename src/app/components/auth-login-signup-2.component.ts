@@ -34,7 +34,10 @@ import { AuthInputControl2Component } from './auth-input-control-2.component';
         type="text"
         label="Email"
         [formControl]="emailCtl"
-      ></app-auth-input-control-2>
+      >
+        <div *ngIf="touchedCtlHasError(emailCtl, 'email')">Invalid email...</div>
+        <div *ngIf="touchedCtlHasError(emailCtl, 'required')">Email required...</div>
+      </app-auth-input-control-2>
 
       <!-- PASSWORD CTL -->
       <app-auth-input-control-2
@@ -42,7 +45,14 @@ import { AuthInputControl2Component } from './auth-input-control-2.component';
         type="password"
         label="Password"
         [formControl]="passwordCtl"
-      ></app-auth-input-control-2>
+      >
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'required')">Password required...</div>
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'minLength')">Is not at least 6 characters long...</div>
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'lowerCaseCharacter')">Lower case character missing...</div>
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'upperCaseCharacter')">Upper case character missing...</div>
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'specialCharacter')">Special character missing...</div>
+        <div *ngIf="touchedCtlHasError(passwordCtl, 'numericCharacter')">Numeric character missing...</div>
+      </app-auth-input-control-2>
 
       <!-- CONFIRM PASSWORD CTL -->
       <app-auth-input-control-2
@@ -50,7 +60,9 @@ import { AuthInputControl2Component } from './auth-input-control-2.component';
         type="password"
         label="Confirm password"
         [formControl]="confirmPasswordCtl"
-      ></app-auth-input-control-2>
+      >
+        <div *ngIf="touchedCtlHasError(confirmPasswordCtl, 'required')">Password confirmation required...</div>
+      </app-auth-input-control-2>
 
       <!-- SUBMIT BUTTON -->
       <div>
@@ -105,47 +117,79 @@ export class AuthLoginSignup2Component {
 
 
   // VARS
-  emailCtl = new FormControl('', {
-    validators: [
-      Validators.required,
-      Validators.email
-    ],
+  // emailCtl = new FormControl('', {
+  //   validators: [
+  //     Validators.required,
+  //     Validators.email
+  //   ],
+  // })
+
+  // passwordCtl = new FormControl('', {
+  //   validators: [
+  //     Validators.required,
+  //     minLengthValidator(6),
+  //     hasRegex(/[0-9]+/, 'numericCharacter'),
+  //     hasRegex(/[a-z]+/, 'lowerCaseCharacter'),
+  //     hasRegex(/[A-Z]+/, 'upperCaseCharacter'),
+  //     hasRegex(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/, 'specialCharacter'),
+  //   ],
+  // })
+
+  emailCtl = new FormControl('')
+  passwordCtl = new FormControl('')
+  confirmPasswordCtl = new FormControl('')
+  
+  form = new FormGroup({
+    emailCtl: this.emailCtl,
+    passwordCtl: this.passwordCtl,
+    confirmPasswordCtl: this.confirmPasswordCtl,
   })
 
-  passwordCtl = new FormControl('', {
-    validators: [
+  // TEMPLATE VARS
+  touchedCtlHasError = (ctl: AbstractControl, errorKey: string) => ctl.touched && ctl.hasError(errorKey)
+
+
+  // INIT
+  constructor() {
+    this.emailCtl.addValidators([
+      Validators.required,
+      Validators.email
+    ])
+
+    this.passwordCtl.addValidators([
       Validators.required,
       minLengthValidator(6),
       hasRegex(/[0-9]+/, 'numericCharacter'),
       hasRegex(/[a-z]+/, 'lowerCaseCharacter'),
       hasRegex(/[A-Z]+/, 'upperCaseCharacter'),
       hasRegex(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/, 'specialCharacter'),
-    ],
-  })
+      // doesn
+      // missmatchWithValidator(this.confirmPasswordCtl)
+    ])
 
-  confirmPasswordCtl = new FormControl('', {
-    validators: [
+    this.confirmPasswordCtl.addValidators([
       Validators.required,
-    ],
-  })
-  
-  form = new FormGroup({
-    emailCtl: this.emailCtl,
-    passwordCtl: this.passwordCtl,
-    confirmPasswordCtl: this.confirmPasswordCtl,
-  }, {
-    validators: [
-      // controlsMismatchValidator('passwordCtl', 'confirmPasswordCtl'),
-    ]
-  })
+      // missmatchWithValidator(this.passwordCtl)
+    ])
 
+    this.form.addValidators([
+      controlsMissmatchValidator('passwordCtl', 'confirmPasswordCtl')
+    ])
+  }
 
-  // INIT
-  constructor() {}
+  ngAfterViewInit() {
+    // const newErr = {'aaa-aaa': true}
+    // console.log(this.emailCtl.errors)
+    // this.addError(this.emailCtl, newErr)
+    // console.log(this.emailCtl.errors)
+    // this.removeError(this.emailCtl, newErr)
+    // console.log(this.emailCtl.errors)
+    // this.removeError(this.emailCtl, {required: true})
+    // console.log(this.emailCtl.errors)
+  }
 
 
   // UTILS
-
 
   // ACTIONS
   onSubmit(e: SubmitEvent) {}
@@ -153,9 +197,8 @@ export class AuthLoginSignup2Component {
 
 
 const minLengthValidator = (min: number): ValidatorFn => (control: AbstractControl) => {
-  
   if (control.value.length >= min) return null
-  return { minLength: true }
+  return { minLength: 'minLenght' }
 }
 
 const hasRegex = (regex: RegExp, errorKey: string) => (control: AbstractControl) => {
@@ -163,25 +206,53 @@ const hasRegex = (regex: RegExp, errorKey: string) => (control: AbstractControl)
   return isValid ? null : { [errorKey]: true }
 } 
 
-// const controlsMismatchValidator = (ctlName1: string, ctlName2: string) => (control: AbstractControl) => {
-//   const ctl1 = control.get(ctlName1)!.value
-//   const ctl2 = control.get(ctlName2)!.value
-//   if (ctl2.trim() === '' || ctl1 === ctl2) return null
-//   control.get(ctlName1)!.setErrors({someErrorHere: true})
-//   return { [`controlsMismatch-${ctlName1}-${ctlName2}`]: true }
-// }
+const missmatchWithValidator = (missMatchCtl: AbstractControl) => (control: AbstractControl) => {
+  const hasMissmatch = missMatchCtl.value !== control.value && missMatchCtl.touched
+  return hasMissmatch ? { 'missmatch-with': true } : null
+}
 
-const controlsMismatchValidator = (ctlName1: string, ctlName2: string) => (control: AbstractControl) => {
+const controlsMissmatchValidator = (ctlName1: string, ctlName2: string) => (control: AbstractControl) => {
+  console.log('controlsMissmatchValidator')
   const ctl1 = control.get(ctlName1)!
   const ctl2 = control.get(ctlName2)!
-  if (ctl2.value.trim() === '' || ctl1.value === ctl2.value) {
-    ctl1.setErrors(null)
-    ctl2.setErrors(null)
-    return null
+  const newErr = { [`missmatch-${ctlName1}-${ctlName2}`]: true }
+  console.log(ctl1.value !== ctl2.value)
+  console.log(ctl1.touched)
+  console.log(ctl2.touched)
+  if (
+    ctl1.value !== ctl2.value
+    // && ctl1.touched
+    // && ctl2.touched
+  ) {
+    // console.log('A')
+    addError(ctl1, newErr)
+    // console.log(ctl1.errors)
+    addError(ctl2, newErr)
+    // console.log(ctl2.errors)
+    return newErr
   } else {
-    const err = { [`controlsMismatch-${ctlName1}-${ctlName2}`]: true }
-    ctl1.setErrors(err)
-    ctl2.setErrors(err)
-    return err
+    // console.log('B')
+    removeError(ctl1, newErr)
+    removeError(ctl2, newErr)
+    return null
   }
 }
+
+function addError(ctl: AbstractControl, err: Record<string, any>) {
+  const keys = Object.keys(err)
+  if(keys.length > 1) throw new Error(`err object must have exatly one key-value pair!`)
+
+  const newError = { ...ctl.errors, ...err }
+  ctl.setErrors(newError)
+}
+
+function removeError(ctl: AbstractControl, err: Record<string, any>) {
+  const keys = Object.keys(err)
+  if(keys.length > 1) throw new Error(`err object must have exactly one key-value pair!`)
+
+  if(ctl.errors === null || !Object.keys(ctl.errors).includes(keys[0])) return
+  
+  const { [`${keys[0]}`]: key, ...newErr} = ctl.errors as Record<string, any>
+  Object.keys(newErr).length === 0 ? ctl.setErrors(null) : ctl.setErrors(newErr)
+}
+

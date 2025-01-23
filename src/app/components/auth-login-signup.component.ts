@@ -210,9 +210,7 @@ export class AuthLoginSignupComponent {
 
   // INIT
   constructor() {
-    setTimeout(() => {
-      
-    }, 5000);
+
   }
 
 

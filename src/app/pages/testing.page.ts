@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
@@ -10,7 +10,7 @@ import { toPeriodUnit } from '../types/PeriodUnit';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../services/user.service';
 import { Observable } from 'rxjs';
-import { AuthLoginSignup2Component } from '../components/auth-login-signup-2.component';
+import { AuthLoginSignup3Component } from '../components/auth-login-signup-3.component copy';
 
 @Component({
   selector: 'app-testing',
@@ -21,7 +21,7 @@ import { AuthLoginSignup2Component } from '../components/auth-login-signup-2.com
     IonToolbar,
     IonTitle,
     IonContent,
-    AuthLoginSignup2Component
+    AuthLoginSignup3Component
   ],
   template: `
     <ion-header>
@@ -32,7 +32,7 @@ import { AuthLoginSignup2Component } from '../components/auth-login-signup-2.com
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
       <!-- <p>Testing works!</p> -->
-      <app-auth-login-signup-2></app-auth-login-signup-2>
+      <app-auth-login-signup-3></app-auth-login-signup-3>
     </ion-content>
   `,
   styles: ``,
@@ -45,6 +45,9 @@ export class TestingPage {
   userService = inject(UserService)
 
   constructor() {
+    setTimeout(() => {
+      // console.log('timeout')
+    }, 1000);
     // this.firestore.doc<Recurrency>('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/4BYFilgH2ySD44D4ux0w').delete()
     // this.recurrencyService.recurrencies$$.subscribe(console.log)
     // this.fireauth.signInWithEmailAndPassword('aaa@aaa.com', '111111').then(console.log).catch(console.log)

@@ -21,10 +21,10 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   ],
   template: `
     <div>
-      <label class="label">{{ label() }}</label>
-      <div class="relative">
+      <label class="ite-label">{{ label() }}</label>
+      <div class="ite-input-wrapper">
         <input
-          class="input"
+          class="ite-input"
           [type]="type()"
           [placeholder]="placeholder()"
           [disabled]="disabled"
@@ -32,11 +32,14 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
           (blur)="onBlur()"
           (input)="onInput($event)"
         />
-        <span *ngIf="showIcon()" class="absolute top-0 right-0 z-10">
+        <span class="ite-icon" *ngIf="showIcon()">
           <ion-button fill="clear" color="dark" (click)="toggleShowPassword()">
             <ion-icon slot="icon-only" [name]="iconName()"></ion-icon>
           </ion-button>
         </span>
+      </div>
+      <div class="ite-errors" color="danger">
+        <ng-content></ng-content>
       </div>
     </div>
   `,
@@ -55,27 +58,31 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
       display: block;
     }
 
-    :host.ng-touched.ng-invalid .input {
+    :host.ng-touched.ng-invalid .ite-input {
       border-color: var(--border-color-invalid);
     }
 
-    :host.ng-touched.ng-invalid .label {
+    :host.ng-touched.ng-invalid .ite-label {
       color: var(--label-color-invalid);
     }
 
-    :host.ng-touched.ng-invalid .input:focus {
+    :host.ng-touched.ng-invalid .ite-input:focus {
       outline-color: var(--label-color-invalid);
     }
 
-    .label {
+    .ite-input-wrapper {
+      position: relative;
+    }
+
+    .ite-label {
       display: block;
-      padding-left: 18px;
+      padding-left: 10px;
       font-size: 0.75em;
       margin-bottom: 5px;
       color: var(--label-color);
     }
 
-    .input {
+    .ite-input {
       display: block;
       background-color: transparent;
       border-width: 1px;
@@ -84,16 +91,31 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
       border-radius: 4px;
       height: 56px;
       width: 100%;
-      padding-left: 17px;
+      padding-left: 10px;
       padding-right: 65px;
       outline: none;
     }
 
-    input:focus {
+    .ite-input:focus {
       border: none;
       outline-width: 2px;
       outline-style: solid;
       outline-color: var(--outline-color);
+    }
+
+    .ite-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    .ite-errors {
+      display: block;
+      font-size: 0.75em;
+      margin-top: 6px;
+      padding-left: 10px;
+      color: var(--ion-color-danger);
     }
   `,
 })
