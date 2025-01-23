@@ -4,7 +4,7 @@
 */
 
 
-:host {
+:root {
   --ite-padding-xs: 2px;
   --ite-padding-sm: 4px;
   --ite-padding-md: 8px;
