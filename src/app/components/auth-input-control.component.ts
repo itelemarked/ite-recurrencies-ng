@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, InputSignal, signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IonButton, IonIcon, IonInput, IonText } from '@ionic/angular/standalone';
+import { Component, computed, input, signal } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+
+import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 
@@ -10,85 +11,153 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
-    IonInput,
     IonButton,
-    IonText,
     IonIcon
+  ],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, multi: true, useExisting: AuthInputControlComponent }
   ],
   template: `
     <div>
-      <div style="position: relative;">
-        <!-- [formControl]="confirmPasswordCtl" -->
-        <ion-input
-          class="override ionic styles"
-          [type]="nativeType()"
-          [label]="label()"
+      <label class="ite-label">{{ label() }}</label>
+      <div class="ite-input-wrapper">
+        <input
+          class="ite-input"
+          [type]="type()"
           [placeholder]="placeholder()"
-          label-placement="stacked"
-          fill="outline"
-          mode="md"
-        >
-        </ion-input>
-        <span *ngIf="showIcon()" class="absolute top-0 right-0 z-10">
+          [disabled]="disabled"
+          [(ngModel)]="inputValue"
+          (blur)="onBlur()"
+          (input)="onInput($event)"
+        />
+        <span class="ite-icon" *ngIf="showIcon()">
           <ion-button fill="clear" color="dark" (click)="toggleShowPassword()">
             <ion-icon slot="icon-only" [name]="iconName()"></ion-icon>
           </ion-button>
         </span>
       </div>
-      <ion-text class="block text-xs pt-sm" color="danger">
+      <div class="ite-errors" color="danger">
         <ng-content></ng-content>
-        <!-- <ion-text color="danger" class="block" *ngIf="confirmPasswordCtl.touched && confirmPasswordCtl.hasError('required')">Enter a password...</ion-text>
-        <ion-text color="danger" class="block" *ngIf="form.touched && form.touched && form.hasError('controlsMismatch-passwordCtl-confirmPasswordCtl')">Missmatch</ion-text> -->
-      </ion-text>
+      </div>
     </div>
   `,
   styles: `
     :host {
       /* css variables here: */
-      /* --border-color: var(--ion-color-dark);
-      --border-color-invalid: var(--ion-color-danger); */
+      --label-color: inherit;
+      --label-color-invalid: var(--ion-color-danger);
+      --border-color: var(--ion-color-step-300);
+      --border-color-invalid: var(--ion-color-danger);
+      --outline-color: var(--ion-color-dark);
+      --outline-color-invalid: var(--ion-color-danger);
     }
 
     :host {
       display: block;
     }
 
-    ion-input.override.ionic.styles {
-      /* --border-color: yellow; border. When set, it overrides the focused border color. */
-      /* --highlight-color: yellow; border, label, cursor when focused */
-      /* --color: yellow; label and text */
+    :host.ng-touched.ng-invalid .ite-input {
+      border-color: var(--border-color-invalid);
+    }
 
-      /* --highlight-color: magenta;  label, cursor and border. Overriden if --border-color set... strange... */
-      /* --border-color: yellow; */
-      /* --color: cyan; label and text. When focused, label takes the color of --highlight-color... strange... */
-      /* --highlight-color-focused: red; */
+    :host.ng-touched.ng-invalid .ite-label {
+      color: var(--label-color-invalid);
+    }
+
+    :host.ng-touched.ng-invalid .ite-input:focus {
+      outline-color: var(--label-color-invalid);
+    }
+
+    .ite-input-wrapper {
+      position: relative;
+    }
+
+    .ite-label {
+      display: block;
+      padding-left: 10px;
+      font-size: 0.75em;
+      margin-bottom: 5px;
+      color: var(--label-color);
+    }
+
+    .ite-input {
+      display: block;
+      background-color: transparent;
+      border-width: 1px;
+      border-style: solid;
+      border-color: var(--border-color);
+      border-radius: 4px;
+      height: 56px;
+      width: 100%;
+      padding-left: 10px;
+      padding-right: 65px;
+      outline: none;
+    }
+
+    .ite-input:focus {
+      border: none;
+      outline-width: 2px;
+      outline-style: solid;
+      outline-color: var(--outline-color);
+    }
+
+    .ite-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    .ite-errors {
+      display: block;
+      font-size: 0.75em;
+      margin-top: 6px;
+      padding-left: 10px;
+      color: var(--ion-color-danger);
     }
   `,
 })
-export class AuthInputControlComponent {
+export class AuthInputControlComponent implements ControlValueAccessor {
 
-  // INPUTS
+  // // INPUTS
   typeInp = input.required<'text' | 'password'>({alias: 'type'})
   labelInp = input<string>('', {alias: 'label'})
   placeholderInp = input<string>('', {alias: 'placeholder'})
 
-  // STATE VARS
-  passwordVisible = signal(false)
 
-  // TEMPLATE VARS
+  // // STATE VARS
+  showPassword = signal(false)
+  inputValue = ''
+
+  // // TEMPLATE VARS
   label = computed(() => this.labelInp())
   placeholder = computed(() => this.placeholderInp())
-  iconName = computed(() => this._iconName(this.typeInp(), this.passwordVisible()))
+  type = computed(() => this._type(this.typeInp(), this.showPassword()))
+  iconName = computed(() => this._iconName(this.typeInp(), this.showPassword()))
   showIcon = computed(() => this._showIcon(this.typeInp()))
-  nativeType = computed(() => this._nativeType(this.typeInp(), this.passwordVisible()))
-  toggleShowPassword = () => this.passwordVisible.set(!this.passwordVisible())
+  toggleShowPassword = () => this.showPassword.set(!this.showPassword())
+  onBlur = () => this._onBlur()
+  onInput = (e: any) => this._onInput(e.target.value)
+
+  // CONTROL VALUE ACCESSOR
+  onChange = (value: string) => {};
+  onTouched = () => {};
+  touched = false;
+  disabled = false;
+
+  writeValue = (val: string) => this.inputValue = val
+  registerOnChange = (fn: (val: string) => void) => this.onChange = fn
+  registerOnTouched = (fn: () => void) => this.onTouched = fn
+  setDisabledState = (disabled: boolean) => this.disabled = disabled
+  // CONTROL VALUE ACCESSOR
 
   constructor() {
     addIcons({eyeOutline, eyeOffOutline})
   }
 
-  // UTILS
+  // // UTILS
   private _iconName(type: 'text' | 'password', passwordVisible: boolean) {
     return type === 'password' && !passwordVisible ? 'eye-outline' : 'eye-off-outline'
   }
@@ -97,8 +166,18 @@ export class AuthInputControlComponent {
     return type === 'password'
   }
 
-  private _nativeType(type: 'text' | 'password', passwordVisible: boolean) {
-    return type === 'password' && passwordVisible ? 'text' : type
+  private _type(type: 'text' | 'password', showPassword: boolean) {
+    return type === 'password' && showPassword ? 'text' : type
   }
 
+  private _onBlur() {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
+  }
+
+  private _onInput(val: string) {
+    this.onChange(val)
+  }
 }

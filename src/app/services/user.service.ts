@@ -4,11 +4,16 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { User } from "../types/User";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 
-// TEMP
-const USER_A = {
-  uid: '0yuA0RLZFJdbRKtVSfW4y5HSQMq1',
-  email: 'aaa@aaa.com'
+import { AuthErrorCodes } from "@angular/fire/auth"
+
+
+export const AuthErrors = {
+  'NETWORK-REQUEST-FAILED': {
+    code: 'auth/network-request-failed',
+    message: ''
+  }
 }
+
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -53,8 +58,10 @@ export class UserService {
       }  
     }
     catch(err: any) {
-      if('code' in err) throw new Error(err.message)
-      throw err
+      if(err.code === 'auth/network-request-failed') throw new AuthError(AUTH_ERRORS.NETWORK_REQUEST_FAILED)
+      if(err.code === 'auth/email-already-in-use') throw new AuthError(AUTH_ERRORS.EMAIL_ALREADY_IN_USE)
+      if(err.code === 'auth/weak-password') throw new AuthError(AUTH_ERRORS.WEAK_PASSWORD)
+      throw new AuthError({ code: 'auth/unknown-error', message: err.message })
     }
   }
 
@@ -69,8 +76,10 @@ export class UserService {
       }  
     }
     catch(err: any) {
-      if('code' in err) throw new Error(err.message)
-      throw err
+      if(err.code === 'auth/network-request-failed') throw new AuthError(AUTH_ERRORS.NETWORK_REQUEST_FAILED)
+      if(err.code === 'auth/user-not-found') throw new AuthError(AUTH_ERRORS.USER_NOT_FOUND)
+      if(err.code === 'auth/wrong-password') throw new AuthError(AUTH_ERRORS.WRONG_PASSWORD)
+      throw new AuthError({ code: 'auth/unknown-error', message: err.message })
     }
   }
 
@@ -79,36 +88,56 @@ export class UserService {
       return this.fireauth.signOut()
     }
     catch(err: any) {
-      if('code' in err) throw new Error(err.message)
-      throw err
+      if(err.code === 'auth/network-request-failed') throw new AuthError(AUTH_ERRORS.NETWORK_REQUEST_FAILED)
+      throw new AuthError({ code: 'auth/unknown-error', message: err.message })
     }
   }
 
   TEST() {
+    // try {
+    //   throw new AuthError(AUTH_ERRORS.TESTING_ERROR)
+    // }
+    // catch(err: any) {
+    //   console.log(err.code)
+    //   console.log(err.message)
+    //   console.log(err.name)
+    // }
 
-    // const p1 = (): Promise<string> => {
-    //   return new Promise<string>((resolve, reject) => {
-    //     const nb = Math.random()
-    //     if(nb < 0.5) {
-    //       resolve(`p1 success: ${nb}`)
-    //     } else {
-    //       reject(`p1 rejected: ${nb}`)
-    //     }
+    // this.fireauth.createUserWithEmailAndPassword('aaa@aaa.com', '2')
+    //   .then(res => console.log(res))
+    //   .catch(err => {
+    //     console.log(`XXXX: { code: '${err.code}', message: '${err.message}' },`)
     //   })
-    // }
-
-    // const p2 = async (): Promise<string> => {
-    //   try {
-    //     const result = await p1()
-    //     return `p2: ${result}`
-    //   }
-    //   catch (err) {
-    //     return `p2: ${err}`
-    //   }
-    // }
-
-    // p2().then(res => console.log(res)).catch(err => console.log(err))
-
   }
 
+}
+
+export const AUTH_ERRORS = {
+  // login errors
+  USER_NOT_FOUND: { code: 'auth/user-not-found', message: 'There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).' },
+  NETWORK_REQUEST_FAILED: { code: 'auth/network-request-failed', message: 'A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred. (auth/network-request-failed).' },
+  WRONG_PASSWORD: { code: 'auth/wrong-password', message: 'The password is invalid. (auth/wrong-password).' },
+  // signup errors
+  EMAIL_ALREADY_IN_USE: { code: 'auth/email-already-in-use', message: 'The email address is already in use by another account. (auth/email-already-in-use).' },
+  WEAK_PASSWORD: { code: 'auth/weak-password', message: 'Password should be at least 6 characters (auth/weak-password).' },
+}
+
+// export const AUTH_ERRORS = {
+//   // login errors
+//   USER_NOT_FOUND: { code: 'auth/user-not-found', message: 'There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).' },
+//   NETWORK_REQUEST_FAILED: { code: 'auth/network-request-failed', message: 'A network AuthError (such as timeout, interrupted connection or unreachable host) has occurred. (auth/network-request-failed).' },
+//   WRONG_PASSWORD: { code: 'auth/wrong-password', message: 'The password is invalid. (auth/wrong-password).' },
+//   // signup errors
+//   EMAIL_ALREADY_IN_USE: { code: 'auth/email-already-in-use', message: 'The email address is already in use by another account. (auth/email-already-in-use).' },
+//   WEAK_PASSWORD: { code: 'auth/weak-password', message: 'Password should be at least 6 characters (auth/weak-password).' },
+// }
+
+export class AuthError extends Error {
+  code: string
+  constructor({code, message}: {code: string, message: string}) {
+    super()
+    this.name = 'AuthError'
+    this.code = code
+    this.message = message
+  }
 }
