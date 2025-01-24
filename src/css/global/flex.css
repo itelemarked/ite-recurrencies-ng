@@ -4,8 +4,30 @@
 */
 
 
+/********** FLEX CONTAINER - ALIGN ITEMS ***********/
+.items-start {
+  align-items: flex-start;
+}
 
-/********* FLEX ***********/
+.items-end {
+  align-items: flex-end;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-baseline {
+  align-items: baseline;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+
+
+/********* FLEX CHILDREN - FLEX ***********/
 
 /* Use flex-1 to allow a flex item to grow and shrink as needed, ignoring its initial size: */
 .flex-1 {
@@ -24,6 +46,9 @@
 
 /* Use flex-none to prevent a flex item from growing or shrinking: */
 .flex-none {
-  flex: none;
+  flex: 0 0 auto;
 }
+
+
+
 
