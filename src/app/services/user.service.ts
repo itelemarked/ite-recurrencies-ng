@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, delay, ReplaySubject, Subject, take, takeUntil } from "rxjs";
 
 import { User } from "../types/User";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
@@ -22,16 +22,27 @@ export class UserService {
   private fireauth = inject(AngularFireAuth)
   
   // PROPERTIES
-  private _user$$ = new Subject<User|null>()
-  public user$$ = this._user$$.asObservable()
-  public currentUser: User | null = null
+  // private _user$$ = new Subject<User|null>()
+  // public user$$ = this._user$$.asObservable()
+  // public currentUser: User | null = null
 
-  private _isLoading$ = new BehaviorSubject(true)
+  
+
+  private _user$$ = new BehaviorSubject<User | null>(null)
+  public user$$ = this._user$$.asObservable()
+  public currentUser: User | null = this._user$$.value
+
+  // private _isLoading$ = new BehaviorSubject(true)
+  // public isLoading$ = this._isLoading$.asObservable()
+
+  private _isLoading$ = new ReplaySubject<boolean>(1)
   public isLoading$ = this._isLoading$.asObservable()
 
   // INIT
   constructor() {
-    this.fireauth.authState.subscribe(usr => {
+    this._isLoading$.next(true)
+    /** authState 'Subject like' */
+    this.fireauth.authState.pipe(delay(1000)).subscribe(usr => {
       if (usr === null) {
         this.currentUser = null
         this._user$$.next(null)
@@ -42,7 +53,10 @@ export class UserService {
         this.currentUser = { uid, email }
         this._user$$.next({ uid, email })
       }
+      // this._isLoading$.next(false)
+      // this._isLoading$.complete()
       this._isLoading$.next(false)
+      this._isLoading$.complete()
     })
   }
 
@@ -94,20 +108,25 @@ export class UserService {
   }
 
   TEST() {
-    // try {
-    //   throw new AuthError(AUTH_ERRORS.TESTING_ERROR)
-    // }
-    // catch(err: any) {
-    //   console.log(err.code)
-    //   console.log(err.message)
-    //   console.log(err.name)
-    // }
+    // const mySubject = new ReplaySubject<number>(1);
+    
+    // mySubject.next(11);
+    // const subscription1 = mySubject.pipe(take(1)).subscribe(x => {
+    //   console.log('From subscription 1:', x);
+    // });
+    
 
-    // this.fireauth.createUserWithEmailAndPassword('aaa@aaa.com', '2')
-    //   .then(res => console.log(res))
-    //   .catch(err => {
-    //     console.log(`XXXX: { code: '${err.code}', message: '${err.message}' },`)
-    //   })
+    // mySubject.next(2);
+
+    // const subscription2 = mySubject.subscribe(x => {
+    //   console.log('From subscription 2:', x);
+    // });
+
+    // mySubject.next(3);
+
+    // subscription1.unsubscribe();
+
+    // mySubject.next(4);
   }
 
 }
