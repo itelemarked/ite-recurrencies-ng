@@ -7,6 +7,8 @@ import { RecurrencyService } from '../services/recurrency.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserService } from '../services/user.service';
 import { AuthLoginSignupComponent } from '../components/auth-login-signup.component';
+import { AuthLogoutComponent } from '../components/auth-logout.component';
+import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
 
 @Component({
   selector: 'app-testing',
@@ -17,7 +19,8 @@ import { AuthLoginSignupComponent } from '../components/auth-login-signup.compon
     IonToolbar,
     IonTitle,
     IonContent,
-    AuthLoginSignupComponent
+    AuthLoginSignupComponent,
+    AuthLogoutComponent
   ],
   template: `
     <ion-header>
@@ -28,7 +31,15 @@ import { AuthLoginSignupComponent } from '../components/auth-login-signup.compon
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
       <!-- <p>Testing works!</p> -->
-      <app-auth-login-signup></app-auth-login-signup>
+      <div *ngIf="this.userService.isLoading$ | async">Loading...</div>
+      <ng-container *ngIf="(this.userService.user$$|async) !== null; then logout else loginSignup"/>
+
+      <ng-template #logout>
+        <app-auth-logout></app-auth-logout>
+      </ng-template>
+      <ng-template #loginSignup>
+        <app-auth-login-signup></app-auth-login-signup>
+      </ng-template>
     </ion-content>
   `,
   styles: ``,
@@ -41,12 +52,13 @@ export class TestingPage {
   userService = inject(UserService)
 
   constructor() {
-    setTimeout(() => {
-      // console.log('timeout')
-    }, 1000);
-
+    this.TEST()
     this.recurrencyService.TEST()
     this.userService.TEST()
+  }
+
+  TEST() {
+
   }
 
 } 
