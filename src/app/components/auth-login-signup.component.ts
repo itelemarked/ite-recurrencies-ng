@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 
 import { IonButton, IonText } from '@ionic/angular/standalone';
 
-import { AUTH_ERRORS, AuthError, UserService } from '../services/user.service';
+import { UserService } from '../services/user.service';
 import { AuthInputControlComponent } from './auth-input-control.component';
 
 
