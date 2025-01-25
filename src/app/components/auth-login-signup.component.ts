@@ -155,6 +155,10 @@ export class AuthLoginSignupComponent {
 
         if (this.emailCtl.valid && this.passwordCtl.valid) {
           this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
+            .then(_ => {
+              this.emailCtl.setValue('')
+              this.passwordCtl.setValue('')
+            })
             .catch(err => {
               this.errorMessages.set([err.message])
             })
@@ -169,6 +173,11 @@ export class AuthLoginSignupComponent {
 
         if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
           this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
+            .then(_ => {
+              this.emailCtl.setValue('')
+              this.passwordCtl.setValue('')
+              this.confirmPasswordCtl.setValue('')
+            })
             .catch(err => {
               this.errorMessages.set([err.message])
             })
