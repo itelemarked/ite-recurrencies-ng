@@ -155,7 +155,6 @@ export class AuthLoginSignupComponent {
 
         if (this.emailCtl.valid && this.passwordCtl.valid) {
           this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
-            .then(() => console.log('successful login'))
             .catch(err => {
               this.errorMessages.set([err.message])
             })
@@ -170,7 +169,6 @@ export class AuthLoginSignupComponent {
 
         if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
           this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
-            .then(() => console.log('successful signup'))
             .catch(err => {
               this.errorMessages.set([err.message])
             })

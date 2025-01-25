@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -19,6 +19,7 @@ import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
     IonToolbar,
     IonTitle,
     IonContent,
+    IonSpinner,
     AuthLoginSignupComponent,
     AuthLogoutComponent
   ],
@@ -31,15 +32,19 @@ import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
       <!-- <p>Testing works!</p> -->
-      <div *ngIf="this.authService.isLoading$ | async">Loading...</div>
-      <ng-container *ngIf="(this.authService.user$$|async) !== null; then logout else loginSignup"/>
+      <div *ngIf="this.authService.isLoading$ | async"><ion-spinner/></div>
+      <!-- <app-auth-logout></app-auth-logout> -->
+      <!-- <div *ngIf="!(this.authService.isLoading$ | async)"> -->
+        <ng-container *ngIf="(this.authService.user$$|async) !== null; then logout else loginSignup"/>
 
-      <ng-template #logout>
-        <app-auth-logout></app-auth-logout>
-      </ng-template>
-      <ng-template #loginSignup>
-        <app-auth-login-signup></app-auth-login-signup>
-      </ng-template>
+        <ng-template #logout>
+          <app-auth-logout></app-auth-logout>
+        </ng-template>
+
+        <ng-template #loginSignup>
+          <app-auth-login-signup></app-auth-login-signup>
+        </ng-template>
+      <!-- </div> -->
     </ion-content>
   `,
   styles: ``,

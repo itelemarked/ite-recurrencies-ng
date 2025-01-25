@@ -18,7 +18,7 @@ import { IonButton } from '@ionic/angular/standalone';
         class="flex-none"
         color="danger"
         (click)="onLogout()"
-      >logout</ion-button>
+      >Logout</ion-button>
     </div>
   `,
   styles: ``,
@@ -34,8 +34,6 @@ export class AuthLogoutComponent {
   // TEMPLATE ACTIONS
   onLogout = () => {
     this.authService.logout()
-      .then(_ => console.log('logout successful'))
-      .catch(err => console.log('logout unsuccessful...'))
   }
 
   constructor() {
