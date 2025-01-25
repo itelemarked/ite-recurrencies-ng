@@ -20,14 +20,14 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
     { provide: NG_VALUE_ACCESSOR, multi: true, useExisting: AuthInputControlComponent }
   ],
   template: `
-    <div>
+    <div [ngClass]="{'ite-disabled': disabled()}">
       <label class="ite-label">{{ label() }}</label>
       <div class="ite-input-wrapper">
         <input
           class="ite-input"
           [type]="type()"
           [placeholder]="placeholder()"
-          [disabled]="disabled"
+          [disabled]="disabled()"
           [(ngModel)]="inputValue"
           (blur)="onBlur()"
           (input)="onInput($event)"
@@ -68,6 +68,10 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 
     :host.ng-touched.ng-invalid .ite-input:focus {
       outline-color: var(--label-color-invalid);
+    }
+
+    .ite-disabled {
+      opacity: 0.5;
     }
 
     .ite-input-wrapper {
@@ -125,6 +129,7 @@ export class AuthInputControlComponent implements ControlValueAccessor {
   typeInp = input.required<'text' | 'password'>({alias: 'type'})
   labelInp = input<string>('', {alias: 'label'})
   placeholderInp = input<string>('', {alias: 'placeholder'})
+  disabledInp = input<boolean>(false, {alias: 'disabled'})
 
 
   // // STATE VARS
@@ -140,21 +145,26 @@ export class AuthInputControlComponent implements ControlValueAccessor {
   toggleShowPassword = () => this.showPassword.set(!this.showPassword())
   onBlur = () => this._onBlur()
   onInput = (e: any) => this._onInput(e.target.value)
+  disabled = computed(() => this.accessorDisabled() || this.disabledInp()) // make sure accessor disabled AND template disabled is working...
 
   // CONTROL VALUE ACCESSOR
-  onChange = (value: string) => {};
-  onTouched = () => {};
-  touched = false;
-  disabled = false;
+  accessorOnChange = (value: string) => {};
+  accessorOnTouched = () => {};
+  accessorTouched = false;
+  accessorDisabled = signal(false);
 
   writeValue = (val: string) => this.inputValue = val
-  registerOnChange = (fn: (val: string) => void) => this.onChange = fn
-  registerOnTouched = (fn: () => void) => this.onTouched = fn
-  setDisabledState = (disabled: boolean) => this.disabled = disabled
+  registerOnChange = (fn: (val: string) => void) => this.accessorOnChange = fn
+  registerOnTouched = (fn: () => void) => this.accessorOnTouched = fn
+  setDisabledState = (disabled: boolean) => this.accessorDisabled.set(disabled)
   // CONTROL VALUE ACCESSOR
 
   constructor() {
     addIcons({eyeOutline, eyeOffOutline})
+  }
+
+  ngAfterViewInit() {
+    console.log(`${this.label()}: ${this.disabledInp()}`)
   }
 
   // // UTILS
@@ -171,13 +181,13 @@ export class AuthInputControlComponent implements ControlValueAccessor {
   }
 
   private _onBlur() {
-    if (!this.touched) {
-      this.onTouched();
-      this.touched = true;
+    if (!this.accessorTouched) {
+      this.accessorOnTouched();
+      this.accessorTouched = true;
     }
   }
 
   private _onInput(val: string) {
-    this.onChange(val)
+    this.accessorOnChange(val)
   }
 }
