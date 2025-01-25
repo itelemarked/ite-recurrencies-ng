@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { IonButton } from '@ionic/angular/standalone';
 
 @Component({
@@ -26,20 +26,20 @@ import { IonButton } from '@ionic/angular/standalone';
 export class AuthLogoutComponent {
 
   // DEPENDENCIES
-  userService = inject(UserService)
+  authService = inject(AuthService)
 
   // TEMPLATE VARS
-  userEmail: string = this.userService.currentUser?.email === undefined ? '' : this.userService.currentUser.email
+  userEmail: string = this.authService.currentUser?.email === undefined ? '' : this.authService.currentUser.email
 
   // TEMPLATE ACTIONS
   onLogout = () => {
-    this.userService.logout()
+    this.authService.logout()
       .then(_ => console.log('logout successful'))
       .catch(err => console.log('logout unsuccessful...'))
   }
 
   constructor() {
-    this.userService.user$$.subscribe(usr => {
+    this.authService.user$$.subscribe(usr => {
       this.userEmail = usr === null ? '' : usr.email
     })
   }

@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, map, of, skip, switchMap, take, tap } from "rxjs";
 
-import { UserService } from "./user.service";
+import { AuthService } from "./auth.service";
 import { SettingsService } from "./settings.service";
 
 import { Recurrency, RecurrencyData, toRecurrency, toRecurrencyData } from "../types/Recurrency";
@@ -22,7 +22,7 @@ export class RecurrencyService {
 
   // DEPENDENCIES
   private firestore = inject(AngularFirestore)
-  private userService = inject(UserService)
+  private authService = inject(AuthService)
   private settingsService = inject(SettingsService)
 
   // PROPERTIES
@@ -38,7 +38,7 @@ export class RecurrencyService {
     // When user or recurrencies change on firestore (realtime updates), update and emits new recurrencies
     // Subscription to user$$ is long lasting (no need to unsubscribe)
     // Using switchMap is convenient, because no need to implement unsubscription of the specific recurrencies path in case user changes
-    const recurrenciesFromFirestore$$ = this.userService.user$$
+    const recurrenciesFromFirestore$$ = this.authService.user$$
       .pipe(
         switchMap(user => {
           return user === null 
@@ -81,7 +81,7 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async add(recurrency: Recurrency): Promise<Recurrency> {
-    const user = this.userService.currentUser
+    const user = this.authService.currentUser
     const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
@@ -97,7 +97,7 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async set(recurrency: Required<Recurrency>): Promise<Recurrency> {
-    const user = this.userService.currentUser
+    const user = this.authService.currentUser
     const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
@@ -120,7 +120,7 @@ export class RecurrencyService {
    * - No id found on the database (nothing to delete)
    */
   async delete(id: string): Promise<void> {
-    const user = this.userService.currentUser
+    const user = this.authService.currentUser
     if (user === null) return Promise.reject('User is null!')
 
     const idToDelete = this.currentRecurrencies().find(rec => rec.id === id) 

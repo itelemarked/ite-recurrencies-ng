@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { RecurrencyService } from '../services/recurrency.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { AuthLoginSignupComponent } from '../components/auth-login-signup.component';
 import { AuthLogoutComponent } from '../components/auth-logout.component';
 import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
@@ -31,8 +31,8 @@ import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
       <!-- <p>Testing works!</p> -->
-      <div *ngIf="this.userService.isLoading$ | async">Loading...</div>
-      <ng-container *ngIf="(this.userService.user$$|async) !== null; then logout else loginSignup"/>
+      <div *ngIf="this.authService.isLoading$ | async">Loading...</div>
+      <ng-container *ngIf="(this.authService.user$$|async) !== null; then logout else loginSignup"/>
 
       <ng-template #logout>
         <app-auth-logout></app-auth-logout>
@@ -49,12 +49,12 @@ export class TestingPage {
   firestore = inject(AngularFirestore)
   fireauth = inject(AngularFireAuth)
   recurrencyService = inject(RecurrencyService)
-  userService = inject(UserService)
+  authService = inject(AuthService)
 
   constructor() {
     this.TEST()
     this.recurrencyService.TEST()
-    this.userService.TEST()
+    this.authService.TEST()
   }
 
   TEST() {

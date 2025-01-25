@@ -15,7 +15,7 @@ export const AuthErrors = {
 
 
 @Injectable({providedIn: 'root'})
-export class UserService {
+export class AuthService {
 
   // DEPENDENCIES
   private fireauth = inject(AngularFireAuth)

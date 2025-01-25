@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 
 import { IonButton, IonText } from '@ionic/angular/standalone';
 
-import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { AuthInputControlComponent } from './auth-input-control.component';
 
 
@@ -109,7 +109,7 @@ import { AuthInputControlComponent } from './auth-input-control.component';
 export class AuthLoginSignupComponent {
 
   // DEPENDENCIES
-  userService = inject(UserService)
+  authService = inject(AuthService)
 
   // INPUTS
 
@@ -154,7 +154,7 @@ export class AuthLoginSignupComponent {
         this.passwordCtl.markAsTouched()
 
         if (this.emailCtl.valid && this.passwordCtl.valid) {
-          this.userService.login(this.emailCtl.value!, this.passwordCtl.value!)
+          this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
             .then(() => console.log('successful login'))
             .catch(err => {
               this.errorMessages.set([err.message])
@@ -169,7 +169,7 @@ export class AuthLoginSignupComponent {
         this.confirmPasswordCtl.markAllAsTouched()
 
         if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
-          this.userService.signup(this.emailCtl.value!, this.passwordCtl.value!)
+          this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
             .then(() => console.log('successful signup'))
             .catch(err => {
               this.errorMessages.set([err.message])
