@@ -44,12 +44,13 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
         <app-auth-login-signup></app-auth-login-signup>
       </ng-template> -->
 
-      <div style="border: 1px solid green; padding: 5px;">
+      <!-- <div style="border: 1px solid green; padding: 5px;">
         <div style="color: green; margin-bottom: 10px; font-size: 0.75em;">Show spinner when loading user</div>
         <div *ngIf="this.authService.isLoading$ | async">
           <ion-spinner/>
         </div>
-      </div>
+      </div> -->
+      
       <div style="border: 1px solid green; padding: 5px; margin-top: 10px;">
         <div style="color: green; margin-bottom: 10px; font-size: 0.75em;">app-auth-login-signup component:</div>
         <app-auth-login-signup></app-auth-login-signup>

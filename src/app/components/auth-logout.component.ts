@@ -1,45 +1,88 @@
 import { Component, computed, inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { IonButton } from '@ionic/angular/standalone';
+import { IonButton, IonSpinner } from '@ionic/angular/standalone';
+import { map, Subject, takeUntil } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { User } from '../types/User';
 
 @Component({
   selector: 'app-auth-logout',
   standalone: true,
   imports: [
-    IonButton
+    CommonModule,
+    IonButton,
+    IonSpinner
   ],
   template: `
-    <div class="flex items-center p-sm">
-      <div class="flex-1">
-        <div class="text-xs mb-md">Logged-in as:</div>
-        <div>{{ userEmail }}</div>
+    <div class="relative">
+      <div 
+        class="ite-main-container flex items-center p-sm"
+        [ngClass]="{'ite-user-loading': userIsLoading}"
+      >
+        <div class="flex-1">
+          <div class="text-xs mb-md">Logged-in as:</div>
+          <div>{{ userEmail }}</div>
+        </div>
+        <ion-button
+          class="flex-none"
+          color="danger"
+          size="small"
+          (click)="onLogout()"
+        >Logout</ion-button>
       </div>
-      <ion-button
-        class="flex-none"
-        color="danger"
-        (click)="onLogout()"
-      >Logout</ion-button>
+      <div 
+        *ngIf="userIsLoading" 
+        class="ite-spinner-container absolute flex items-center justify-center" 
+        style="height: 100%; width: 100%; top: 0;"
+      >
+        Loading user... <ion-spinner></ion-spinner>
+      </div>
     </div>
   `,
-  styles: ``,
+  styles: `
+    .ite-main-container.ite-user-loading {
+      opacity: 0.2;
+    }
+  `,
 })
 export class AuthLogoutComponent {
 
   // DEPENDENCIES
   authService = inject(AuthService)
 
-  // TEMPLATE VARS
-  userEmail: string = this.authService.currentUser?.email === undefined ? '' : this.authService.currentUser.email
+  // VARS
+  destroy$ = new Subject<void>()
 
-  // TEMPLATE ACTIONS
+  // TEMPLATE VARS
+  userIsLoading = true
+  currentUser: User | null = null
+  userEmail = this.getUserEmail(null)
+
+  constructor() {
+    this.authService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserLoadingChange(isLoading))
+    this.authService.user$$.pipe(takeUntil(this.destroy$)).subscribe(usr => this.onUserChange(usr))
+  }
+
+  // ACTIONS
+  ngOnDestroy() {
+    this.destroy$.next()
+  }
+
+  onUserLoadingChange(isLoading: boolean) {
+    this.userIsLoading = isLoading
+  }
+
+  onUserChange(user: User | null) {
+    this.userEmail = this.getUserEmail(user)
+  }
+
   onLogout = () => {
     this.authService.logout()
   }
 
-  constructor() {
-    this.authService.user$$.subscribe(usr => {
-      this.userEmail = usr === null ? '' : usr.email
-    })
+  // UTILS
+  private getUserEmail(user: User | null): string {
+    return user === null ? 'No logged-in user...' : user.email
   }
 
 }
