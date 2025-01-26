@@ -142,10 +142,10 @@ export class AuthInputControlComponent implements ControlValueAccessor {
   type = computed(() => this._type(this.typeInp(), this.showPassword()))
   iconName = computed(() => this._iconName(this.typeInp(), this.showPassword()))
   showIcon = computed(() => this._showIcon(this.typeInp()))
+  disabled = computed(() => this.accessorDisabled() || this.disabledInp()) // make sure accessor disabled AND template disabled is working...
   toggleShowPassword = () => this.showPassword.set(!this.showPassword())
   onBlur = () => this._onBlur()
   onInput = (e: any) => this._onInput(e.target.value)
-  disabled = computed(() => this.accessorDisabled() || this.disabledInp()) // make sure accessor disabled AND template disabled is working...
 
   // CONTROL VALUE ACCESSOR
   accessorOnChange = (value: string) => {};
@@ -161,10 +161,6 @@ export class AuthInputControlComponent implements ControlValueAccessor {
 
   constructor() {
     addIcons({eyeOutline, eyeOffOutline})
-  }
-
-  ngAfterViewInit() {
-    console.log(`${this.label()}: ${this.disabledInp()}`)
   }
 
   // // UTILS

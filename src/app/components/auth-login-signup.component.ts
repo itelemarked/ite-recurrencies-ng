@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { IonButton, IonText } from '@ionic/angular/standalone';
+import { Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 import { AuthInputControlComponent } from './auth-input-control.component';
@@ -23,8 +23,8 @@ import { AuthInputControlComponent } from './auth-input-control.component';
 
     <!-- AUTH ERRORS -->
     <div 
-      *ngIf="errorMessages().length > 0"
       class="ite-auth-errors p-sm mb-lg"
+      *ngIf="errorMessages().length > 0"
     >
       <div *ngFor="let err of errorMessages()">{{ err }}</div>
     </div>
@@ -73,19 +73,15 @@ import { AuthInputControlComponent } from './auth-input-control.component';
 
       <!-- SUBMIT BUTTON -->
       <div class="ite-submit-button">
-        <ion-button type="submit" class="ion-padding-top" expand="block">
+        <ion-button type="submit" class="ion-padding-top" expand="block" [disabled]="this.authService.isLoading$ | async">
           {{ this.loginSignup() === 'login' ? 'Login' : 'Signup' }}
         </ion-button>
-      </div>
-
-      <div class="text-xs pt-sm">
-        <ion-text color="danger" class="block" *ngIf="form.touched && form.hasError('controlsMismatch-passwordCtl-confirmPasswordCtl')">Mismatch between password and confirmed password...</ion-text>
       </div>
 
       <!-- SIGNUP/LOGIN COMMENTS -->
       <div class="ite-signup-login-comments flex ion-justify-content-center ion-align-items-center">
         <span class="flex-none">No account yet?</span>
-        <ion-button class="flex-none" fill="clear" [strong]="true" color="primary" (click)="onLoginSignupToggle()">
+        <ion-button class="flex-none" fill="clear" [strong]="true" color="primary" [disabled]="this.authService.isLoading$ | async" (click)="onLoginSignupToggle()">
           {{ this.loginSignup() === 'login' ? 'Signup' : 'Login' }}
         </ion-button
         >
@@ -111,15 +107,15 @@ export class AuthLoginSignupComponent {
   // DEPENDENCIES
   authService = inject(AuthService)
 
-  // INPUTS
-
-  // OUTPUTS
-
   // VARS
+  destroy$ = new Subject<void>()
+
+  // TEMPLATE VARS
   emailCtl = new FormControl('', [
     Validators.required,
     Validators.email
   ])
+
   passwordCtl = new FormControl('', [
     Validators.required,
     Validators.minLength(6),
@@ -128,6 +124,7 @@ export class AuthLoginSignupComponent {
     // patternValidator(/[A-Z]+/, 'upperCaseCharacter'),
     // patternValidator(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/, 'specialCharacter'),
   ])
+
   confirmPasswordCtl = new FormControl('', [
     Validators.required,
   ])
@@ -138,60 +135,86 @@ export class AuthLoginSignupComponent {
     confirmPasswordCtl: this.confirmPasswordCtl,
   })
 
-  // TEMPLATE VARS
   errorMessages = signal<string[]>([])
   loginSignup = signal<'login' | 'signup'>('login')
   passwordMissmatch = () => this.passwordCtl.touched && this.confirmPasswordCtl.touched && this.passwordCtl.value !== this.confirmPasswordCtl.value
   
   // TEMPLATE ACTIONS
   onLoginSignupToggle = () => this.loginSignup() === 'login' ? this.loginSignup.set('signup') : this.loginSignup.set('login')
-  onSubmit = async () => {
+
+  onSubmit = () => {
     this.errorMessages.set([])
 
     switch(this.loginSignup()) {
       case 'login': {
-        this.emailCtl.markAsTouched()
-        this.passwordCtl.markAsTouched()
-
-        if (this.emailCtl.valid && this.passwordCtl.valid) {
-          this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
-            .then(_ => {
-              this.emailCtl.setValue('')
-              this.passwordCtl.setValue('')
-            })
-            .catch(err => {
-              this.errorMessages.set([err.message])
-            })
-        }
+        this.onSubmitLogin()
         break;
       }
 
       case 'signup': {
-        this.emailCtl.markAsTouched()
-        this.passwordCtl.markAsTouched()
-        this.confirmPasswordCtl.markAllAsTouched()
-
-        if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
-          this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
-            .then(_ => {
-              this.emailCtl.setValue('')
-              this.passwordCtl.setValue('')
-              this.confirmPasswordCtl.setValue('')
-            })
-            .catch(err => {
-              this.errorMessages.set([err.message])
-            })
-        }
+        this.onSubmitSignup()
         break;
       }
     }
   }
 
-  // UTILS
+  constructor() {
+    this.authService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserIsLoading(isLoading))
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+  }
+
+  // UTILS  
+  private onUserIsLoading = (isLoading: boolean) => {
+    if(isLoading) {
+      this.emailCtl.disable()
+      this.passwordCtl.disable()
+      this.confirmPasswordCtl.disable()
+    } else {
+      this.emailCtl.enable()
+      this.passwordCtl.enable()
+      this.confirmPasswordCtl.enable()
+    }
+  }
+
+  private onSubmitLogin = () => {
+    this.emailCtl.markAsTouched()
+    this.passwordCtl.markAsTouched()
+
+    if (this.emailCtl.valid && this.passwordCtl.valid) {
+      this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
+        .then(_ => {
+          this.form.reset()
+        })
+        .catch(err => {
+          this.errorMessages.set([err.message])
+        })
+    }
+  }
+
+  private onSubmitSignup = () => {
+    this.emailCtl.markAsTouched()
+    this.passwordCtl.markAsTouched()
+    this.confirmPasswordCtl.markAsTouched()
+
+    if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
+      this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
+        .then(_ => {
+          this.form.reset()
+        })
+        .catch(err => {
+          this.errorMessages.set([err.message])
+        })
+    }
+  }
 }
 
+
+// TODO: export to external utility file???
 const patternValidator = (regex: RegExp, errorKey: string) => (control: AbstractControl) => {
-  if(control.value.trim() === '') return null
+  if(control.value && control.value.trim() === '') return null
   const isValid = regex.test(control.value)
   return isValid ? null : { [errorKey]: true }
 } 
