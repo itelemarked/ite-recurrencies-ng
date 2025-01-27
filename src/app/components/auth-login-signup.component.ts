@@ -16,7 +16,6 @@ import { AuthInputControlComponent } from './auth-input-control.component';
     CommonModule,
     ReactiveFormsModule,
     IonButton,
-    IonText,
     AuthInputControlComponent
   ],
   template: `

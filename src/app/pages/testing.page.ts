@@ -10,6 +10,7 @@ import { AuthLoginSignupComponent } from '../components/auth-login-signup.compon
 import { AuthLogoutComponent } from '../components/auth-logout.component';
 import { BehaviorSubject, ReplaySubject, take } from 'rxjs';
 import { AuthInputControlComponent } from '../components/auth-input-control.component';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-testing',
@@ -23,7 +24,6 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
     IonSpinner,
     AuthLoginSignupComponent,
     AuthLogoutComponent,
-    AuthInputControlComponent,
   ],
   template: `
     <ion-header>
@@ -50,6 +50,11 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
           <ion-spinner/>
         </div>
       </div> -->
+
+
+      <div>timezone: {{ settingsTimezone }}</div> 
+      <div *ngIf="this.settingsService.isLoading$$ | async"><ion-spinner/></div>
+      <!-- <div *ngIf="true"><ion-spinner/></div> -->
       
       <div style="border: 1px solid green; padding: 5px; margin-top: 10px;">
         <div style="color: green; margin-bottom: 10px; font-size: 0.75em;">app-auth-login-signup component:</div>
@@ -72,15 +77,24 @@ export class TestingPage {
   fireauth = inject(AngularFireAuth)
   recurrencyService = inject(RecurrencyService)
   authService = inject(AuthService)
+  settingsService = inject(SettingsService)
+
+
+  settingsTimezone = ''
 
   constructor() {
     this.TEST()
     this.recurrencyService.TEST()
     this.authService.TEST()
+    this.settingsService.TEST()
   }
 
   TEST() {
-
+    this.settingsService.isLoading$$.subscribe(val => console.log(val))
+    this.settingsService.settings$$.subscribe(settings => {
+      // console.log(settings)
+      this.settingsTimezone = settings.timezone
+    })
   }
 
 } 

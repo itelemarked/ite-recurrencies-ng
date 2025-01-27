@@ -45,7 +45,7 @@ export class RecurrencyService {
             ? of([])
             : this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).snapshotChanges().pipe(
                 map(snapshots => snapshots.map(snap => {
-                  const timezone = this.settingsService.currentSettings().timezone
+                  const timezone = this.settingsService.currentSettings.timezone
                   const id = snap.payload.doc.id
                   const data = snap.payload.doc.data()
                   return toRecurrency(data, timezone, id)
@@ -82,7 +82,7 @@ export class RecurrencyService {
    */
   async add(recurrency: Recurrency): Promise<Recurrency> {
     const user = this.authService.currentUser
-    const timezone = this.settingsService.currentSettings().timezone
+    const timezone = this.settingsService.currentSettings.timezone
 
     if (user === null) return Promise.reject('User is null')
     
@@ -98,7 +98,7 @@ export class RecurrencyService {
    */
   async set(recurrency: Required<Recurrency>): Promise<Recurrency> {
     const user = this.authService.currentUser
-    const timezone = this.settingsService.currentSettings().timezone
+    const timezone = this.settingsService.currentSettings.timezone
 
     if (user === null) return Promise.reject('User is null')
     

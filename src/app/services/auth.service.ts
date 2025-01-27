@@ -21,8 +21,9 @@ export class AuthService {
 
   // INIT
   constructor() {
+    // Before first fetch
     this._isLoading$.next(true)
-    /** authState 'Subject like' */
+    // authState 'Subject like': it fires only after the first fetch 
     this.fireauth.authState.subscribe(usr => {
       if (usr === null) {
         this.currentUser = null
@@ -34,6 +35,7 @@ export class AuthService {
         this.currentUser = { uid, email }
         this._user$$.next({ uid, email })
       }
+      // After first fetch
       this._isLoading$.next(false)
     })
   }
