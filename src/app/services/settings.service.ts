@@ -19,7 +19,6 @@ const fromData = (defaultSettings: Settings, data?: SettingsData): Settings => {
 const toData = (settings: Settings): SettingsData => settings
 
 
-
 @Injectable({providedIn: 'root'})
 export class SettingsService {
 
@@ -28,9 +27,10 @@ export class SettingsService {
   firestore = inject(AngularFirestore)
 
   // PROPERTIES
+  private _currentSettings = DEFAUTLT_SETTINGS
+  public currentSettings = () => this._currentSettings
   private _settings$$ = new BehaviorSubject<Settings>(DEFAUTLT_SETTINGS)
   public settings$$ = this._settings$$.asObservable()
-  public currentSettings = DEFAUTLT_SETTINGS
 
   private _isLoading$$ = new ReplaySubject<boolean>(1)
   public isLoading$$ = this._isLoading$$.asObservable()
@@ -56,28 +56,82 @@ export class SettingsService {
     
     // listen to all changes
     settingsFromUser$.subscribe(settings => {
-      this.currentSettings = settings
+      this._currentSettings = settings
       this._settings$$.next(settings)
     })
   }
 
   // TODO: avoid 'save' to fire 'settings$$' twice...
   save(settings: Settings): Promise<Settings> {
-    const currentUser = this.authService.currentUser
+    const currentUser = this.authService.currentUser()
     if(currentUser === null) return Promise.reject('user-is-null')
     this.firestore.doc<SettingsData>(`users/${currentUser.uid}/settings/data`).set(toData(settings))
     return Promise.resolve(settings)
   }
 
-  TEST() {
-    // this.settings$$.subscribe(val => console.log(val))
-    // setTimeout(() => {
-    //   // const timezone: TimezoneString = 'Indian/Mauritius'
-    //   const timezone: TimezoneString = 'Europe/Zurich'
-    //   const newSettings: Settings = {timezone}
-    //   this.save(newSettings)
-    //     .then((val) => console.log(val))
-    //     .catch(err => console.log(err))
-    // }, 3000);
-  }
+  TEST() {}
 }
+
+
+// @Injectable({providedIn: 'root'})
+// export class SettingsService {
+
+//   // DEPENDENCIES
+//   authService = inject(AuthService)
+//   firestore = inject(AngularFirestore)
+
+//   // PROPERTIES
+//   private _currentSettings = DEFAUTLT_SETTINGS
+//   public currentSettings = () => this._currentSettings
+//   private _settings$$ = new BehaviorSubject<Settings>(DEFAUTLT_SETTINGS)
+//   public settings$$ = this._settings$$.asObservable()
+
+//   private _isLoading$$ = new ReplaySubject<boolean>(1)
+//   public isLoading$$ = this._isLoading$$.asObservable()
+
+//   constructor() {
+
+//     const settingsFromUser$ = this.authService.user$$.pipe(
+//       switchMap(usr => {
+//         if(usr === null) {
+//           return of(DEFAUTLT_SETTINGS)
+//         }
+//         return this.firestore.doc<SettingsData>(`users/${usr.uid}/settings/data`).valueChanges().pipe(map(settings => {
+//           if(settings === undefined) return DEFAUTLT_SETTINGS
+//           return fromData(DEFAUTLT_SETTINGS, settings)
+//         }))
+//       })
+//     )
+
+//     // listen to the first change only, then complete
+//     settingsFromUser$.pipe(take(1)).subscribe(_ => this._isLoading$$.next(true))
+//     // listen to the second change only, then complete
+//     settingsFromUser$.pipe(skip(1), take(1)).subscribe(_ => this._isLoading$$.next(false))
+    
+//     // listen to all changes
+//     settingsFromUser$.subscribe(settings => {
+//       this._currentSettings = settings
+//       this._settings$$.next(settings)
+//     })
+//   }
+
+//   // TODO: avoid 'save' to fire 'settings$$' twice...
+//   save(settings: Settings): Promise<Settings> {
+//     const currentUser = this.authService.currentUser()
+//     if(currentUser === null) return Promise.reject('user-is-null')
+//     this.firestore.doc<SettingsData>(`users/${currentUser.uid}/settings/data`).set(toData(settings))
+//     return Promise.resolve(settings)
+//   }
+
+//   TEST() {
+//     // this.settings$$.subscribe(val => console.log(val))
+//     // setTimeout(() => {
+//     //   // const timezone: TimezoneString = 'Indian/Mauritius'
+//     //   const timezone: TimezoneString = 'Europe/Zurich'
+//     //   const newSettings: Settings = {timezone}
+//     //   this.save(newSettings)
+//     //     .then((val) => console.log(val))
+//     //     .catch(err => console.log(err))
+//     // }, 3000);
+//   }
+// }

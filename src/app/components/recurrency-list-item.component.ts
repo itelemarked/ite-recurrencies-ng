@@ -1,12 +1,13 @@
 
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Recurrency } from '../types/Recurrency';
-import { add } from '../utils/date/date.utils';
+import { add, format } from '../utils/date/date.utils';
 import { toInteger } from '../types/Integer';
+import { SettingsService } from '../services/settings.service';
 
 
 
@@ -28,9 +29,6 @@ import { toInteger } from '../types/Integer';
       </ion-item>
       
       <ion-item-options>
-        <ion-item-option color="light">
-          <ion-icon slot="icon-only" icon="create-outline"></ion-icon>
-        </ion-item-option>
         <ion-item-option color="danger">
           <ion-icon slot="icon-only" icon="trash-outline"></ion-icon>
         </ion-item-option>
@@ -42,17 +40,20 @@ import { toInteger } from '../types/Integer';
   styles: ``,
 })
 export class RecurrencyListItemComponent {
+  // DEPENDENCIES
+  private settingsService = inject(SettingsService)
+
   // INPUT
-  recurrency = input.required<Recurrency>()
+  recurrencyInp = input.required<Recurrency>({alias: 'recurrency'})
+
+  // VARS
+  timezone = this.settingsService.currentSettings().timezone
 
   // TEMPLATE VARIABLES
-  title = computed(() => this.recurrency().title)
-  // lastEventString = computed(() => format(this.recurrency().lastEvent, 'short', 'fr-CH'))
-  lastEventString = computed(() => 'xx.xx.xxxx')
-  periodString = computed(() => this.recurrency().periodNb + ' ' + this.recurrency().periodUnit)
-  expiryString = computed(() => {
-    // return format(this.expiryDate(), 'short', 'fr-CH')
-  })
+  title = computed(() => this.recurrencyInp().title)
+  lastEventString = computed(() => format(this.recurrencyInp().lastEvent, 'DD.MM.YY HH:mm:ss.SSS TIMEZONE', this.timezone))
+  periodString = computed(() => this.recurrencyInp().periodNb + ' ' + this.recurrencyInp().periodUnit)
+  expiryString = computed(() => format(this.expiryDate(), 'DD.MM.YY HH:mm:ss.SSS TIMEZONE', this.timezone))
   daysLeftString = computed(() => {
     // return diff(this.expiryDate(), this.nowDate(), 'days')
   })
@@ -72,11 +73,11 @@ export class RecurrencyListItemComponent {
 
   // HELPERS
   private lastEventDate(): Date {
-    return this.recurrency().lastEvent
+    return this.recurrencyInp().lastEvent
   }
 
   private expiryDate(): Date {
-    const { lastEvent, periodNb, periodUnit } = this.recurrency()
+    const { lastEvent, periodNb, periodUnit } = this.recurrencyInp()
     return add(lastEvent, toInteger(periodNb + 1), periodUnit)
   }
 
@@ -84,3 +85,54 @@ export class RecurrencyListItemComponent {
     return new Date()
   }
 }
+
+
+
+
+
+// export class RecurrencyListItemComponent {
+//   // DEPENDENCIES
+//   private settingsService = inject(SettingsService)
+
+//   // INPUT
+//   recurrencyInp = input.required<Recurrency>({alias: 'recurrency'})
+
+//   // VARS
+//   timezone = this.settingsService.currentSettings().timezone
+
+//   // TEMPLATE VARIABLES
+//   title = computed(() => this.recurrencyInp().title)
+//   lastEventString = computed(() => format(this.recurrencyInp().lastEvent, 'DD.MM.YY HH:mm:ss.SSS TIMEZONE', this.timezone))
+//   periodString = computed(() => this.recurrencyInp().periodNb + ' ' + this.recurrencyInp().periodUnit)
+//   expiryString = computed(() => format(this.expiryDate(), 'DD.MM.YY HH:mm:ss.SSS TIMEZONE', this.timezone))
+//   daysLeftString = computed(() => {
+//     // return diff(this.expiryDate(), this.nowDate(), 'days')
+//   })
+//   progress = computed(() => {
+//     return (this.nowDate().valueOf() - this.lastEventDate().valueOf()) / (this.expiryDate().valueOf() - this.lastEventDate().valueOf())
+//   })
+//   progressColor = computed(() => {
+//     if(this.progress() < 0.7) return 'success'
+//     if(this.progress() < 0.85) return 'warning'
+//     return 'danger'
+//   })
+
+//   // INIT
+//   constructor() {
+//     addIcons({createOutline, trashOutline})
+//   }
+
+//   // HELPERS
+//   private lastEventDate(): Date {
+//     return this.recurrencyInp().lastEvent
+//   }
+
+//   private expiryDate(): Date {
+//     const { lastEvent, periodNb, periodUnit } = this.recurrencyInp()
+//     return add(lastEvent, toInteger(periodNb + 1), periodUnit)
+//   }
+
+//   private nowDate(): Date {
+//     return new Date()
+//   }
+// }

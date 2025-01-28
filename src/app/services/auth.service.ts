@@ -12,9 +12,10 @@ export class AuthService {
   // DEPENDENCIES
   private fireauth = inject(AngularFireAuth)
 
+  private _currentUser: User | null = null
+  public currentUser = (): User | null => this._currentUser
   private _user$$ = new BehaviorSubject<User | null>(null)
   public user$$ = this._user$$.asObservable()
-  public currentUser: User | null = this._user$$.value
 
   private _isLoading$ = new ReplaySubject<boolean>(1)
   public isLoading$ = this._isLoading$.asObservable()
@@ -26,13 +27,13 @@ export class AuthService {
     // authState 'Subject like': it fires only after the first fetch 
     this.fireauth.authState.subscribe(usr => {
       if (usr === null) {
-        this.currentUser = null
+        this._currentUser = null
         this._user$$.next(null)
       } else {
         if(usr.email === null) throw new Error(`User must have an email...`)
         const uid = usr.uid
         const email = usr.email
-        this.currentUser = { uid, email }
+        this._currentUser = { uid, email }
         this._user$$.next({ uid, email })
       }
       // After first fetch

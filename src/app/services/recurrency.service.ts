@@ -26,9 +26,10 @@ export class RecurrencyService {
   private settingsService = inject(SettingsService)
 
   // PROPERTIES
+  private _currentRecurrencies: Recurrency[] = []
+  public currentRecurrencies = (): Recurrency[] => this._currentRecurrencies
   private _recurrencies$$ = new BehaviorSubject<Recurrency[]>([])
   public recurrencies$$ = this._recurrencies$$.asObservable()
-  public currentRecurrencies = () => this._recurrencies$$.value
 
   private _isLoading$ = new BehaviorSubject<boolean>(true)
   // Will emit twice in the constructor. We only need the second emission (when the data has been first fetched)
@@ -45,7 +46,7 @@ export class RecurrencyService {
             ? of([])
             : this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).snapshotChanges().pipe(
                 map(snapshots => snapshots.map(snap => {
-                  const timezone = this.settingsService.currentSettings.timezone
+                  const timezone = this.settingsService.currentSettings().timezone
                   const id = snap.payload.doc.id
                   const data = snap.payload.doc.data()
                   return toRecurrency(data, timezone, id)
@@ -55,6 +56,7 @@ export class RecurrencyService {
       )
 
     recurrenciesFromFirestore$$.subscribe(recs => {
+      this._currentRecurrencies = recs
       this._recurrencies$$.next(recs)
     })
 
@@ -70,6 +72,7 @@ export class RecurrencyService {
         const newLastEvent = endOf(rec.lastEvent, 'days', settings.timezone)
         return { ...rec, lastEvent: newLastEvent }
       })
+      this._currentRecurrencies = newRecurrencies
       this._recurrencies$$.next(newRecurrencies)
     })
   }
@@ -81,8 +84,8 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async add(recurrency: Recurrency): Promise<Recurrency> {
-    const user = this.authService.currentUser
-    const timezone = this.settingsService.currentSettings.timezone
+    const user = this.authService.currentUser()
+    const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
     
@@ -97,8 +100,8 @@ export class RecurrencyService {
    * Rejects if User is not logged in.
    */
   async set(recurrency: Required<Recurrency>): Promise<Recurrency> {
-    const user = this.authService.currentUser
-    const timezone = this.settingsService.currentSettings.timezone
+    const user = this.authService.currentUser()
+    const timezone = this.settingsService.currentSettings().timezone
 
     if (user === null) return Promise.reject('User is null')
     
@@ -120,36 +123,14 @@ export class RecurrencyService {
    * - No id found on the database (nothing to delete)
    */
   async delete(id: string): Promise<void> {
-    const user = this.authService.currentUser
+    const user = this.authService.currentUser()
     if (user === null) return Promise.reject('User is null!')
 
-    const idToDelete = this.currentRecurrencies().find(rec => rec.id === id) 
+    const idToDelete = this._currentRecurrencies.find(rec => rec.id === id) 
     if(idToDelete === undefined) return Promise.reject('Nothing to delete!')
 
     return this.firestore.doc<RecurrencyData>(`users/${user.uid}/recurrencies/${id}`).delete()
   }
-
-  TEST() {
-    // this.isLoading$.subscribe({
-    //   next: res => console.log(res),
-    //   complete: (() => console.log('completes'))
-    // })
-    // setTimeout(() => {
-    //   // const REC = {
-    //   //   id: 'aaaa',
-    //   //   title: 'REC',
-    //   //   lastEvent: new Date(),
-    //   //   periodNb: toPositiveInteger(99),
-    //   //   periodUnit: toPeriodUnit('weeks')
-    //   // }
-    //   // const TIMEZONE = this.settingsService.currentSettings().timezone
-    //   // this.save(REC)
-    //   //   .then(res => console.log(res))
-    //   //   .catch(err => console.log(err))
-
-    //   // this.delete('aaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
-    //   // this.delete('aaaa').then(_ => console.log('deleted!')).catch(_=>console.log('hey, nothing to delete!'))
-    // }, 2000);
-  }
-
+  
+  TEST() {}
 }
