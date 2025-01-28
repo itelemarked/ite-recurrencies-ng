@@ -22,9 +22,8 @@ export class AuthService {
 
   // INIT
   constructor() {
-    // Before first fetch
+    // authState doesn't fire on subscription (at first when first fetch on firebase is done)
     this._isLoading$.next(true)
-    // authState 'Subject like': it fires only after the first fetch 
     this.fireauth.authState.subscribe(usr => {
       if (usr === null) {
         this._currentUser = null
@@ -46,11 +45,10 @@ export class AuthService {
     this._isLoading$.next(true)
     try {
       const credentials = await this.fireauth.createUserWithEmailAndPassword(email, password)
-      if(credentials.user === null) throw new Error(`No firebase user found...`)
-      if(credentials.user.email === null) throw new Error(`A user must have an email`)
+      if(credentials.user === null) throw new Error(`no-firebase-user-found...`)
       return {
         uid: credentials.user.uid,
-        email: credentials.user.email
+        email
       }  
     }
     catch(err: any) {

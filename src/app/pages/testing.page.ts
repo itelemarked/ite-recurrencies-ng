@@ -55,6 +55,12 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
         </div>
       </div> -->
 
+
+      <div class="test-container">
+        <div class="test-container-title">recurrencies</div>
+        <app-recurrency-list></app-recurrency-list>
+      </div>
+
       <div class="test-container">
         <div class="test-container-title">settings</div>
         <div>timezone: {{ (this.settingsService.settings$$ | async)?.timezone }}</div> 
@@ -64,11 +70,6 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
         <div class="test-container-title">auth</div>
         <app-auth-logout *ngIf="(this.authService.user$$ | async) !== null"></app-auth-logout>
         <app-auth-login-signup *ngIf="(this.authService.user$$ | async) === null"></app-auth-login-signup>
-      </div>
-
-      <div class="test-container">
-        <div class="test-container-title">recurrencies</div>
-        <app-recurrency-list></app-recurrency-list>
       </div>
 
 

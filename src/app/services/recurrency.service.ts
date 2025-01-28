@@ -11,6 +11,7 @@ import { endOf } from "../utils/date/date.utils";
 
 
 
+
 /**
  * Recurrencies must be updated/emitted when:
  * a) the user changes (have to fetch data on firestore)
