@@ -6,7 +6,7 @@ import { RecurrencyListItemComponent } from '../components/recurrency-list-item.
 import { RecurrencyService } from '../services/recurrency.service';
 
 @Component({
-  selector: 'app-recurrency-list',
+  selector: 'app-tab-recurrencies',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,7 +23,7 @@ import { RecurrencyService } from '../services/recurrency.service';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content [forceOverscroll]="false">
       <ng-container *ngFor="let recurrency of (recurrencies$ | async)">
         <app-recurrency-list-item
           [recurrency]="recurrency"
@@ -33,7 +33,7 @@ import { RecurrencyService } from '../services/recurrency.service';
   `,
   styles: ``,
 })
-export class RecurrencyListPage {
+export class TabRecurrenciesPage {
 
   recurrencies$ = this.recurrencyService.recurrencies$$
   // .pipe(

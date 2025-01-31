@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-tab-home',
   standalone: true,
   imports: [
     IonHeader,
@@ -17,13 +17,13 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content [forceOverscroll]="false">
       <p>Recurrencies version 1.1</p>
     </ion-content>
   `,
   styles: ``,
 })
-export class HomePage {
+export class TabHomePage {
 
   constructor() {}
 

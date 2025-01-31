@@ -1,17 +1,22 @@
 import { Routes } from '@angular/router';
 
-import { HomePage } from './pages/home.page';
-import { RecurrencyListPage } from './pages/recurrency-list.page';
-import { TestingPage } from './pages/testing.page';
+import { TabHomePage } from './pages/tab-home.page';
+import { TabRecurrenciesPage } from './pages/tab-recurrencies.page';
+import { TabTestingPage } from './pages/tab-testing.page';
+import { TabsPage } from './pages/tabs.page';
 
-const ORIGIN = '/testing'
+const ORIGIN = '/tabs'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
-  { path: 'home', component: HomePage },
-  { path: 'recurrency-list', component: RecurrencyListPage },
-  { path: 'testing', component: TestingPage},
-
+  { path: 'tabs', component: TabsPage, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: TabHomePage },
+    { path: 'recurrencies', component: TabRecurrenciesPage },
+    { path: 'testing', component: TabTestingPage},
+    { path: '**', redirectTo: 'home', pathMatch: 'full' }
+  ]},
+  
   { path: '**', redirectTo: ORIGIN, pathMatch: 'full' }
 ];

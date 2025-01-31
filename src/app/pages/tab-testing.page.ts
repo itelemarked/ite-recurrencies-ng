@@ -16,7 +16,7 @@ import { SettingsService } from '../services/settings.service';
 import { RecurrencyListComponent } from '../components/recurrency-list.component';
 
 @Component({
-  selector: 'app-testing',
+  selector: 'app-tab-testing',
   standalone: true,
   imports: [
     CommonModule,
@@ -24,7 +24,6 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
     AuthLoginSignupComponent,
     AuthLogoutComponent,
     RecurrencyListComponent,
@@ -89,7 +88,7 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
     }
   `,
 })
-export class TestingPage {
+export class TabTestingPage {
 
   firestore = inject(AngularFirestore)
   fireauth = inject(AngularFireAuth)
