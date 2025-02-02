@@ -14,6 +14,8 @@ import { BehaviorSubject, ReplaySubject, Subject, take } from 'rxjs';
 import { AuthInputControlComponent } from '../components/auth-input-control.component';
 import { SettingsService } from '../services/settings.service';
 import { RecurrencyListComponent } from '../components/recurrency-list.component';
+import { LoginViewComponent } from '../components/login-view.component';
+import { SignupViewComponent } from '../components/signup-view.component';
 
 @Component({
   selector: 'app-tab-testing',
@@ -24,6 +26,8 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
     IonToolbar,
     IonTitle,
     IonContent,
+    LoginViewComponent,
+    SignupViewComponent,
     AuthLoginSignupComponent,
     AuthLogoutComponent,
     RecurrencyListComponent,
@@ -36,6 +40,19 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
     </ion-header>
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
+
+      <app-login-view
+        *ngIf="loginSignup === 'login'"
+        [errorMessages]="['No errors to display']"
+        (toggleLoginSignup)="onToggleLoginSignup()"
+      />
+
+      <app-signup-view
+        *ngIf="loginSignup === 'signup'"
+        [errorMessages]="['No errors to display']"
+        (toggleLoginSignup)="onToggleLoginSignup()"
+      />
+
       <!-- <div *ngIf="this.authService.isLoading$ | async"><ion-spinner/></div>
       <ng-container *ngIf="(this.authService.user$$|async) !== null; then logout else loginSignup"/>
 
@@ -55,7 +72,7 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
       </div> -->
 
 
-      <div class="test-container">
+      <!-- <div class="test-container">
         <div class="test-container-title">recurrencies</div>
         <app-recurrency-list></app-recurrency-list>
       </div>
@@ -69,7 +86,7 @@ import { RecurrencyListComponent } from '../components/recurrency-list.component
         <div class="test-container-title">auth</div>
         <app-auth-logout *ngIf="(this.authService.user$$ | async) !== null"></app-auth-logout>
         <app-auth-login-signup *ngIf="(this.authService.user$$ | async) === null"></app-auth-login-signup>
-      </div>
+      </div> -->
 
 
     </ion-content>
@@ -99,13 +116,17 @@ export class TabTestingPage {
 
   settingsTimezone = ''
 
-
+  loginSignup: 'login' | 'signup' = 'login'
 
   constructor() {
     this.TEST()
     this.recurrencyService.TEST()
     this.authService.TEST()
     this.settingsService.TEST()
+  }
+
+  onToggleLoginSignup() {
+    this.loginSignup === 'login' ? this.loginSignup = 'signup' : this.loginSignup = 'login'
   }
 
   
