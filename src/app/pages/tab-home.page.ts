@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonMenuButton, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { menuOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab-home',
@@ -8,11 +10,21 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonMenuButton
   ],
   template: `
     <ion-header>
       <ion-toolbar>
+        <ion-buttons>
+          <!-- <ion-button>
+            <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+          </ion-button> -->
+          <ion-menu-button menu="main-menu"></ion-menu-button>
+        </ion-buttons>
         <ion-title>Home</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -25,6 +37,8 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
 })
 export class TabHomePage {
 
-  constructor() {}
+  constructor() {
+    addIcons({ menuOutline })
+  }
 
 } 

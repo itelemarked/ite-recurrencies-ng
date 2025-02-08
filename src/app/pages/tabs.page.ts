@@ -34,13 +34,9 @@ import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
           <ion-icon name="alarm-outline"></ion-icon>
           Recurrencies
         </ion-tab-button>
-        <!-- <ion-tab-button tab="library">
-          <ion-icon name="library"></ion-icon>
-          BRB
-        </ion-tab-button> -->
-        <ion-tab-button tab="testing">
+        <ion-tab-button tab="brb">
           <ion-icon name="list-outline"></ion-icon>
-          Testing...
+          BRB
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
