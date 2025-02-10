@@ -5,11 +5,7 @@ import { IonItem, IonLabel, IonList, IonNote, IonToggle } from '@ionic/angular/s
   selector: 'app-list',
   standalone: true,
   imports: [
-    IonList,
-    IonItem,
-    IonLabel,
-    IonNote,
-    IonToggle
+    IonList
   ],
   template: `
     <div class="list-header">
@@ -18,17 +14,6 @@ import { IonItem, IonLabel, IonList, IonNote, IonToggle } from '@ionic/angular/s
 
     <ion-list class="list">
       <ng-content select="[list-items]"/>
-      <!-- <ion-item>
-        <ion-label>Simple</ion-label>
-        <ion-note>item</ion-note>
-      </ion-item>
-      <ion-item [button]="true">
-        <ion-label>Button</ion-label>
-        <ion-note>item</ion-note>
-      </ion-item>
-      <ion-item>
-        <ion-toggle>Toggle</ion-toggle>
-      </ion-item> -->
     </ion-list>
 
     <div class="list-footer">
@@ -45,7 +30,6 @@ import { IonItem, IonLabel, IonList, IonNote, IonToggle } from '@ionic/angular/s
     :host {
       display: block;
       padding: 16px;
-      // border: 1px solid red;
     }
 
     .list-header {

@@ -28,7 +28,6 @@ import { MainMenuComponent } from './components/main-menu.component';
     IonList,
     IonItem,
     IonLabel,
-    MainMenuComponent,
   ],
   template: `
     <ion-app>

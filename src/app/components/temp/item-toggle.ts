@@ -20,7 +20,6 @@ import { IonItem, IonToggle } from '@ionic/angular/standalone';
 
     ion-item {
       --ite-background: var(--ion-color-step-50);
-      // --ite-background: red;
     }
 
     ion-item {

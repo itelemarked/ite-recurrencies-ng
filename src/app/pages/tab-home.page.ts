@@ -12,8 +12,6 @@ import { menuOutline } from 'ionicons/icons';
     IonTitle,
     IonContent,
     IonButtons,
-    IonButton,
-    IonIcon,
     IonMenuButton
   ],
   template: `

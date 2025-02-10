@@ -24,7 +24,6 @@ import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 import { SelectComponent } from '../components/temp/select.component';
 import { OptionComponent } from '../components/temp/option.component';
-import { HelloWorldComponent } from '../components/temp/hello-world.component';
 import { ReplaceDirective } from '../components/temp/replace.directive';
 import { ItemComponent } from '../components/temp/item.component';
 import { ItemButtonComponent } from '../components/temp/item-button.component';
@@ -41,17 +40,7 @@ import { ItemToggleComponent } from '../components/temp/item-toggle';
     IonTitle,
     IonContent,
     IonList,
-    IonListHeader,
     IonItem,
-    IonLabel,
-    IonIcon,
-    IonButton,
-    IonNote,
-    IonToggle,
-    SelectComponent,
-    OptionComponent,
-    HelloWorldComponent,
-    ReplaceDirective,
     ItemComponent,
     ItemButtonComponent,
     IonRadioGroup,
