@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
 import {
   IonButton,
   IonCheckbox,
@@ -11,6 +11,8 @@ import {
   IonList,
   IonListHeader,
   IonNote,
+  IonRadio,
+  IonRadioGroup,
   IonSpinner,
   IonTitle,
   IonToggle,
@@ -22,6 +24,12 @@ import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 import { SelectComponent } from '../components/temp/select.component';
 import { OptionComponent } from '../components/temp/option.component';
+import { HelloWorldComponent } from '../components/temp/hello-world.component';
+import { ReplaceDirective } from '../components/temp/replace.directive';
+import { ItemComponent } from '../components/temp/item.component';
+import { ItemButtonComponent } from '../components/temp/item-button.component';
+import { ListComponent } from '../components/temp/list.component';
+import { ItemToggleComponent } from '../components/temp/item-toggle';
 
 @Component({
   selector: 'app-testing',
@@ -41,7 +49,15 @@ import { OptionComponent } from '../components/temp/option.component';
     IonNote,
     IonToggle,
     SelectComponent,
-    OptionComponent
+    OptionComponent,
+    HelloWorldComponent,
+    ReplaceDirective,
+    ItemComponent,
+    ItemButtonComponent,
+    IonRadioGroup,
+    IonRadio,
+    ListComponent,
+    ItemToggleComponent
   ],
   template: `
     <ion-header>
@@ -65,57 +81,122 @@ import { OptionComponent } from '../components/temp/option.component';
 
     <ion-content [forceOverscroll]="false">
 
-      <div class="text-xs" style="margin: 16px 16px 0 16px; padding-left: 16px;">USER</div>
-      <ion-list [inset]="true" style="margin-top: 4px;">
+      <!-- <ion-list [inset]="true">
         <ion-item [button]="true">
-          <ion-icon name="person-circle-outline" slot="start" style="font-size: 50px;"></ion-icon>
+          <ion-icon
+            name="person-circle-outline"
+            slot="start"
+            style="font-size: 50px;"
+          ></ion-icon>
           <ion-label>**USERNAME**</ion-label>
         </ion-item>
       </ion-list>
 
-      <div class="text-xs" style="margin: 16px 16px 0 16px; padding-left: 16px;">SETTINGS</div>
-      <ion-list [inset]="true" style="margin-top: 4px;">
+      <div>aaa</div>
+      <ion-list>
         <ion-item [button]="true">
           <ion-label>Date format</ion-label>
           <ion-note>**01.01.2025**</ion-note>
         </ion-item>
-        <ion-item [button]="true">
+        <ion-item>
+          <ion-label>Date format</ion-label>
+          <ion-note>**01.01.2025**</ion-note>
+        </ion-item>
+        <ion-item [button]="true" lines="none">
           <ion-label>Timezone</ion-label>
           <ion-note>**Europe/Zurich**</ion-note>
         </ion-item>
-      </ion-list>
+      </ion-list> -->
 
-      <div>
-        <ion-list [inset]="true">
-          <ion-item [button]="true">
-            <ion-label>Foo</ion-label>
-            <ion-note>bar</ion-note>
+
+      <!-- <div class="list-wrapper">
+        <div class="list-header">TITLE</div>
+        <ion-list class="list">
+          <ion-item>
+            <ion-label>Simple</ion-label>
+            <ion-note>item</ion-note>
           </ion-item>
           <ion-item [button]="true">
-            <ion-label>Foo2</ion-label>
-            <ion-note>bar2</ion-note>
+            <ion-label>Button</ion-label>
+            <ion-note>item</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-toggle>Toggle</ion-toggle>
           </ion-item>
         </ion-list>
-      </div>
+        <div class="list-footer">This is some text to show some useful comments! It may be very long text!</div>
+      </div> -->
 
-      <div class="p-md">
-        <p>selectValue: {{ selectValue }}</p>
-        <app-select [(value)]="selectValue">
-          <app-option label="label-a" [value]="1"></app-option>
-          <app-option label="label-b" [value]="2"></app-option>
-        </app-select>
-      </div>
+      <app-list>
+        <ng-container list-header>A TITLE</ng-container>
 
+        <ng-container list-items>
+          <app-item 
+            label="Do something now"
+            note="done"
+          />
+          <app-item-button
+            label="Do something else"
+            note="yep!"
+          />
+          <app-item-toggle
+            label="Agree??"
+          />
+        </ng-container>
+
+        <ng-container list-footer>Some explanation here!!</ng-container>
+      </app-list>
+
+      <div class="list-wrapper">
+        <div class="list-header">OPTIONS</div>
+        <ion-list class="list">
+          <ion-radio-group value="second">
+            <ion-item>
+              <ion-radio value="first">first</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="second">second</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="third">third</ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+        <div class="list-footer">This is some text to show some useful comments! It may be very long text!</div>
+      </div>
     </ion-content>
   `,
   styles: `
+
+    .list-wrapper {
+      padding: 16px;
+    }
+
+    .list-header {
+      padding: 0 16px;
+      margin-bottom: 6px;
+      font-size: 0.75em;
+      font-weight: 600;
+    }
+    
+    .list {
+      border-radius: 10px;
+    }
+
+    .list-footer {
+      margin-top: 6px;
+      padding: 0 16px;
+      font-size: 0.75em;
+      color: var(--ion-color-step-500);
+    }
+
     ion-item {
       --background: var(--ion-color-step-50);
     }
   `,
 })
 export class TestingPage {
-  selectValue = 1
+  selectValue = 1;
   // firestore = inject(AngularFirestore)
   // fireauth = inject(AngularFireAuth)
   // recurrencyService = inject(RecurrencyService)
@@ -131,9 +212,17 @@ export class TestingPage {
     this.TEST();
   }
 
-  TEST() {
+  animated = false;
+
+  onAnimate() {
+    this.animated = false;
     setTimeout(() => {
-      this.selectValue = 2
-    }, 3000);
+      this.animated = true;
+    }, 100);
+    setTimeout(() => {
+      this.animated = false;
+    }, 1000);
   }
+
+  TEST() {}
 }
