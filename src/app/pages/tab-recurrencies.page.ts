@@ -40,7 +40,9 @@ export class TabRecurrenciesPage {
   //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
   // )
 
-  constructor(private recurrencyService: RecurrencyService) {
-    
+  constructor(private recurrencyService: RecurrencyService) {}
+
+  ngOnDestroy() {
+    console.log('TabsRecurrenciesPage destroyed')
   }
 } 

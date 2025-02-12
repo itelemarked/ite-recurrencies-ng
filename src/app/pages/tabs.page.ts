@@ -14,7 +14,6 @@ import { addIcons } from 'ionicons';
 import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,6 +41,9 @@ import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
     </ion-tabs>
   `,
   styles: ``,
+  host: {
+    '[attr.aria-hidden]': 'false',
+  }
 })
 export class TabsPage {
   constructor() {

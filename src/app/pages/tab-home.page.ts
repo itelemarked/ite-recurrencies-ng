@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonMenuButton, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { menuOutline } from 'ionicons/icons';
+import { cogOutline } from 'ionicons/icons';
+import { RouterLinkDirective } from '../directives/router-link';
 
 @Component({
   selector: 'app-tab-home',
@@ -12,16 +14,17 @@ import { menuOutline } from 'ionicons/icons';
     IonTitle,
     IonContent,
     IonButtons,
-    IonMenuButton
+    IonButton,
+    IonIcon,
+    RouterLinkDirective,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-buttons>
-          <!-- <ion-button>
-            <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
-          </ion-button> -->
-          <ion-menu-button menu="main-menu"></ion-menu-button>
+        <ion-buttons slot="end">
+          <ion-button appRouterLink="/settings">
+            <ion-icon slot="icon-only" name="cog-outline"></ion-icon>
+          </ion-button>
         </ion-buttons>
         <ion-title>Home</ion-title>
       </ion-toolbar>
@@ -34,9 +37,10 @@ import { menuOutline } from 'ionicons/icons';
   styles: ``,
 })
 export class TabHomePage {
+  router = inject(Router)
 
   constructor() {
-    addIcons({ menuOutline })
+    addIcons({ cogOutline })
   }
 
 } 
