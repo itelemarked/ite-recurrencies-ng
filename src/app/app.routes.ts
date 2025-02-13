@@ -6,7 +6,7 @@ import { TestingPage } from './pages/testing.page';
 import { TabsPage } from './pages/tabs.page';
 import { TabBrbComponent } from './pages/tab-brb.page';
 
-const ORIGIN = '/tabs'
+const ORIGIN = '/testing'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
