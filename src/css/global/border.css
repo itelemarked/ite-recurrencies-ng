@@ -1,0 +1,27 @@
+/* 
+* INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
+*/
+
+.rounded-xs {
+  border-radius: 2px;
+}
+
+.rounded-sm {
+  border-radius: 4px;
+}
+
+.rounded-md {
+  border-radius: 8px;
+}
+
+.rounded-lg {
+  border-radius: 16px;
+}
+
+.rounded-xl {
+  border-radius: 32px;
+}
+
+.rounded-full {
+  border-radius: calc(infinity * 1px);
+}
