@@ -6,9 +6,9 @@ import { TestingPage } from './pages/testing.page';
 import { TabsPage } from './pages/tabs.page';
 import { TabBrbComponent } from './pages/tab-brb.page';
 import { SettingsPage } from './pages/settings.page';
-import { SettingsDateformatPage } from './pages/settings-dateformat';
-import { SettingsTimezonePage } from './pages/settings-timezone';
-import { SettingsLoginSignupPage } from './pages/settings-login-signup';
+import { SettingsDateformatPage } from './pages/settings-dateformat.page';
+import { SettingsTimezonePage } from './pages/settings-timezone.page';
+import { SettingsLoginSignupPage } from './pages/settings-login-signup.page';
 
 const ORIGIN = '/tabs'
 

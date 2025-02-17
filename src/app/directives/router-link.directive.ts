@@ -1,5 +1,9 @@
 
 /**
+ * DEPRECATED, USE BLUR-ON-CLICK-DIRECTIVE INSTEAD!
+ */
+
+/**
  * Fixes bug of angular routerLink directive when used with ionic. In this case, the element which triggers the routing
  * remains active when the aria-hidden attribute is set to true.
  * 

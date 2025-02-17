@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton } from '@ionic/angular/standalone';
-import { Subject, takeUntil } from 'rxjs';
 
-import { AuthInputControlComponent } from './auth-input-control.component';
+import { AuthInputControlComponent } from '../components/auth-input-control.component';
 
 
 @Component({
-  selector: 'app-signup-view',
+  selector: 'app-login-view',
   standalone: true,
   imports: [
     FormsModule,
@@ -40,7 +39,6 @@ import { AuthInputControlComponent } from './auth-input-control.component';
     <!-- PASSWORD CTL -->
     <app-auth-input-control
       class="ion-margin-top"
-      [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
       type="password"
       label="Password"
       [formControl]="passwordCtl"
@@ -50,31 +48,18 @@ import { AuthInputControlComponent } from './auth-input-control.component';
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('numericCharacter')">Numeric character missing...</div>
     </app-auth-input-control>
 
-    <!-- CONFIRM PASSWORD CTL -->
-    <app-auth-input-control
-      class="ion-margin-top"
-      [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
-      type="password"
-      label="Confirm password"
-      [formControl]="confirmPasswordCtl"
-    >
-      <div *ngIf="passwordCtl.touched && passwordCtl.hasError('required')">Password required...</div>
-      <div *ngIf="passwordCtl.touched && passwordCtl.hasError('minlength')">Must be at least 6 characters long...</div>
-      <div *ngIf="passwordCtl.touched && passwordCtl.hasError('numericCharacter')">Numeric character missing...</div>
-    </app-auth-input-control>
-
     <!-- SUBMIT BUTTON -->
     <div>
       <ion-button type="submit" class="ion-padding-top" expand="block" (click)="onLoginClick()">
-        Signup
+        Login
       </ion-button>
     </div>
 
     <!-- SIGNUP/LOGIN COMMENTS -->
     <div class="flex ion-justify-content-center ion-align-items-center">
-      <span class="flex-none">Already have an account?</span>
+      <span class="flex-none">No account yet?</span>
       <ion-button class="flex-none" fill="clear" [strong]="true" color="primary" (click)="onLoginSignupToggle()">
-        Login
+        Signup
       </ion-button
       >
     </div>
@@ -84,16 +69,10 @@ import { AuthInputControlComponent } from './auth-input-control.component';
       background-color: var(--ion-color-danger);
       color: var(--ion-color-danger-contrast);
     }
-
-    .ite-password-missmatch {
-      --border-color: var(--ion-color-danger);
-      --label-color: var(--ion-color-danger);
-      --outline-color: var(--ion-color-danger);
-    }
   `,
 })
 
-export class SignupViewComponent {
+export class LoginViewComponent {
 
   // INPUTS
   errorMessagesInput = input<string[]>([], {alias: 'errorMessages'})
@@ -103,8 +82,6 @@ export class SignupViewComponent {
   toggleLoginSignupOutput = output<void>({alias: 'toggleLoginSignup'})
 
   // TEMPLATE VARS
-  passwordMissmatch = () => this.passwordCtl.touched && this.confirmPasswordCtl.touched && this.passwordCtl.value !== this.confirmPasswordCtl.value
-  
   emailCtl = new FormControl('', [
     Validators.required,
     Validators.email
@@ -117,10 +94,6 @@ export class SignupViewComponent {
     // patternValidator(/[a-z]+/, 'lowerCaseCharacter'),
     // patternValidator(/[A-Z]+/, 'upperCaseCharacter'),
     // patternValidator(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]+/, 'specialCharacter'),
-  ])
-
-  confirmPasswordCtl = new FormControl('', [
-    Validators.required,
   ])
 
   // TEMPLATE ACTIONS

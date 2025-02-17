@@ -5,7 +5,7 @@ import { IonButton, IonText } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { AuthInputControlComponent } from './auth-input-control.component';
+import { AuthInputControlComponent } from '../components/auth-input-control.component';
 
 
 @Component({

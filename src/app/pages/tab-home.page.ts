@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonMenuButton, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cogOutline } from 'ionicons/icons';
-import { RouterLinkDirective } from '../directives/router-link';
+import { RouterLinkDirective } from '../directives/router-link.directive';
+import { BlurOnClickDirective } from '../directives/blur-on-click.directive';
 
 @Component({
   selector: 'app-tab-home',
@@ -16,13 +17,15 @@ import { RouterLinkDirective } from '../directives/router-link';
     IonButtons,
     IonButton,
     IonIcon,
+    RouterLink,
     RouterLinkDirective,
+    BlurOnClickDirective
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="end">
-          <ion-button appRouterLink="/settings">
+          <ion-button appBlurOnClick routerLink="/settings">
             <ion-icon slot="icon-only" name="cog-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
