@@ -1,117 +1,160 @@
-import { Component } from '@angular/core';
+
+import { Component, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
+  IonInput,
   IonItem,
+  IonItemDivider,
   IonLabel,
-  IonRadio,
-  IonRadioGroup,
+  IonList,
+  IonSkeletonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { ListComponent } from '../components/list.component';
+import { Auth2Service } from '../services/auth2.service';
+import { FormsModule } from '@angular/forms';
+import { Recurrency2Service } from '../services/recurrency2.service';
+import { SkeletonDirective } from '../directives/skeleton.directive';
+import { AppListComponent } from '../components/app-list.component';
+
 
 @Component({
   selector: 'app-testing',
   standalone: true,
   imports: [
+    CommonModule,
+    FormsModule,
     IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
+    IonButton,
+    IonInput,
     IonItem,
-    IonRadioGroup,
-    IonRadio,
+    IonIcon,
     IonLabel,
-    ListComponent
+    IonSkeletonText,
+    SkeletonDirective,
+    IonList,
+    AppListComponent,
+    IonItemDivider
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>Settings</ion-title>
+        <ion-title>Testing</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false">
-      
-      <app-list
-        class="mt-lg"
-        [inset]="true" 
-        header="TITLE"
-        footer="This is some text to describe the list and which could be quite long if the user wishes so!!"
-      >
-        <ion-item>
-          <ion-label>Pokémon Yellow</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>Mega Man X</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>The Legend of Zelda</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>Pac-Man</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>Super Mario World</ion-label>
-        </ion-item>
+    <ion-content [forceOverscroll]="false" class="ion-padding">
+
+      <!-- <section class="user-info" style="border: 1px solid var(--ion-color-medium); border-radius: 10px; margin-top: 10px; padding: 10px;">
+        <p>User email: {{ userInfo() }}</p>
+        <ion-button expand="block" color="danger" (click)="onLogout()">logout</ion-button>
+      </section>
+
+      <section class="app-login" style="border: 1px solid var(--ion-color-primary); padding: 10px; border-radius: 10px; margin-top: 20px;">
+        <ion-button size="small" fill="outline" (click)="logAaa()">aaa</ion-button>
+        <ion-input label="Email" [(ngModel)]="email" />
+        <ion-input label="Password" [(ngModel)]="password" />
+        <ion-button expand="block" (click)="onLogin()">login</ion-button>
+      </section>
+
+      <section class="recurrencies" style="border: 1px solid var(--ion-color-medium); border-radius: 10px; margin-top: 10px; padding: 10px;">
+        <p *ngIf="recurrencyService.recurrencies() === undefined">Recurrencies are loading...</p>
+        <ul *ngIf="recurrencyService.recurrencies() !== undefined">
+          <li *ngFor="let recurrency of recurrencyService.recurrencies()">
+            {{ recurrency.title }}
+          </li>
+        </ul>
+      </section> -->
+
+      <h1>Some paragraph here...</h1>
+      <p>Some other paragraph here...</p>
+
+      <div style="margin: 20px;">aaa</div>
+
+      <app-list [inset]="true">
+        <header>List header</header>
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-label>a</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>b</ion-label>
+          </ion-item>
+        </ion-list>
+        <footer>List footer</footer>
       </app-list>
 
-      <app-list 
-        class="mt-xl" 
-        [inset]="true"
-        header="OPTIONS"
-      >
-        <ion-radio-group value="second">
-          <ion-item>
-            <ion-radio value="first">first</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="second">second</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="third">third</ion-radio>
-          </ion-item>
-        </ion-radio-group>
-      </app-list>
+      <ion-list [inset]="true">
+        <ion-item>
+          <ion-label>a</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>b</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- <ion-list [inset]="true">
+        <ion-item>
+          <ion-label>a</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>b</ion-label>
+        </ion-item>
+      </ion-list> -->
+
+
     </ion-content>
   `,
   styles: `
-
+    .app-list-icon {
+      font-size: 3.5em;
+    }
   `,
 })
 export class TestingPage {
-  selectValue = 1;
-  // firestore = inject(AngularFirestore)
-  // fireauth = inject(AngularFireAuth)
-  // recurrencyService = inject(RecurrencyService)
-  // authService = inject(AuthService)
-  // settingsService = inject(SettingsService)
 
-  settingsTimezone = '';
+  authService = inject(Auth2Service)
+  recurrencyService = inject(Recurrency2Service)
 
-  loginSignup: 'login' | 'signup' = 'login';
+  userInfo = computed(() => {
+    const user = this.authService.user()
+    switch (user) {
+      case undefined: return 'User loading...' 
+      case null: return 'No registered user...' 
+      default: return user.email
+    }
+  })
+
+  email = ''
+  password = ''
 
   constructor() {
-    addIcons({ personCircleOutline });
-    this.TEST();
+    addIcons({ personCircleOutline })
   }
 
-  animated = false;
-
-  onAnimate() {
-    this.animated = false;
-    setTimeout(() => {
-      this.animated = true;
-    }, 100);
-    setTimeout(() => {
-      this.animated = false;
-    }, 1000);
+  onLogin() {
+    this.authService.login(this.email, this.password)
+    this.email = this.password = ''
   }
 
-  TEST() {}
+  onLogout() {
+    this.authService.logout()
+  }
+
+  logAaa() {
+    this.email = 'aaa@aaa.com'
+    this.password = '111111'
+    this.onLogin()
+  }
+
 }

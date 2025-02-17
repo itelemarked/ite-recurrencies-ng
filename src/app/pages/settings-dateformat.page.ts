@@ -2,13 +2,11 @@ import { Component } from '@angular/core';
 
 import {
   IonBackButton,
-  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
-  IonLabel,
+  IonList,
   IonNote,
   IonRadio,
   IonRadioGroup,
@@ -18,7 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { ListComponent } from '../components/list.component';
+import { AppListComponent } from '../components/app-list.component';
 
 @Component({
   selector: 'app-settings-dateformat',
@@ -32,10 +30,10 @@ import { ListComponent } from '../components/list.component';
     IonButtons,
     IonBackButton,
     IonItem,
-    IonLabel,
     IonRadioGroup,
     IonRadio,
-    ListComponent,
+    AppListComponent,
+    IonList
   ],
   template: `
     <ion-header>
@@ -50,27 +48,31 @@ import { ListComponent } from '../components/list.component';
     <ion-content [forceOverscroll]="false">
       <ion-radio-group value="DD.MM.YYYY">
         <app-list class="mt-xl" [inset]="true">
-          <ion-item>
-            <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
-              <span class="flex-1">Platform defined</span>
-              <ion-note>2025/06/01</ion-note>
-            </ion-radio>
-          </ion-item>
+          <ion-list>
+            <ion-item>
+              <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
+                <span class="flex-1">Platform defined</span>
+                <ion-note>2025/06/01</ion-note>
+              </ion-radio>
+            </ion-item>
+          </ion-list>
         </app-list>
 
         <app-list 
           class="mt-lg" 
           [inset]="true"
         >  
-          <ion-item>
-            <ion-radio value="DD.MM.YYYY">** 01.06.2025 **</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="DD.MM.YY HH:mm:ss.SSS TIMEZONE">** 01.06.25 12:28:59.123 Europe/Zurich **</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="YYYY-MM-DD">** 2025-06-01 **</ion-radio>
-          </ion-item>
+          <ion-list>
+            <ion-item>
+              <ion-radio value="DD.MM.YYYY">** 01.06.2025 **</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="DD.MM.YY HH:mm:ss.SSS TIMEZONE">** 01.06.25 12:28:59.123 Europe/Zurich **</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="YYYY-MM-DD">** 2025-06-01 **</ion-radio>
+            </ion-item>
+          </ion-list>
         </app-list>
       </ion-radio-group>
     </ion-content>

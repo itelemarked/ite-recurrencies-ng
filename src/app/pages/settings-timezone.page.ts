@@ -14,11 +14,12 @@ import {
   IonRadioGroup,
   IonTitle,
   IonToolbar,
+  IonList
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { ListComponent } from '../components/list.component';
+import { AppListComponent } from '../components/app-list.component';
 
 @Component({
   selector: 'app-settings-timezone',
@@ -34,7 +35,8 @@ import { ListComponent } from '../components/list.component';
     IonRadioGroup,
     IonRadio,
     IonNote,
-    ListComponent,
+    AppListComponent,
+    IonList
   ],
   template: `
     <ion-header>
@@ -49,28 +51,32 @@ import { ListComponent } from '../components/list.component';
     <ion-content [forceOverscroll]="false">
       <ion-radio-group value="Europe/Zurich">
         <app-list class="mt-xl" [inset]="true">
-          <ion-item>
-            <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
-              <span class="flex-1">Platform defined</span>
-              <ion-note>Europe/Zurich</ion-note>
-            </ion-radio>
-          </ion-item>
+          <ion-list>
+            <ion-item>
+              <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
+                <span class="flex-1">Platform defined</span>
+                <ion-note>Europe/Zurich</ion-note>
+              </ion-radio>
+            </ion-item>
+          </ion-list>
         </app-list>
 
         <app-list
           class="mt-lg"
           [inset]="true"
-          header="AVAILABLE TIMEZONES"
         >
-          <ion-item>
-            <ion-radio value="Europe/Zurich">** Europe/Zurich **</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="Indian/Mauritius">** Indian/Mauritius **</ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio value="UTC">** UTC **</ion-radio>
-          </ion-item>
+          <ion-list>
+            <header>AVAILABLE TIMEZONES</header>
+            <ion-item>
+              <ion-radio value="Europe/Zurich">** Europe/Zurich **</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="Indian/Mauritius">** Indian/Mauritius **</ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-radio value="UTC">** UTC **</ion-radio>
+            </ion-item>
+          </ion-list>
         </app-list>
       </ion-radio-group>
     </ion-content>
