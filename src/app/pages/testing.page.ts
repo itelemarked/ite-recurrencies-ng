@@ -23,6 +23,9 @@ import { FormsModule } from '@angular/forms';
 import { Recurrency2Service } from '../services/recurrency2.service';
 import { SkeletonDirective } from '../directives/skeleton.directive';
 import { AppListComponent } from '../components/app-list.component';
+import { EncapsulationNoneComponent } from '../_temp_/encapsulation-none.component';
+import { EncapsulationEmulatedComponent } from '../_temp_/encapsulation-emulated.component';
+import { EncapsulationShadowDomComponent } from '../_temp_/encapsulation-shadow-dom.component';
 
 
 @Component({
@@ -44,7 +47,10 @@ import { AppListComponent } from '../components/app-list.component';
     SkeletonDirective,
     IonList,
     AppListComponent,
-    IonItemDivider
+    IonItemDivider,
+    EncapsulationNoneComponent,
+    EncapsulationEmulatedComponent,
+    EncapsulationShadowDomComponent
   ],
   template: `
     <ion-header>
@@ -53,7 +59,28 @@ import { AppListComponent } from '../components/app-list.component';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false" class="ion-padding">
+    <ion-content [forceOverscroll]="false" class="p-sm">
+
+      <app-encapsulation-none>
+        <div class="app-message">none message</div>
+      </app-encapsulation-none>
+
+      <app-encapsulation-emulated>
+        <div class="app-message">emulated message</div>
+      </app-encapsulation-emulated>
+
+      <app-encapsulation-shadow-dom>
+        <div class="app-message">shadow-dom message</div>
+      </app-encapsulation-shadow-dom>
+
+      <ion-list>
+        <ion-item>
+          <ion-label>item 1</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>item 2</ion-label>
+        </ion-item>
+      </ion-list>
 
       <!-- <section class="user-info" style="border: 1px solid var(--ion-color-medium); border-radius: 10px; margin-top: 10px; padding: 10px;">
         <p>User email: {{ userInfo() }}</p>
@@ -76,12 +103,12 @@ import { AppListComponent } from '../components/app-list.component';
         </ul>
       </section> -->
 
-      <h1>Some paragraph here...</h1>
+      <!-- <h1>Some paragraph here...</h1>
       <p>Some other paragraph here...</p>
 
       <div style="margin: 20px;">aaa</div>
 
-      <app-list [inset]="true">
+      <app-list>
         <header>List header</header>
         <ion-list [inset]="true">
           <ion-item>
@@ -101,7 +128,7 @@ import { AppListComponent } from '../components/app-list.component';
         <ion-item>
           <ion-label>b</ion-label>
         </ion-item>
-      </ion-list>
+      </ion-list> -->
 
       <!-- <ion-list [inset]="true">
         <ion-item>
@@ -115,11 +142,7 @@ import { AppListComponent } from '../components/app-list.component';
 
     </ion-content>
   `,
-  styles: `
-    .app-list-icon {
-      font-size: 3.5em;
-    }
-  `,
+  styles: ``,
 })
 export class TestingPage {
 
