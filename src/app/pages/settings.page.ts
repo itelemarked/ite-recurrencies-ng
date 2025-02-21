@@ -37,6 +37,9 @@ import { ContentLoadingComponent } from '../_temp_/content-loading.component';
   selector: 'app-settings',
   standalone: true,
   imports: [
+    RouterLink,
+    RouterLinkDirective,
+    NgIf,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -47,20 +50,17 @@ import { ContentLoadingComponent } from '../_temp_/content-loading.component';
     IonBackButton,
     IonIcon,
     IonNote,
-    AppListComponent,
     IonButton,
-    RouterLink,
-    RouterLinkDirective,
+    IonList,
     IonAlert,
-    NgIf,
+    IonLoading,
+    IonSpinner,
+    IonSkeletonText,
     BlurOnClickDirective,
     BackdropDirective,
     SkeletonDirective,
-    IonSkeletonText,
-    IonLoading,
-    IonSpinner,
     ContentLoadingComponent,
-    IonList
+    AppListComponent,
   ],
   template: `
     <ion-header>
@@ -73,44 +73,38 @@ import { ContentLoadingComponent } from '../_temp_/content-loading.component';
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-    
-      <!-- <app-content-loading *ngIf="authService.isLoading()" /> -->
-      <!-- <app-content-loading /> -->
-
-      <app-list
-        class="mt-lg"
-        [inset]="true"
-        header="USER"
-      >
+      <app-list>
+        
         <header>USER</header>
-        <ion-list *ngIf="authService.isLoggedIn()">
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <ion-list [inset]="true">
+            <ion-item class="app-user-item">
+              <ion-icon name="person-circle-outline" slot="start" />
+              <ion-label>{{ authService.user()?.email }}</ion-label>
+              <ion-button color="danger" fill="outline" appBlurOnClick (click)="confirmLogoutAlert.show = true">logout</ion-button>
+            </ion-item>
+          </ion-list>
+        </ng-container>
+
+        <!-- <ion-list *ngIf="authService.isLoggedIn()">
           <ion-item class="app-user-item">
             <ion-icon name="person-circle-outline" slot="start" />
             <ion-label>{{ authService.user()!.email }}</ion-label>
             <ion-button color="danger" fill="outline" appBlurOnClick (click)="confirmLogoutAlert.show = true">logout</ion-button>
           </ion-item>
-        </ion-list>
-
-        <ion-list *ngIf="authService.isLoggedOut()">
+        </ion-list> -->
+        <!-- <ion-list *ngIf="authService.isLoggedOut()">
           <ion-item class="app-user-item" button appBlurOnClick routerLink="/settings/login">
             <ion-icon name="person-circle-outline" slot="start" color="danger" />
             <ion-label>Need to login?</ion-label>
           </ion-item>
-        </ion-list>
-
-        <!-- <main *ngIf="authService.isLoading()"> -->
-        <!-- <main>
-          <ion-item class="app-user-item">
-            <ion-icon appSkeleton class="rounded-full" slot="start" />
-            <ion-label appSkeleton class="rounded-md">skeleton-loading-user</ion-label>
-          </ion-item> 
-        </main>-->
+        </ion-list> -->
         <footer>**Logged-in users have their datas backed-up on a google server. The datas of unregistered users are stored in the browser memory (data lost is not guaranteed...)**</footer>
       </app-list>
 
-      <app-list class="mt-lg" [inset]="true">
+      <app-list>
         <header>Settings</header>
-        <ion-list>
+        <ion-list [inset]="true">
           <ion-item [button]="true" appBlurOnClick routerLink="/settings/dateformat">
             <ion-label>Date format</ion-label>
             <ion-note>**01.06.2025**</ion-note>

@@ -47,7 +47,7 @@ import { AppListComponent } from '../components/app-list.component';
 
     <ion-content [forceOverscroll]="false">
       <ion-radio-group value="DD.MM.YYYY">
-        <app-list class="mt-xl" [inset]="true">
+        <app-list class="mt-xl">
           <ion-list>
             <ion-item>
               <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
@@ -60,7 +60,6 @@ import { AppListComponent } from '../components/app-list.component';
 
         <app-list 
           class="mt-lg" 
-          [inset]="true"
         >  
           <ion-list>
             <ion-item>
