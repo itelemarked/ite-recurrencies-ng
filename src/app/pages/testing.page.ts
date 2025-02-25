@@ -1,17 +1,23 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
+  IonAlert,
   IonButton,
   IonContent,
   IonHeader,
   IonInput,
+  IonLoading,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 import { Auth2Service } from '../services/auth2.service';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Recurrency2Service } from '../services/recurrency2.service';
+import { ContentLoadingComponent } from '../components/content-loading.component';
+import { BackdropDirective } from '../directives/backdrop.directive';
+import { AuthAuthenticateFormComponent } from '../components/temp/auth-authenticate-form.component';
+import { AppInputComponent } from '../components/app-input.component';
 
 
 @Component({
@@ -20,11 +26,13 @@ import { Recurrency2Service } from '../services/recurrency2.service';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
+    AuthAuthenticateFormComponent,
+    AppInputComponent,
     IonInput,
   ],
   template: `
@@ -34,28 +42,24 @@ import { Recurrency2Service } from '../services/recurrency2.service';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false" class="ion-padding">
+    <ion-content [forceOverscroll]="false">
 
-      <section class="user-info" style="border: 1px solid var(--ion-color-medium); border-radius: 10px; margin-top: 10px; padding: 10px;">
-        <p>User email: {{ userInfo() }}</p>
-        <ion-button expand="block" color="danger" (click)="onLogout()">logout</ion-button>
-      </section>
+      <!-- <auth-authenticate-form /> -->
 
-      <section class="app-login" style="border: 1px solid var(--ion-color-primary); padding: 10px; border-radius: 10px; margin-top: 20px;">
-        <ion-button size="small" fill="outline" (click)="logAaa()">aaa</ion-button>
-        <ion-input label="Email" [(ngModel)]="email" />
-        <ion-input label="Password" [(ngModel)]="password" />
-        <ion-button expand="block" (click)="onLogin()">login</ion-button>
-      </section>
+      <ion-input></ion-input>
 
-      <section class="recurrencies" style="border: 1px solid var(--ion-color-medium); border-radius: 10px; margin-top: 10px; padding: 10px;">
-        <p *ngIf="recurrencyService.recurrencies() === undefined">Recurrencies are loading...</p>
-        <ul *ngIf="recurrencyService.recurrencies() !== undefined">
-          <li *ngFor="let recurrency of recurrencyService.recurrencies()">
-            {{ recurrency.title }}
-          </li>
-        </ul>
-      </section>
+      <app-input
+        type="text"
+        label="Email"
+        [formControl]="email"
+      />
+
+      <app-input
+        type="password"
+        label="Password"
+        [(ngModel)]="passwordValue"
+        [disabled]="passwordDisabled"
+      />
 
     </ion-content>
   `,
@@ -63,34 +67,19 @@ import { Recurrency2Service } from '../services/recurrency2.service';
 })
 export class TestingPage {
 
-  authService = inject(Auth2Service)
-  recurrencyService = inject(Recurrency2Service)
+  email = new FormControl({value: 'aaa@aaa.com', disabled: false}, Validators.required)
 
-  userInfo = computed(() => {
-    const user = this.authService.user()
-    switch (user) {
-      case undefined: return 'User loading...' 
-      case null: return 'No registered user...' 
-      default: return user.email
-    }
-  })
+  passwordValue = signal('111111')
+  passwordDisabled = false
+  
 
-  email = ''
-  password = ''
+  ngOnInit() {
+    setTimeout(() => {
+      // this.email.setValue('bbb@bbb')
+      // this.passwordValue.set('22222')
 
-  onLogin() {
-    this.authService.login(this.email, this.password)
-    this.email = this.password = ''
+      // this.email.disable()
+      // this.passwordDisabled = true
+    }, 3000);
   }
-
-  onLogout() {
-    this.authService.logout()
-  }
-
-  logAaa() {
-    this.email = 'aaa@aaa.com'
-    this.password = '111111'
-    this.onLogin()
-  }
-
 }
