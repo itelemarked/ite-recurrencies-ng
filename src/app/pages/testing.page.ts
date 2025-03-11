@@ -61,9 +61,9 @@ import { AppInput2Component } from '../components/app-input2.component';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false" class="ion-padding">
+    <ion-content [forceOverscroll]="false" class="p-xl">
 
-    
+      <div>testing</div>
 
     </ion-content>
   `,

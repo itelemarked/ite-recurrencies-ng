@@ -3,89 +3,90 @@
 * INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
 */
 
+:root {
 
-/********** FLEX CONTAINER - ALIGN ITEMS ***********/
-.items-start {
-  align-items: flex-start;
+  /********** FLEX CONTAINER - ALIGN ITEMS ***********/
+  .items-start {
+    align-items: flex-start;
+  }
+
+  .items-end {
+    align-items: flex-end;
+  }
+
+  .items-center {
+    align-items: center;
+  }
+
+  .items-baseline {
+    align-items: baseline;
+  }
+
+  .items-stretch {
+    align-items: stretch;
+  }
+
+
+  /********** FLEX CONTAINER - JUSTIFY CONTENT ***********/
+  .justify-start {
+    justify-content: flex-start;
+  }
+
+  .justify-end {
+    justify-content: flex-end;
+  }
+
+  .justify-center {
+    justify-content: center;
+  }
+
+  .justify-between {
+    justify-content: space-between;
+  }
+
+  .justify-around {
+    justify-content: space-around;
+  }
+
+  .justify-evenly {
+    justify-content: space-evenly;
+  }
+
+  .justify-stretch {
+    justify-content: stretch;
+  }
+
+  .justify-baseline {
+    justify-content: baseline;
+  }
+
+  .justify-normal {
+    justify-content: normal;
+  }
+
+
+  /********* FLEX CHILDREN - FLEX ***********/
+
+  /* Use flex-1 to allow a flex item to grow and shrink as needed, ignoring its initial size: */
+  .flex-1 {
+    flex: 1 1 0%;
+  }
+
+  /* Use flex-auto to allow a flex item to grow and shrink, taking into account its initial size: */
+  .flex-auto {
+    flex: 1 1 auto;
+  }
+
+  /* Use flex-initial to allow a flex item to shrink but not grow, taking into account its initial size: */
+  .flex-initial {
+    flex: 0 1 auto;
+  }
+
+  /* Use flex-none to prevent a flex item from growing or shrinking: */
+  .flex-none {
+    flex: 0 0 auto;
+  }
+
 }
-
-.items-end {
-  align-items: flex-end;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.items-baseline {
-  align-items: baseline;
-}
-
-.items-stretch {
-  align-items: stretch;
-}
-
-
-/********** FLEX CONTAINER - JUSTIFY CONTENT ***********/
-.justify-start {
-  justify-content: flex-start;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-around {
-  justify-content: space-around;
-}
-
-.justify-evenly {
-  justify-content: space-evenly;
-}
-
-.justify-stretch {
-  justify-content: stretch;
-}
-
-.justify-baseline {
-  justify-content: baseline;
-}
-
-.justify-normal {
-  justify-content: normal;
-}
-
-
-/********* FLEX CHILDREN - FLEX ***********/
-
-/* Use flex-1 to allow a flex item to grow and shrink as needed, ignoring its initial size: */
-.flex-1 {
-  flex: 1 1 0%;
-}
-
-/* Use flex-auto to allow a flex item to grow and shrink, taking into account its initial size: */
-.flex-auto {
-  flex: 1 1 auto;
-}
-
-/* Use flex-initial to allow a flex item to shrink but not grow, taking into account its initial size: */
-.flex-initial {
-  flex: 0 1 auto;
-}
-
-/* Use flex-none to prevent a flex item from growing or shrinking: */
-.flex-none {
-  flex: 0 0 auto;
-}
-
-
 
 

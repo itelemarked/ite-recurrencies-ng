@@ -3,18 +3,22 @@
 * INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
 */
 
-.text-xs {
-  font-size: 0.75em;
-}
+:root {
 
-.text-sm {
-  font-size: 0.9em;
-}
+  .text-xs {
+    font-size: 0.75em;
+  }
 
-.text-lg {
-  font-size: 1.1em;
-}
+  .text-sm {
+    font-size: 0.9em;
+  }
 
-.text-xl {
-  font-size: 1.3em;
+  .text-lg {
+    font-size: 1.1em;
+  }
+
+  .text-xl {
+    font-size: 1.3em;
+  }
+
 }
