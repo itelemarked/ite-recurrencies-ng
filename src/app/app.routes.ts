@@ -8,7 +8,7 @@ import { TabBrbComponent } from './pages/tab-brb.page';
 import { SettingsPage } from './pages/settings.page';
 import { SettingsDateformatPage } from './pages/settings-dateformat.page';
 import { SettingsTimezonePage } from './pages/settings-timezone.page';
-import { SettingsLoginSignupPage } from './pages/settings-login-signup.page';
+import { SettingsAuthenticatePage } from './pages/settings-authenticate.page';
 
 const ORIGIN = '/tabs'
 
@@ -26,7 +26,7 @@ export const routes: Routes = [
   { path: 'settings', component: SettingsPage },
   { path: 'settings/dateformat', component: SettingsDateformatPage },
   { path: 'settings/timezone', component: SettingsTimezonePage },
-  { path: 'settings/login', component: SettingsLoginSignupPage },
+  { path: 'settings/login', component: SettingsAuthenticatePage },
 
   { path: 'testing', component: TestingPage },
   

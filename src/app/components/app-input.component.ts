@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { Component, computed, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
@@ -7,17 +7,17 @@ import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-auth-input-control',
+  selector: 'app-input',
   standalone: true,
   imports: [
-    CommonModule,
+    NgClass,
     FormsModule,
     ReactiveFormsModule,
     IonButton,
     IonIcon
   ],
   providers: [
-    { provide: NG_VALUE_ACCESSOR, multi: true, useExisting: AuthInputControlComponent }
+    { provide: NG_VALUE_ACCESSOR, multi: true, useExisting: AppInputComponent }
   ],
   template: `
     <div [ngClass]="{'ite-disabled': disabled()}">
@@ -123,7 +123,7 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
     }
   `,
 })
-export class AuthInputControlComponent implements ControlValueAccessor {
+export class AppInputComponent implements ControlValueAccessor {
 
   // // INPUTS
   typeInp = input.required<'text' | 'password'>({alias: 'type'})

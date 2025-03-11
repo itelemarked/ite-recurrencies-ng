@@ -1,0 +1,67 @@
+import { Component, computed, input, output } from '@angular/core';
+import { AppListComponent } from './app-list.component';
+
+import { IonButton, IonIcon, IonItem, IonLabel, IonList } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { personCircleOutline } from 'ionicons/icons';
+import { User } from '../types/User';
+import { NgIf } from '@angular/common';
+
+@Component({
+  selector: 'user-state2',
+  standalone: true,
+  imports: [
+    NgIf,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonButton,
+    AppListComponent,
+  ],
+  template: `
+      <header>USER</header>
+      <ng-container *ngIf="isLoggedIn()">
+        <ion-list [inset]="true" class="mx-0">
+          <ion-item>
+            <ion-icon name="person-circle-outline" slot="start" />
+            <ion-label>{{ user()!.email }}</ion-label>
+            <ion-button color="danger" fill="outline" (click)="logout.emit()">logout</ion-button>
+          </ion-item>
+        </ion-list>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedOut()">
+        <ion-list [inset]="true" class="mx-0">
+          <ion-item button (click)="login.emit()">
+            <ion-icon name="person-circle-outline" slot="start" color="danger" />
+            <ion-label>Need to login?</ion-label>
+          </ion-item>
+        </ion-list>
+      </ng-container>
+      <footer>**Logged-in users have their datas backed-up on a google server. The datas of unregistered users are stored in the browser memory (data lost is not guaranteed...)**</footer>
+  `,
+  styles: `
+    ion-icon {
+      font-size: 3.5em;
+    }
+
+    .no-margin-x {
+      margin-left: 0;
+    }
+  `,
+})
+export class UserState2Component {
+
+  user = input.required<User | null | undefined>()
+  login = output<void>()
+  logout = output<void>()
+
+  isLoggedOut = computed(() => this.user() === null)
+  isLoggedIn = computed(() => this.user() !== null && this.user() !== undefined)
+
+  constructor() {
+    addIcons({ personCircleOutline })
+  }
+
+}

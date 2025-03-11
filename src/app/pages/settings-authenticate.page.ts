@@ -8,10 +8,11 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+// import { UserAuthenticateComponent } from '../components/user-authenticate.component';
 
 
 @Component({
-  selector: 'app-settings-login-signup',
+  selector: 'app-settings-authenticate',
   standalone: true,
   imports: [
     IonHeader,
@@ -19,8 +20,8 @@ import {
     IonTitle,
     IonContent,
     IonButtons,
-    IonBackButton,
-  ],
+    IonBackButton
+],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -32,11 +33,11 @@ import {
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-      <p>SettingsLoginSignupPage works</p>
+      <!-- <user-authenticate /> -->
     </ion-content>
   `,
   styles: ``,
 })
-export class SettingsLoginSignupPage {
+export class SettingsAuthenticatePage {
 
 }

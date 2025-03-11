@@ -5,7 +5,7 @@ import { IonButton, IonText } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { AuthInputControlComponent } from '../components/auth-input-control.component';
+import { AppInputComponent } from '../components/app-input.component';
 
 
 @Component({
@@ -16,7 +16,7 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
     CommonModule,
     ReactiveFormsModule,
     IonButton,
-    AuthInputControlComponent
+    AppInputComponent
   ],
   template: `
 
@@ -31,7 +31,7 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
       <!-- EMAIL CTL -->
-      <app-auth-input-control
+      <app-input
         class="ite-email-ctl"
         type="text"
         label="Email"
@@ -39,10 +39,10 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
       >
         <div *ngIf="emailCtl.touched && emailCtl.hasError('email')">Invalid email...</div>
         <div *ngIf="emailCtl.touched && emailCtl.hasError('required')">Email required...</div>
-      </app-auth-input-control>
+      </app-input>
 
       <!-- PASSWORD CTL -->
-      <app-auth-input-control
+      <app-input
         class="ite-password-ctl ion-margin-top"
         [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
         type="password"
@@ -55,10 +55,10 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
         <!-- <div *ngIf="passwordCtl.touched && passwordCtl.hasError('upperCaseCharacter')">Upper case character missing...</div>
         <div *ngIf="passwordCtl.touched && passwordCtl.hasError('lowerCaseCharacter')">Lower case character missing...</div>
         <div *ngIf="passwordCtl.touched && passwordCtl.hasError('specialCharacter')">Special character missing...</div> -->
-      </app-auth-input-control>
+      </app-input>
 
       <!-- CONFIRM PASSWORD CTL -->
-      <app-auth-input-control
+      <app-input
         *ngIf="loginSignup() === 'signup'"
         class="ite-confirm-password-ctl ion-margin-top"
         [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
@@ -68,7 +68,7 @@ import { AuthInputControlComponent } from '../components/auth-input-control.comp
       >
         <div *ngIf="confirmPasswordCtl.touched && confirmPasswordCtl.hasError('required')">Password confirmation required...</div>
         <div *ngIf="passwordMissmatch()">Password missmatch...</div>
-      </app-auth-input-control>
+      </app-input>
 
       <!-- SUBMIT BUTTON -->
       <div class="ite-submit-button">

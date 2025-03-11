@@ -3,7 +3,7 @@ import { Component, input, output } from '@angular/core';
 import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton } from '@ionic/angular/standalone';
 
-import { AuthInputControlComponent } from '../components/auth-input-control.component';
+import { AuthInputControlComponent } from '../components/app-input.component';
 
 
 @Component({
