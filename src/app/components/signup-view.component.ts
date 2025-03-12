@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validat
 import { IonButton } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 
-import { AuthInputControlComponent } from './auth-input-control.component';
+import { AppInputComponent } from './app-input.component';
 
 
 @Component({
@@ -15,7 +15,7 @@ import { AuthInputControlComponent } from './auth-input-control.component';
     CommonModule,
     ReactiveFormsModule,
     IonButton,
-    AuthInputControlComponent
+    AppInputComponent
   ],
   template: `
 
@@ -28,17 +28,17 @@ import { AuthInputControlComponent } from './auth-input-control.component';
     </div>
 
     <!-- EMAIL CTL -->
-    <app-auth-input-control
+    <app-input
       type="text"
       label="Email"
       [formControl]="emailCtl"
     >
       <div *ngIf="emailCtl.touched && emailCtl.hasError('email')">Invalid email...</div>
       <div *ngIf="emailCtl.touched && emailCtl.hasError('required')">Email required...</div>
-    </app-auth-input-control>
+    </app-input>
 
     <!-- PASSWORD CTL -->
-    <app-auth-input-control
+    <app-input
       class="ion-margin-top"
       [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
       type="password"
@@ -48,10 +48,10 @@ import { AuthInputControlComponent } from './auth-input-control.component';
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('required')">Password required...</div>
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('minlength')">Must be at least 6 characters long...</div>
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('numericCharacter')">Numeric character missing...</div>
-    </app-auth-input-control>
+    </app-input>
 
     <!-- CONFIRM PASSWORD CTL -->
-    <app-auth-input-control
+    <app-input
       class="ion-margin-top"
       [ngClass]="{'ite-password-missmatch': passwordMissmatch()}"
       type="password"
@@ -61,7 +61,7 @@ import { AuthInputControlComponent } from './auth-input-control.component';
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('required')">Password required...</div>
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('minlength')">Must be at least 6 characters long...</div>
       <div *ngIf="passwordCtl.touched && passwordCtl.hasError('numericCharacter')">Numeric character missing...</div>
-    </app-auth-input-control>
+    </app-input>
 
     <!-- SUBMIT BUTTON -->
     <div>

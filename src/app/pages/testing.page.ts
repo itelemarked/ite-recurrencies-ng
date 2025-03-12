@@ -5,6 +5,9 @@ import {
   IonContent,
   IonHeader,
   IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
   IonLoading,
   IonTitle,
   IonToolbar,
@@ -34,6 +37,9 @@ import { AppInputComponent } from '../components/app-input.component';
     AuthAuthenticateFormComponent,
     AppInputComponent,
     IonInput,
+    IonList,
+    IonItem,
+    IonLabel
   ],
   template: `
     <ion-header>
@@ -42,28 +48,24 @@ import { AppInputComponent } from '../components/app-input.component';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false">
+    <ion-content [forceOverscroll]="false" class="ion-padding">
 
-      <!-- <auth-authenticate-form /> -->
-
-      <ion-input></ion-input>
-
-      <app-input
-        type="text"
-        label="Email"
-        [formControl]="email"
-      />
-
-      <app-input
-        type="password"
-        label="Password"
-        [(ngModel)]="passwordValue"
-        [disabled]="passwordDisabled"
-      />
+      <ion-list inset class="mx-0">
+        <ion-item>
+          <ion-label>a</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>b</ion-label>
+        </ion-item>
+      </ion-list>
 
     </ion-content>
   `,
-  styles: ``,
+  styles: `
+    ion-item {
+      --background: var(--ion-color-light);
+    }
+  `,
 })
 export class TestingPage {
 

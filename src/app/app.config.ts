@@ -8,6 +8,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 
+import { provideAnimations } from '@angular/platform-browser/animations'
+
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 
 const firebaseConfig = {
@@ -27,7 +29,8 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(firebaseConfig)), 
     provideAuth(() => getAuth()), 
     provideFirestore(() => getFirestore()), 
-    provideDatabase(() => getDatabase())
+    provideDatabase(() => getDatabase()),
+    provideAnimations()
   ]
 };
 
