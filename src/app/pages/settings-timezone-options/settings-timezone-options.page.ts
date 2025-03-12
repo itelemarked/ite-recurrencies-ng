@@ -19,7 +19,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { AppListComponent } from '../components/app-list.component';
+import { AppListComponent } from '../../_shared/components/app-list.component';
 
 @Component({
   selector: 'app-settings-timezone',
@@ -92,7 +92,7 @@ import { AppListComponent } from '../components/app-list.component';
     }
   `,
 })
-export class SettingsTimezonePage {
+export class SettingsTimezoneOptionsPage {
   constructor() {
     addIcons({ personCircleOutline });
   }

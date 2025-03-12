@@ -16,7 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { AppListComponent } from '../components/app-list.component';
+import { AppListComponent } from '../../_shared/components/app-list.component';
 
 @Component({
   selector: 'app-settings-dateformat',
@@ -89,7 +89,7 @@ import { AppListComponent } from '../components/app-list.component';
 
   `,
 })
-export class SettingsDateformatPage {
+export class SettingsDateformatOptionsPage {
   constructor() {
     addIcons({ personCircleOutline });
   }

@@ -14,18 +14,15 @@ import { IonSpinner } from "@ionic/angular/standalone";
   `,
   styles: [`
 
-    // CSS VARS
+    /* CSS VARS */
     :host {
       --ite-background-color: yellow;
       --ite-spinner-color: var(--ion-color-primary);
     }
 
-    :host {
-      // position: absolute; 
-      // top: 0; 
+    :host { 
       height: 100%; 
       width: 100%; 
-      
     }
 
     .app-wrapper {

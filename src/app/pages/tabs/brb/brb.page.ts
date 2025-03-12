@@ -23,7 +23,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
   `,
   styles: ``,
 })
-export class TabBrbComponent {
+export class TabsBrbComponent {
 
   constructor() {}
 

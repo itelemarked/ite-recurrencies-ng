@@ -1,15 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+
 import {
-  IonContent,
-  IonHeader,
   IonIcon,
   IonTabBar,
   IonTabButton,
-  IonTitle,
-  IonToolbar,
   IonTabs,
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
 import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
 

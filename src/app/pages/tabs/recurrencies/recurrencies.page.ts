@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
-import { RecurrencyListItemComponent } from '../components/recurrency-list-item.component';
-import { RecurrencyService } from '../services/recurrency.service';
+import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+
+import { RecurrencyListItemComponent } from '../../../_shared/components/recurrency-list-item.component';
+import { RecurrencyService } from '../../../_shared/services/recurrency.service';
 
 @Component({
   selector: 'app-tab-recurrencies',
@@ -33,7 +34,7 @@ import { RecurrencyService } from '../services/recurrency.service';
   `,
   styles: ``,
 })
-export class TabRecurrenciesPage {
+export class TabsRecurrenciesPage {
 
   recurrencies$ = this.recurrencyService.recurrencies$$
   // .pipe(

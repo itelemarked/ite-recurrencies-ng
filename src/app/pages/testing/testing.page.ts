@@ -18,15 +18,16 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { Auth2Service } from '../services/auth2.service';
+import { EncapsulationNoneComponent } from '../../__temp__/encapsulation-none.component';
+import { EncapsulationEmulatedComponent } from '../../__temp__/encapsulation-emulated.component';
+import { EncapsulationShadowDomComponent } from '../../__temp__/encapsulation-shadow-dom.component';
+
+import { Auth2Service } from '../../_shared/services/auth2.service';
 import { FormsModule } from '@angular/forms';
-import { Recurrency2Service } from '../services/recurrency2.service';
-import { SkeletonDirective } from '../directives/skeleton.directive';
-import { AppListComponent } from '../components/app-list.component';
-import { EncapsulationNoneComponent } from '../_temp_/encapsulation-none.component';
-import { EncapsulationEmulatedComponent } from '../_temp_/encapsulation-emulated.component';
-import { EncapsulationShadowDomComponent } from '../_temp_/encapsulation-shadow-dom.component';
-import { AppInput2Component } from '../components/app-input2.component';
+import { Recurrency2Service } from '../../_shared/services/recurrency2.service';
+import { SkeletonDirective } from '../../_shared/directives/skeleton.directive';
+import { AppListComponent } from '../../_shared/components/app-list.component';
+import { AppInput2Component } from '../../_shared/components/app-input2.component';
 
 
 @Component({

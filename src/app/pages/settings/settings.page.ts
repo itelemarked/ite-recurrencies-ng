@@ -1,4 +1,6 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 import {
   AlertOptions,
@@ -21,17 +23,14 @@ import {
 } from '@ionic/angular/standalone';
 
 
-import { AppListComponent } from '../components/app-list.component';
-import { User } from '../types/User';
-import { NgIf } from '@angular/common';
-import { RouterLinkDirective } from '../directives/router-link.directive';
-import { blurActiveElement, BlurOnClickDirective } from '../directives/blur-on-click.directive';
-import { Router, RouterLink } from '@angular/router';
-import { BackdropDirective } from '../directives/backdrop.directive';
-import { Auth2Service } from '../services/auth2.service';
-import { SkeletonDirective } from '../directives/skeleton.directive';
-import { ContentLoadingComponent } from '../_temp_/content-loading.component';
-import { UserState2Component } from '../components/user-state2.component';
+import { AppListComponent } from '../../_shared/components/app-list.component';
+import { User } from '../../_shared/types/User';
+import { RouterLinkDirective } from '../../_shared/directives/router-link.directive';
+import { blurActiveElement, BlurOnClickDirective } from '../../_shared/directives/blur-on-click.directive';
+import { BackdropDirective } from '../../_shared/directives/backdrop.directive';
+import { Auth2Service } from '../../_shared/services/auth2.service';
+import { SkeletonDirective } from '../../_shared/directives/skeleton.directive';
+import { UserState2Component } from '../../_shared/components/user-state2.component';
 
 @Component({
   selector: 'app-settings',
@@ -59,7 +58,6 @@ import { UserState2Component } from '../components/user-state2.component';
     BlurOnClickDirective,
     BackdropDirective,
     SkeletonDirective,
-    ContentLoadingComponent,
     AppListComponent,
     UserState2Component
   ],
@@ -82,13 +80,13 @@ import { UserState2Component } from '../components/user-state2.component';
       />
 
       <app-list>
-        <header>Settings</header>
+        <header>DATE SETTINGS</header>
         <ion-list [inset]="true">
-          <ion-item [button]="true" appBlurOnClick routerLink="/settings/dateformat">
+          <ion-item [button]="true" appBlurOnClick routerLink="/settings-dateformat-options">
             <ion-label>Date format</ion-label>
             <ion-note>**01.06.2025**</ion-note>
           </ion-item>
-          <ion-item [button]="true" appBlurOnClick routerLink="/settings/timezone">
+          <ion-item [button]="true" appBlurOnClick routerLink="/settings-timezone-options">
             <ion-label>Timezone</ion-label>
             <ion-note>**Europe/Zurich**</ion-note>
           </ion-item>
@@ -145,7 +143,7 @@ export class SettingsPage {
     user: this.USER,
     onLogin: () => {
       blurActiveElement()
-      this.router.navigateByUrl('/settings/login')
+      this.router.navigateByUrl('/settings-authenticate')
     },
     onLogout: () => {
       this.USER.set(null)
