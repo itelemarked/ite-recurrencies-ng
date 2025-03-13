@@ -2,9 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, input, output, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton } from '@ionic/angular/standalone';
-import { Subject, takeUntil } from 'rxjs';
 
-import { AppInputComponent } from '../components/app-input.component';
 
 
 @Component({
@@ -14,8 +12,7 @@ import { AppInputComponent } from '../components/app-input.component';
     FormsModule,
     CommonModule,
     ReactiveFormsModule,
-    IonButton,
-    AppInputComponent
+    IonButton
   ],
   template: `
 

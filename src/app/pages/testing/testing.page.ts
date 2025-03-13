@@ -20,14 +20,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { EncapsulationNoneComponent } from '../../__temp__/encapsulation-none.component';
-import { EncapsulationEmulatedComponent } from '../../__temp__/encapsulation-emulated.component';
-import { EncapsulationShadowDomComponent } from '../../__temp__/encapsulation-shadow-dom.component';
-
-
-import { SkeletonDirective } from '@shared/directives/skeleton.directive';
 import { AppListComponent } from '@shared/components/app-list.component';
-import { AppInput2Component } from '@shared/components/app-input2.component';
 import { Auth2Service } from '@shared/services/auth2.service';
 import { Recurrency2Service } from '@shared/services/recurrency2.service';
 
@@ -43,20 +36,6 @@ import { Recurrency2Service } from '@shared/services/recurrency2.service';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
-    IonInput,
-    IonItem,
-    IonIcon,
-    IonLabel,
-    IonSkeletonText,
-    SkeletonDirective,
-    IonList,
-    AppListComponent,
-    IonItemDivider,
-    EncapsulationNoneComponent,
-    EncapsulationEmulatedComponent,
-    EncapsulationShadowDomComponent,
-    AppInput2Component
   ],
   template: `
     <ion-header>

@@ -6,38 +6,31 @@ import {
   AlertOptions,
   IonAlert,
   IonBackButton,
-  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
-  IonLoading,
   IonNote,
-  IonSkeletonText,
-  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 
 
 import { AppListComponent } from '@shared/components/app-list.component';
-import { User } from '@shared/types/User';
-import { RouterLinkDirective } from '@shared/directives/router-link.directive';
 import { blurActiveElement, BlurOnClickDirective } from '@shared/directives/blur-on-click.directive';
 import { BackdropDirective } from '@shared/directives/backdrop.directive';
 import { Auth2Service } from '@shared/services/auth2.service';
-import { SkeletonDirective } from '@shared/directives/skeleton.directive';
-import { UserState2Component } from '@shared/components/user-state2.component';
+import { User } from '@shared/types/User';
+
+import { UserState2Component } from './user-settings/user-state2.component';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkDirective,
     NgIf,
     IonHeader,
     IonToolbar,
@@ -47,17 +40,11 @@ import { UserState2Component } from '@shared/components/user-state2.component';
     IonLabel,
     IonButtons,
     IonBackButton,
-    IonIcon,
     IonNote,
-    IonButton,
     IonList,
     IonAlert,
-    IonLoading,
-    IonSpinner,
-    IonSkeletonText,
     BlurOnClickDirective,
     BackdropDirective,
-    SkeletonDirective,
     AppListComponent,
     UserState2Component
   ],

@@ -4,10 +4,10 @@ import { Component, computed, inject, input } from '@angular/core';
 import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
-import { Recurrency } from '../types/Recurrency';
-import { add, format } from '../utils/date/date.utils';
-import { toInteger } from '../types/Integer';
-import { SettingsService } from '../services/settings.service';
+import { Recurrency } from '../../../../_shared/types/Recurrency';
+import { add, format } from '../../../../_shared/utils/date/date.utils';
+import { toInteger } from '../../../../_shared/types/Integer';
+import { SettingsService } from '../../../../_shared/services/settings.service';
 
 
 

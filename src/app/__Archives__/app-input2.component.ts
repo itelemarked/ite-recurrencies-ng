@@ -1,11 +1,10 @@
-import { CommonModule, NgClass, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, Directive, forwardRef, inject, input, model, OnDestroy, output, Signal, signal, WritableSignal } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
-import { IonButton, IonIcon } from '@ionic/angular/standalone';
+import { ChangeDetectionStrategy, Component, computed, Directive, forwardRef, inject, input, model, OnDestroy, output, Signal, signal, WritableSignal } from '@angular/core';
+import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+
+
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { Subject } from 'rxjs';
 
 
 /**
@@ -24,6 +23,7 @@ import { Subject } from 'rxjs';
  *   - change: string. Fired everytime a inputs has been made
  *   - blur: void. Fired when blurred.
  */
+
 
 
 
@@ -70,12 +70,8 @@ export class ValueAccessorDirective<T> {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
-    IonButton,
-    IonIcon
   ],
   hostDirectives: [ValueAccessorDirective],
   template: `

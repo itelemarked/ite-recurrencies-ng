@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonMenuButton, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cogOutline } from 'ionicons/icons';
-import { RouterLinkDirective } from '@shared/directives/router-link.directive';
 import { BlurOnClickDirective } from '@shared/directives/blur-on-click.directive';
 
 @Component({
@@ -18,7 +17,6 @@ import { BlurOnClickDirective } from '@shared/directives/blur-on-click.directive
     IonButton,
     IonIcon,
     RouterLink,
-    RouterLinkDirective,
     BlurOnClickDirective
   ],
   template: `

@@ -1,11 +1,12 @@
 import { Component, computed, input, output } from '@angular/core';
-import { AppListComponent } from './app-list.component';
+
 
 import { IonButton, IonIcon, IonItem, IonLabel, IonList } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
-import { User } from '../types/User';
+
 import { NgIf } from '@angular/common';
+import { User } from '@shared/types/User';
 
 @Component({
   selector: 'user-state2',
@@ -17,7 +18,6 @@ import { NgIf } from '@angular/common';
     IonIcon,
     IonLabel,
     IonButton,
-    AppListComponent,
   ],
   template: `
       <header>USER</header>

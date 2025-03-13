@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
-import { RecurrencyListItemComponent } from '@shared/components/recurrency-list-item.component';
+import { RecurrencyListItemComponent } from './recurrency-list-item/recurrency-list-item.component';
 import { RecurrencyService } from '@shared/services/recurrency.service';
 
 @Component({
