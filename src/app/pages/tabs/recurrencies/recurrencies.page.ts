@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
-import { RecurrencyListItemComponent } from '../../../_shared/components/recurrency-list-item.component';
-import { RecurrencyService } from '../../../_shared/services/recurrency.service';
+import { RecurrencyListItemComponent } from '@shared/components/recurrency-list-item.component';
+import { RecurrencyService } from '@shared/services/recurrency.service';
 
 @Component({
   selector: 'app-tab-recurrencies',

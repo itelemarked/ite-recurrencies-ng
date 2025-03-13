@@ -23,14 +23,14 @@ import {
 } from '@ionic/angular/standalone';
 
 
-import { AppListComponent } from '../../_shared/components/app-list.component';
-import { User } from '../../_shared/types/User';
-import { RouterLinkDirective } from '../../_shared/directives/router-link.directive';
-import { blurActiveElement, BlurOnClickDirective } from '../../_shared/directives/blur-on-click.directive';
-import { BackdropDirective } from '../../_shared/directives/backdrop.directive';
-import { Auth2Service } from '../../_shared/services/auth2.service';
-import { SkeletonDirective } from '../../_shared/directives/skeleton.directive';
-import { UserState2Component } from '../../_shared/components/user-state2.component';
+import { AppListComponent } from '@shared/components/app-list.component';
+import { User } from '@shared/types/User';
+import { RouterLinkDirective } from '@shared/directives/router-link.directive';
+import { blurActiveElement, BlurOnClickDirective } from '@shared/directives/blur-on-click.directive';
+import { BackdropDirective } from '@shared/directives/backdrop.directive';
+import { Auth2Service } from '@shared/services/auth2.service';
+import { SkeletonDirective } from '@shared/directives/skeleton.directive';
+import { UserState2Component } from '@shared/components/user-state2.component';
 
 @Component({
   selector: 'app-settings',

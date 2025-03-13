@@ -16,7 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { AppListComponent } from '../../_shared/components/app-list.component';
+import { AppListComponent } from '@shared/components/app-list.component';
 
 @Component({
   selector: 'app-settings-dateformat',

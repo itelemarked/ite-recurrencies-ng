@@ -1,6 +1,8 @@
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import {
   IonButton,
   IonContent,
@@ -22,12 +24,13 @@ import { EncapsulationNoneComponent } from '../../__temp__/encapsulation-none.co
 import { EncapsulationEmulatedComponent } from '../../__temp__/encapsulation-emulated.component';
 import { EncapsulationShadowDomComponent } from '../../__temp__/encapsulation-shadow-dom.component';
 
-import { Auth2Service } from '../../_shared/services/auth2.service';
-import { FormsModule } from '@angular/forms';
-import { Recurrency2Service } from '../../_shared/services/recurrency2.service';
-import { SkeletonDirective } from '../../_shared/directives/skeleton.directive';
-import { AppListComponent } from '../../_shared/components/app-list.component';
-import { AppInput2Component } from '../../_shared/components/app-input2.component';
+
+import { SkeletonDirective } from '@shared/directives/skeleton.directive';
+import { AppListComponent } from '@shared/components/app-list.component';
+import { AppInput2Component } from '@shared/components/app-input2.component';
+import { Auth2Service } from '@shared/services/auth2.service';
+import { Recurrency2Service } from '@shared/services/recurrency2.service';
+
 
 
 @Component({

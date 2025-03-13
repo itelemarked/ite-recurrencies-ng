@@ -3,17 +3,18 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import { AngularFirestore, DocumentChangeAction } from "@angular/fire/compat/firestore";
 import { toObservable } from "@angular/core/rxjs-interop";
 
+import { map, of, switchMap } from "rxjs";
+
 import { Recurrency } from "../types/Recurrency";
 import { User } from "../types/User";
-
-import { Auth2Service } from "./auth2.service";
-import { map, of, switchMap } from "rxjs";
 import { toDateString } from "../types/DateString";
 import { TimezoneString } from "../types/TimezoneString";
 import { toTimeString } from "../types/TimeString";
 import { createTimezoneDate } from "../utils/date/date.utils";
 import { toPositiveInteger } from "../types/PositiveInteger";
 import { toPeriodUnit } from "../types/PeriodUnit";
+
+import { Auth2Service } from "./auth2.service";
 
 
 
