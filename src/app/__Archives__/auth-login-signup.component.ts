@@ -3,9 +3,7 @@ import { Component, inject, signal, viewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonText } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
-
-import { AuthService } from '../services/auth.service';
-import { AppInputComponent } from '../components/app-input.component';
+import { AuthService } from './auth1.service';
 
 
 @Component({
@@ -15,8 +13,7 @@ import { AppInputComponent } from '../components/app-input.component';
     FormsModule,
     CommonModule,
     ReactiveFormsModule,
-    IonButton,
-    AppInputComponent
+    IonButton
   ],
   template: `
 
@@ -72,7 +69,7 @@ import { AppInputComponent } from '../components/app-input.component';
 
       <!-- SUBMIT BUTTON -->
       <div class="ite-submit-button">
-        <ion-button type="submit" class="ion-padding-top" expand="block" [disabled]="this.authService.isLoading$ | async">
+        <ion-button type="submit" class="ion-padding-top" expand="block" [disabled]="this.AuthService.isLoading$ | async">
           {{ this.loginSignup() === 'login' ? 'Login' : 'Signup' }}
         </ion-button>
       </div>
@@ -80,7 +77,7 @@ import { AppInputComponent } from '../components/app-input.component';
       <!-- SIGNUP/LOGIN COMMENTS -->
       <div class="ite-signup-login-comments flex ion-justify-content-center ion-align-items-center">
         <span class="flex-none">No account yet?</span>
-        <ion-button class="flex-none" fill="clear" [strong]="true" color="primary" [disabled]="this.authService.isLoading$ | async" (click)="onLoginSignupToggle()">
+        <ion-button class="flex-none" fill="clear" [strong]="true" color="primary" [disabled]="this.AuthService.isLoading$ | async" (click)="onLoginSignupToggle()">
           {{ this.loginSignup() === 'login' ? 'Signup' : 'Login' }}
         </ion-button
         >
@@ -104,7 +101,7 @@ import { AppInputComponent } from '../components/app-input.component';
 export class AuthLoginSignupComponent {
 
   // DEPENDENCIES
-  authService = inject(AuthService)
+  AuthService = inject(AuthService)
 
   // VARS
   destroy$ = new Subject<void>()
@@ -158,7 +155,7 @@ export class AuthLoginSignupComponent {
   }
 
   constructor() {
-    this.authService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserIsLoading(isLoading))
+    this.AuthService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserIsLoading(isLoading))
   }
 
   ngOnDestroy() {
@@ -183,7 +180,7 @@ export class AuthLoginSignupComponent {
     this.passwordCtl.markAsTouched()
 
     if (this.emailCtl.valid && this.passwordCtl.valid) {
-      this.authService.login(this.emailCtl.value!, this.passwordCtl.value!)
+      this.AuthService.login(this.emailCtl.value!, this.passwordCtl.value!)
         .then(_ => {
           this.form.reset()
         })
@@ -199,7 +196,7 @@ export class AuthLoginSignupComponent {
     this.confirmPasswordCtl.markAsTouched()
 
     if (this.emailCtl.valid && this.passwordCtl.valid && this.confirmPasswordCtl.valid) {
-      this.authService.signup(this.emailCtl.value!, this.passwordCtl.value!)
+      this.AuthService.signup(this.emailCtl.value!, this.passwordCtl.value!)
         .then(_ => {
           this.form.reset()
         })

@@ -7,7 +7,7 @@ import { createOutline, trashOutline } from 'ionicons/icons';
 import { Recurrency } from '../../../../_shared/types/Recurrency';
 import { add, format } from '../../../../_shared/utils/date/date.utils';
 import { toInteger } from '../../../../_shared/types/Integer';
-import { SettingsService } from '../../../../_shared/services/settings.service';
+import { SettingsService } from '../../../../_shared/services/settings1.service';
 
 
 

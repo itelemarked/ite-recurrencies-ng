@@ -88,7 +88,7 @@
 //           type="submit"
 //           class="ion-padding-top"
 //           expand="block"
-//           [disabled]="this.authService.isLoading$ | async"
+//           [disabled]="this.AuthService.isLoading$ | async"
 //         >
 //           {{ this.loginSignup() === 'login' ? 'Login' : 'Signup' }}
 //         </ion-button>
@@ -104,7 +104,7 @@
 //           fill="clear"
 //           [strong]="true"
 //           color="primary"
-//           [disabled]="this.authService.isLoading$ | async"
+//           [disabled]="this.AuthService.isLoading$ | async"
 //           (click)="onLoginSignupToggle()"
 //         >
 //           {{ this.loginSignup() === 'login' ? 'Signup' : 'Login' }}

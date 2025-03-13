@@ -13,8 +13,7 @@ import { toTimeString } from "../types/TimeString";
 import { createTimezoneDate } from "../utils/date/date.utils";
 import { toPositiveInteger } from "../types/PositiveInteger";
 import { toPeriodUnit } from "../types/PeriodUnit";
-
-import { Auth2Service } from "./auth2.service";
+import { AuthService } from "../../__Archives__/auth2.service";
 
 
 
@@ -52,14 +51,14 @@ export function toRecurrency(docData: DocumentChangeAction<RecurrencyData>, time
 export class Recurrency2Service {
 
   private firestore = inject(AngularFirestore)
-  private authService = inject(Auth2Service)
+  private AuthService = inject(AuthService)
 
   private _recurrencies = signal<Recurrency[] | undefined>(undefined)
   public recurrencies = computed(() => this._recurrencies())
 
   constructor() {
 
-    const user$$ = toObservable<User | null | undefined>(this.authService.user)
+    const user$$ = toObservable<User | null | undefined>(this.AuthService.user)
     const recurrencies$$ = user$$.pipe(
       switchMap(usr => {
         if(usr === undefined)  return of(undefined)

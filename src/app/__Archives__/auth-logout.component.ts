@@ -48,7 +48,7 @@ import { User } from '../types/User';
 export class AuthLogoutComponent {
 
   // DEPENDENCIES
-  authService = inject(AuthService)
+  AuthService = inject(AuthService)
 
   // VARS
   destroy$ = new Subject<void>()
@@ -59,8 +59,8 @@ export class AuthLogoutComponent {
   userEmail = this.getUserEmail(null)
 
   constructor() {
-    this.authService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserLoadingChange(isLoading))
-    this.authService.user$$.pipe(takeUntil(this.destroy$)).subscribe(usr => this.onUserChange(usr))
+    this.AuthService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => this.onUserLoadingChange(isLoading))
+    this.AuthService.user$$.pipe(takeUntil(this.destroy$)).subscribe(usr => this.onUserChange(usr))
   }
 
   // ACTIONS
@@ -77,7 +77,7 @@ export class AuthLogoutComponent {
   }
 
   onLogout = () => {
-    this.authService.logout()
+    this.AuthService.logout()
   }
 
   // UTILS

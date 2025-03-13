@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal, Signal, WritableSignal } from "@angular/core";
-import { User } from "../types/User";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { User } from "@shared/types/User";
 import { map } from "rxjs";
 
 
@@ -14,7 +14,7 @@ interface AuthServiceInterface {
 
 
 @Injectable({providedIn: 'root'})
-export class Auth2Service {
+export class AuthService {
 
   fireauth = inject(AngularFireAuth)
 

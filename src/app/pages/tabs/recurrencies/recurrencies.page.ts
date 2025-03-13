@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 import { RecurrencyListItemComponent } from './recurrency-list-item/recurrency-list-item.component';
-import { RecurrencyService } from '@shared/services/recurrency.service';
+import { RecurrencyService } from '@shared/services/recurrency1.service';
 
 @Component({
   selector: 'app-tab-recurrencies',

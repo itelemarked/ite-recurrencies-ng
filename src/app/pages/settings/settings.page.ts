@@ -21,7 +21,7 @@ import {
 import { AppListComponent } from '@shared/components/app-list.component';
 import { blurActiveElement, BlurOnClickDirective } from '@shared/directives/blur-on-click.directive';
 import { BackdropDirective } from '@shared/directives/backdrop.directive';
-import { Auth2Service } from '@shared/services/auth2.service';
+import { AuthService } from '../../__Archives__/auth2.service';
 import { User } from '@shared/types/User';
 
 import { UserState2Component } from './user-settings/user-state2.component';
@@ -80,7 +80,7 @@ import { UserState2Component } from './user-settings/user-state2.component';
         </ion-list>
       </app-list>
 
-      <ng-container *ngIf="authService.user() !== null">
+      <ng-container *ngIf="AuthService.user() !== null">
         <ion-alert
           appBackdrop
           [isOpen]="confirmLogoutAlert.show"
@@ -117,7 +117,7 @@ export class SettingsPage {
   // - when accessing Settings page, user item flickering on load. --> load user before accessing SettingsPage?
 
   // DEPENDENCIES
-  authService = inject(Auth2Service)
+  AuthService = inject(AuthService)
   router = inject(Router)
 
 
@@ -153,7 +153,7 @@ export class SettingsPage {
         {
           text: 'OK',
           handler: () => {
-            this.authService.logout()
+            this.AuthService.logout()
           }
         }
       ]
