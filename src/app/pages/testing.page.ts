@@ -21,6 +21,8 @@ import { ContentLoadingComponent } from '../components/content-loading.component
 import { BackdropDirective } from '../directives/backdrop.directive';
 import { AuthAuthenticateFormComponent } from '../components/temp/auth-authenticate-form.component';
 import { AppInputComponent } from '../components/app-input.component';
+import { TEST } from '../services/MOCK';
+
 
 
 @Component({
@@ -76,12 +78,6 @@ export class TestingPage {
   
 
   ngOnInit() {
-    setTimeout(() => {
-      // this.email.setValue('bbb@bbb')
-      // this.passwordValue.set('22222')
-
-      // this.email.disable()
-      // this.passwordDisabled = true
-    }, 3000);
+    TEST();
   }
 }
