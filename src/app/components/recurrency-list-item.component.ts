@@ -8,6 +8,7 @@ import { Recurrency } from '../types/Recurrency';
 import { add, format } from '../utils/date/date.utils';
 import { toInteger } from '../types/Integer';
 import { SettingsService } from '../services/settings.service';
+import { toTimezoneString } from '../types/TimezoneString';
 
 
 
@@ -47,7 +48,7 @@ export class RecurrencyListItemComponent {
   recurrencyInp = input.required<Recurrency>({alias: 'recurrency'})
 
   // VARS
-  timezone = this.settingsService.currentSettings().timezone
+  timezone = toTimezoneString('UTC')
 
   // TEMPLATE VARIABLES
   title = computed(() => this.recurrencyInp().title)

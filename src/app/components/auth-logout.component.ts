@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth3.service';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { map, Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';

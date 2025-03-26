@@ -24,23 +24,21 @@ import { RecurrencyService } from '../services/recurrency.service';
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-      <ng-container *ngFor="let recurrency of (recurrencies$ | async)">
+      <!-- <ng-container *ngFor="let recurrency of (recurrencies$ | async)">
         <app-recurrency-list-item
           [recurrency]="recurrency"
         ></app-recurrency-list-item>
-      </ng-container>
+      </ng-container> -->
     </ion-content>
   `,
   styles: ``,
 })
 export class TabRecurrenciesPage {
 
-  recurrencies$ = this.recurrencyService.recurrencies$$
+  // recurrencies$ = this.recurrencyService.recurrencies$$
   // .pipe(
   //   map(recs => recs.sort((a,b) => progress(a) - progress(b)))
   // )
 
-  constructor(private recurrencyService: RecurrencyService) {
-    
-  }
+  constructor() {}
 } 

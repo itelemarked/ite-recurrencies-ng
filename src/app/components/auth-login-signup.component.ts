@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 import { IonButton, IonText } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
 
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth3.service';
 import { AppInputComponent } from './app-input.component';
 
 

@@ -12,11 +12,9 @@ export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
   { path: 'tabs', component: TabsPage, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: TabHomePage },
     { path: 'recurrencies', component: TabRecurrenciesPage },
-    { path: 'brb', component: TabBrbComponent },
-    { path: '**', redirectTo: 'home', pathMatch: 'full' }
+    { path: 'brb', component: TabBrbComponent }
   ]},
   { path: 'testing', component: TestingPage},
   
