@@ -1,27 +1,16 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import {
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonTabBar,
-  IonTabButton,
-  IonTitle,
-  IonToolbar,
-  IonTabs,
-} from '@ionic/angular/standalone';
+import { Component } from "@angular/core";
+import { IonIcon, IonTabBar, IonTabButton, IonTabs } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
+import { homeOutline, listOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-tabs',
   standalone: true,
   imports: [
-    CommonModule,
     IonTabs,
     IonTabBar,
     IonTabButton,
-    IonIcon,
+    IonIcon
   ],
   template: `
     <ion-tabs>
@@ -31,20 +20,17 @@ import { homeOutline, alarmOutline, listOutline } from 'ionicons/icons';
           Home
         </ion-tab-button>
         <ion-tab-button tab="recurrencies">
-          <ion-icon name="alarm-outline"></ion-icon>
-          Recurrencies
-        </ion-tab-button>
-        <ion-tab-button tab="brb">
           <ion-icon name="list-outline"></ion-icon>
-          BRB
+          Recurrencies
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
   `,
-  styles: ``,
+  styles: [``]
 })
 export class TabsPage {
+  
   constructor() {
-    addIcons({ homeOutline, alarmOutline, listOutline })
+    addIcons({ homeOutline, listOutline });
   }
 }

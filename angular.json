@@ -5,7 +5,17 @@
   "projects": {
     "ite-recurrencies-ng": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "skipTests": true,
+          "flat": true,
+          "inlineStyle": true,
+          "inlineTemplate": true,
+          "standalone": true,
+          "changeDetection": "OnPush",
+          "displayBlock": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -149,17 +159,6 @@
       }
     }
   },
-  "cli": {
-    "schematicCollections": [
-      "@ionic/angular-toolkit"
-    ]
-  },
-  "schematics": {
-    "@ionic/angular-toolkit:component": {
-      "styleext": "scss"
-    },
-    "@ionic/angular-toolkit:page": {
-      "styleext": "scss"
-    }
-  }
+  "cli": {},
+  "schematics": {}
 }

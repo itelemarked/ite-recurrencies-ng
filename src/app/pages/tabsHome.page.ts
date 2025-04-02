@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 
 @Component({
-  selector: 'app-testing',
+  selector: 'app-tabs-home',
   standalone: true,
   imports: [
     IonHeader,
@@ -14,16 +14,16 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/stan
     <ion-header>
       <ion-toolbar>
         <ion-title>
-          Testing
+          TabsHome
         </ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
-      TestingPage works!
+      TabsHomePage works!
     </ion-content>
   `,
   styles: [``]
 })
-export class TestingPage {
+export class TabsHomePage {
 
 }
