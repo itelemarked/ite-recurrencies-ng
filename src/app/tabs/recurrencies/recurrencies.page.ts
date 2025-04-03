@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 
 @Component({
-  selector: 'app-tabs-home',
+  selector: 'app-recurrencies',
   standalone: true,
   imports: [
     IonHeader,
@@ -14,16 +14,16 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/stan
     <ion-header>
       <ion-toolbar>
         <ion-title>
-          TabsHome
+          Recurrencies
         </ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
-      TabsHomePage works!
+      RecurrenciesPage works!
     </ion-content>
   `,
   styles: [``]
 })
-export class TabsHomePage {
+export class RecurrenciesPage {
 
 }

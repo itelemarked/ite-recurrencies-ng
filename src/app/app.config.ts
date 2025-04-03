@@ -1,7 +1,7 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes';
+import { appRoutes } from './app.routes';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -23,7 +23,7 @@ const firebaseConfig = {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(appRoutes),
     provideIonicAngular({}),
     { provide: FIREBASE_OPTIONS, useValue: firebaseConfig }, // Needed for using angularfire compat API
     provideFirebaseApp(() => initializeApp(firebaseConfig)), 
