@@ -19,6 +19,7 @@ import { DateFormatPage } from './pages/settings/pages/dateFormat/dateFormat.pag
  *  - pages should be "smart", components should be "dumb"
  *  - pages navigation should be implemented in pages (which should be smart...) and not in components (which should be dumb...)
  *  - folder stucture: paths should match nested "pages folder". E.g path to '/settings/xyz' should match "/app/pages/settings/pages/xyz/xyz.page.ts"
+ *  - consider redirects and wildcard routes in the children paths
  */
 
 
