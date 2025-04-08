@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { SettingsContentComponent } from "./components/settings-content.component";
 
 @Component({
   selector: 'app-settings',
@@ -8,7 +9,8 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/stan
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent
+    IonContent,
+    SettingsContentComponent
   ],
   template: `
     <ion-header>
@@ -20,11 +22,10 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/stan
     </ion-header>
     <ion-content [forceOverscroll]="false">
       SettingsPage works!
+      <app-settings-content/>
     </ion-content>
   `,
-  styles: [`
-
-  `]
+  styles: [``]
 })
 export class SettingsPage {
 

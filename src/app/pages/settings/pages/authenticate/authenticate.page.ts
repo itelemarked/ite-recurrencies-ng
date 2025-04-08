@@ -1,16 +1,16 @@
 import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-settings-date-format',
+  selector: 'app-authenticate',
   standalone: true,
   imports: [],
   template: `
-    SettingsDateFormatPage works!
+    AuthenticatePage works!
   `,
   styles: [`
 
   `]
 })
-export class SettingsDateFormatPage {
+export class AuthenticatePage {
 
 }
