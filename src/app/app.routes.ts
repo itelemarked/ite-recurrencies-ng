@@ -10,7 +10,7 @@ import { SettingsDateformatOptionsPage } from './pages/settings-dateformat-optio
 import { SettingsTimezoneOptionsPage } from './pages/settings-timezone-options/settings-timezone-options.page';
 import { SettingsAuthenticatePage } from './pages/settings-authenticate/settings-authenticate.page';
 
-const ORIGIN = '/tabs'
+const ORIGIN = '/testing'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },

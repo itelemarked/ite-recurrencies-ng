@@ -13,11 +13,18 @@ export type Recurrency = {
   periodUnit: PeriodUnit
 }
 
-export function toRecurrency(data: RecurrencyData, timezone: TimezoneString, id?: string): Recurrency {
+
+// export function isRecurrency(data: any, timezone: TimezoneString, id?: string): data is Recurrency {
+//   if(isPlainObject(data) && isString(data.title) && isValidDate(new Date(data.lastEvent)) ) {
+//     const t = data.title
+//   }
+// }
+
+export function toRecurrency(data: any, timezone: TimezoneString, id?: string): Recurrency {
   const dateString = toDateString(data.lastEvent)
   const timeString = toTimeString('23:59:59.999')
+  
   const lastEvent = createTimezoneDate({dateString, timeString, timezone})
-
   const title = data.title
   const periodNb = toPositiveInteger(data.periodNb)
   const periodUnit = toPeriodUnit(data.periodUnit)
@@ -33,20 +40,20 @@ export function toRecurrency(data: RecurrencyData, timezone: TimezoneString, id?
 
 
 
-export type RecurrencyData = {
-  title: string,
-  lastEvent: string,
-  periodNb: number,
-  periodUnit: string
-}
+// export type RecurrencyData = {
+//   title: string,
+//   lastEvent: string,
+//   periodNb: number,
+//   periodUnit: string
+// }
 
-export function toRecurrencyData(recurrency: Recurrency, timezone: TimezoneString): RecurrencyData {
-  const { title, lastEvent, periodNb, periodUnit } = recurrency
+// export function toRecurrencyData(recurrency: Recurrency, timezone: TimezoneString): RecurrencyData {
+//   const { title, lastEvent, periodNb, periodUnit } = recurrency
 
-  return {
-    title,
-    lastEvent: format(lastEvent, 'YYYY-MM-DD', timezone),
-    periodNb,
-    periodUnit
-  }
-}
+//   return {
+//     title,
+//     lastEvent: format(lastEvent, 'YYYY-MM-DD', timezone),
+//     periodNb,
+//     periodUnit
+//   }
+// }

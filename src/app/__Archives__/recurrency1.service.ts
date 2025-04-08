@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { inject, Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, map, of, skip, switchMap, take, tap } from "rxjs";
@@ -5,9 +6,10 @@ import { BehaviorSubject, map, of, skip, switchMap, take, tap } from "rxjs";
 import { AuthService } from "../../__Archives__/auth1.service";
 import { SettingsService } from "./settings1.service";
 
-import { Recurrency, RecurrencyData, toRecurrency, toRecurrencyData } from "../types/Recurrency";
+import { Recurrency, toRecurrency } from "../types/Recurrency";
 
-import { endOf } from "../utils/date/date.utils";
+import { endOf, format } from "../utils/date/date.utils";
+import { TimezoneString } from "@shared/types/TimezoneString";
 
 
 
@@ -18,8 +20,19 @@ import { endOf } from "../utils/date/date.utils";
  * b) the timezone changes (the "lastEvent: Date" time must be updated to the new timezone.)
  */
 
+export function toRecurrencyData(recurrency: Recurrency, timezone: TimezoneString) {
+  const { title, lastEvent, periodNb, periodUnit } = recurrency
+
+  return {
+    title,
+    lastEvent: format(lastEvent, 'YYYY-MM-DD', timezone),
+    periodNb,
+    periodUnit
+  }
+}
+
 @Injectable({providedIn: 'root'})
-export class RecurrencyService {
+export class Recurrency1Service {
 
   // DEPENDENCIES
   private firestore = inject(AngularFirestore)
@@ -45,7 +58,7 @@ export class RecurrencyService {
         switchMap(user => {
           return user === null 
             ? of([])
-            : this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).snapshotChanges().pipe(
+            : this.firestore.collection<unknown>(`users/${user.uid}/recurrencies`).snapshotChanges().pipe(
                 map(snapshots => snapshots.map(snap => {
                   const timezone = this.settingsService.currentSettings().timezone
                   const id = snap.payload.doc.id
@@ -90,7 +103,7 @@ export class RecurrencyService {
 
     if (user === null) return Promise.reject('User is null')
     
-    const firebaseDocRef = await this.firestore.collection<RecurrencyData>(`users/${user.uid}/recurrencies`).add(toRecurrencyData(recurrency, timezone))
+    const firebaseDocRef = await this.firestore.collection<unknown>(`users/${user.uid}/recurrencies`).add(toRecurrencyData(recurrency, timezone))
     const id = firebaseDocRef.id
     return { ...recurrency, id }
   }
@@ -106,7 +119,7 @@ export class RecurrencyService {
 
     if (user === null) return Promise.reject('User is null')
     
-    await this.firestore.doc<RecurrencyData>(`users/${user.uid}/recurrencies/${recurrency.id}`).set(toRecurrencyData(recurrency, timezone))
+    await this.firestore.doc<unknown>(`users/${user.uid}/recurrencies/${recurrency.id}`).set(toRecurrencyData(recurrency, timezone))
     return { ...recurrency }
   }
 
@@ -130,7 +143,7 @@ export class RecurrencyService {
     const idToDelete = this._currentRecurrencies.find(rec => rec.id === id) 
     if(idToDelete === undefined) return Promise.reject('Nothing to delete!')
 
-    return this.firestore.doc<RecurrencyData>(`users/${user.uid}/recurrencies/${id}`).delete()
+    return this.firestore.doc<unknown>(`users/${user.uid}/recurrencies/${id}`).delete()
   }
   
   TEST() {}
