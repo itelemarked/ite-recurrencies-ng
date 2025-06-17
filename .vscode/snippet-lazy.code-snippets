@@ -1,0 +1,8 @@
+{
+	"snippetLazy": {
+		"prefix": "snippet-lazy",
+		"body": [
+			"() => import('./pages/$1').then(m => $2) }",
+		]
+	}
+}

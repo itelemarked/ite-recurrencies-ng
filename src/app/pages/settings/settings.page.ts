@@ -18,13 +18,13 @@ import {
 } from '@ionic/angular/standalone';
 
 
-import { AppListComponent } from '@shared/components/app-list.component';
-import { blurActiveElement, BlurOnClickDirective } from '@shared/directives/blur-on-click.directive';
-import { BackdropDirective } from '@shared/directives/backdrop.directive';
+import { AppListComponent } from '../../components/app-list.component';
+import { blurActiveElement, BlurOnClickDirective } from '../../directives/blur-on-click.directive';
+import { BackdropDirective } from '../../directives/backdrop.directive';
 import { AuthService } from '../../__Archives__/auth2.service';
-import { User } from '@shared/types/User';
+import { User } from '../../types/User';
 
-import { UserState2Component } from './user-settings/user-state2.component';
+import { UserStateComponent } from './components/user-state.component';
 
 @Component({
   selector: 'app-settings',
@@ -46,7 +46,7 @@ import { UserState2Component } from './user-settings/user-state2.component';
     BlurOnClickDirective,
     BackdropDirective,
     AppListComponent,
-    UserState2Component
+    UserStateComponent
   ],
   template: `
     <ion-header>
@@ -69,11 +69,11 @@ import { UserState2Component } from './user-settings/user-state2.component';
       <app-list>
         <header>DATE SETTINGS</header>
         <ion-list [inset]="true">
-          <ion-item [button]="true" appBlurOnClick routerLink="/settings-dateformat-options">
+          <ion-item [button]="true" appBlurOnClick routerLink="./dateformat-options">
             <ion-label>Date format</ion-label>
             <ion-note>**01.06.2025**</ion-note>
           </ion-item>
-          <ion-item [button]="true" appBlurOnClick routerLink="/settings-timezone-options">
+          <ion-item [button]="true" appBlurOnClick routerLink="./timezone-options">
             <ion-label>Timezone</ion-label>
             <ion-note>**Europe/Zurich**</ion-note>
           </ion-item>

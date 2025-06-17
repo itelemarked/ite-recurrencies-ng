@@ -10,13 +10,13 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 
-import { AuthService } from '@shared/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { STORE } from '@shared/services/_MOCK_DATAS';
-import { RecurrencyService } from '@shared/services/recurrency.service';
-import { isNumber, isPlainObject, isString } from '@shared/utils/types-check/types-check';
-import { UserServiceCheckComponent } from './user-service-check/user-service-check.component';
-import { RecurrencyServiceCheckComponent } from "./recurrency-service-check.component.ts/recurrency-service-check.component";
+import { STORE } from '../../services/_MOCK_DATAS';
+import { RecurrencyService } from '../../services/recurrency.service';
+import { isNumber, isPlainObject, isString } from '../../utils/types-check/types-check';
+import { UserServiceCheckComponent } from './components/user-service-check/user-service-check.component';
+import { RecurrencyServiceCheckComponent } from "./components/recurrency-service-check.component.ts/recurrency-service-check.component";
 
 
 

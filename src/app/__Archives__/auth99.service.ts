@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from "@angular/core"
-import { User } from "@shared/types/User"
+import { User } from "../types/User"
 
 
 /**

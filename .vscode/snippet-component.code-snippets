@@ -1,0 +1,21 @@
+{
+  "snippetComponent": {
+    "prefix": "snippet-component",
+    "body": [
+      "import { Component } from \"@angular/core\";",
+      "",
+      "@Component({",
+      "  selector: 'app-$1',",
+      "  standalone: true,",
+      "  imports: [],",
+      "  template: `",
+      "    $2Component works!",
+      "  `,",
+      "  styles: [``]",
+      "})",
+      "export class $2Component {",
+      "",
+      "}"
+    ]
+  }
+}

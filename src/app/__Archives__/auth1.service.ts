@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { User } from "@shared/types/User";
-import { AUTH_ERRORS, AuthError } from "@shared/utils/errors/auth-error";
+import { User } from "../types/User";
+import { AUTH_ERRORS, AuthError } from "../utils/errors/auth-error";
 import { BehaviorSubject, delay, ReplaySubject, Subject, take, takeUntil } from "rxjs";
 
 

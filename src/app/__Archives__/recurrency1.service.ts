@@ -9,7 +9,7 @@ import { SettingsService } from "./settings1.service";
 import { Recurrency, toRecurrency } from "../types/Recurrency";
 
 import { endOf, format } from "../utils/date/date.utils";
-import { TimezoneString } from "@shared/types/TimezoneString";
+import { TimezoneString } from "../types/TimezoneString";
 
 
 
