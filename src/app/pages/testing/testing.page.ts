@@ -9,14 +9,8 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { SettingsService } from '../../services/settings.service';
 
-import { AuthService } from '../../services/auth.service';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { STORE } from '../../services/_MOCK_DATAS';
-import { RecurrencyService } from '../../services/recurrency.service';
-import { isNumber, isPlainObject, isString } from '../../utils/types-check/types-check';
-import { UserServiceCheckComponent } from './components/user-service-check/user-service-check.component';
-import { RecurrencyServiceCheckComponent } from "./components/recurrency-service-check.component.ts/recurrency-service-check.component";
 
 
 
@@ -29,9 +23,7 @@ import { RecurrencyServiceCheckComponent } from "./components/recurrency-service
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent,
-    UserServiceCheckComponent,
-    RecurrencyServiceCheckComponent
+    IonContent
 ],
   template: `
     <ion-header>
@@ -42,8 +34,10 @@ import { RecurrencyServiceCheckComponent } from "./components/recurrency-service
 
     <ion-content [forceOverscroll]="false" class="p-xl">
 
-      <app-user-service-check />
-      <app-recurrency-service-check />
+      <div>Datas:</div>
+      <div *ngFor="let data of datas()">
+        uid: {{data.uid}}, title: {{data.title}}
+      </div>
 
     </ion-content>
   `,
@@ -51,16 +45,24 @@ import { RecurrencyServiceCheckComponent } from "./components/recurrency-service
 })
 export class TestingPage {
 
-  authService = inject(AuthService)
-  recurrencyService = inject(RecurrencyService)
-  // fs = inject(AngularFirestore)
+  private settingsService = inject(SettingsService)
+
+  datas = this.settingsService.getAll
 
   constructor() {
     this.TEST()
   }
 
   private TEST() {
-    
+    setTimeout(() => {
+      // this.settingsService.updateDoc({uid: 'uid-3', title: 'a new one changed!'})
+      // .then(_ => console.log('update success'))
+      // .catch(err => console.log('nothing to update... uid has not been found'))
+
+      this.settingsService.removeDoc('uid-3')
+      .then(_ => console.log('remove success'))
+      .catch(err => console.log('nothing to remove... uid has not been found'))
+    }, 2000);
   }
 
 }

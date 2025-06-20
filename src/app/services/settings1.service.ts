@@ -29,7 +29,6 @@ export class SettingsService {
   public isLoading$$ = this._isLoading$$.asObservable()
 
   constructor() {
-
     const settingsFromUser$ = this.AuthService.user$$.pipe(
       switchMap(usr => {
         if(usr === null) {
