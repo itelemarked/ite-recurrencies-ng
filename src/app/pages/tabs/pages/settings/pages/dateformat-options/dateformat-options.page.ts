@@ -16,7 +16,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { AppListComponent } from '../../../../components/app-list.component';
+import { AppListComponent } from '../../../../../../components/app-list.component';
 
 @Component({
   selector: 'app-settings-dateformat',
@@ -45,10 +45,10 @@ import { AppListComponent } from '../../../../components/app-list.component';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false">
+    <ion-content [forceOverscroll]="false" class="ion-padding">
       <ion-radio-group value="DD.MM.YYYY">
         <app-list class="mt-xl">
-          <ion-list>
+          <ion-list [inset]="true">
             <ion-item>
               <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
                 <span class="flex-1">Platform defined</span>
@@ -61,7 +61,8 @@ import { AppListComponent } from '../../../../components/app-list.component';
         <app-list 
           class="mt-lg" 
         >  
-          <ion-list>
+          <header>SUPPORTED FORMATS</header>
+          <ion-list [inset]="true">
             <ion-item>
               <ion-radio value="DD.MM.YYYY">** 01.06.2025 **</ion-radio>
             </ion-item>

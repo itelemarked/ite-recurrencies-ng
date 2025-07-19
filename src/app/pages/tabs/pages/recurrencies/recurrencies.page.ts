@@ -22,7 +22,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-      
+      <p>RecurrenciesPage works!</p>
     </ion-content>
   `,
   styles: ``,

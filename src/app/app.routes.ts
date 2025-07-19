@@ -4,12 +4,10 @@ import { TabsPage } from './pages/tabs/tabs.page';
 import { HomePage } from './pages/tabs/pages/home/home.page';
 import { RecurrenciesPage } from './pages/tabs/pages/recurrencies/recurrencies.page';
 import { BrbPage } from './pages/tabs/pages/brb/brb.page';
-
-import { SettingsPage } from './pages/settings/settings.page';
-import { DateformatOptionsPage } from './pages/settings/pages/dateformat-options/dateformat-options.page';
-import { TimezoneOptionsPage } from './pages/settings/pages/timezone-options/timezone-options.page';
-import { AuthenticatePage } from './pages/settings/pages/authenticate/authenticate.page';
-
+import { SettingsPage } from './pages/tabs/pages/settings/settings.page';
+import { DateformatOptionsPage } from './pages/tabs/pages/settings/pages/dateformat-options/dateformat-options.page';
+import { TimezoneOptionsPage } from './pages/tabs/pages/settings/pages/timezone-options/timezone-options.page';
+import { AuthenticatePage } from './pages/tabs/pages/settings/pages/authenticate/authenticate.page';
 import { TestingPage } from './pages/testing/testing.page';
 
 
@@ -24,26 +22,39 @@ import { TestingPage } from './pages/testing/testing.page';
  *  - consider redirects and wildcard routes in the children paths
  */
 
-const ORIGIN = '/testing'
+const ORIGIN = '/tabs'
 
 export const routes: Routes = [
   { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
   { path: 'tabs', component: TabsPage, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomePage },
+    // { path: '', redirectTo: 'recurrencies', pathMatch: 'full' },
+    // { path: 'home', component: HomePage },
     { path: 'recurrencies', component: RecurrenciesPage },
     { path: 'brb', component: BrbPage },
-    { path: '**', redirectTo: 'home', pathMatch: 'full' }
+
+    // { path: 'settings', component: SettingsPage },
+    // { path: 'settings/dateformat-options', component: DateformatOptionsPage },
+    // { path: 'settings/timezone-options', component: TimezoneOptionsPage },
+    // { path: 'settings/authenticate', component: AuthenticatePage },
+      // { path: '**', redirectTo: '', pathMatch: 'full' }
+    { path: 'settings', children: [
+      { path: '', component: SettingsPage },
+      { path: 'dateformat-options', component: DateformatOptionsPage },
+      { path: 'timezone-options', component: TimezoneOptionsPage },
+      { path: 'authenticate', component: AuthenticatePage },
+      // { path: '**', redirectTo: '', pathMatch: 'full' }
+    ]},
+    // { path: '**', redirectTo: 'recurrencies', pathMatch: 'full' }
   ]},
 
-  { path: 'settings', children: [
-    { path: '', component: SettingsPage },
-    { path: 'dateformat-options', component: DateformatOptionsPage },
-    { path: 'timezone-options', component: TimezoneOptionsPage },
-    { path: 'authenticate', component: AuthenticatePage },
-    { path: '**', redirectTo: '', pathMatch: 'full' }
-  ]},
+  // { path: 'settings', children: [
+  //   { path: '', component: SettingsPage },
+  //   { path: 'dateformat-options', component: DateformatOptionsPage },
+  //   { path: 'timezone-options', component: TimezoneOptionsPage },
+  //   { path: 'authenticate', component: AuthenticatePage },
+  //   { path: '**', redirectTo: '', pathMatch: 'full' }
+  // ]},
 
   { path: 'testing', component: TestingPage },
   

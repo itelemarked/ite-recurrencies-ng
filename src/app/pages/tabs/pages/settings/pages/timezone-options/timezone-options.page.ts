@@ -19,7 +19,7 @@ import {
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { AppListComponent } from '../../../../components/app-list.component';
+import { AppListComponent } from '../../../../../../components/app-list.component';
 
 @Component({
   selector: 'app-settings-timezone',
@@ -48,10 +48,10 @@ import { AppListComponent } from '../../../../components/app-list.component';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false">
+    <ion-content [forceOverscroll]="false" class="ion-padding">
       <ion-radio-group value="Europe/Zurich">
         <app-list class="mt-xl">
-          <ion-list>
+          <ion-list [inset]="true">
             <ion-item>
               <ion-radio class="app-part-label-flex" value="PLATFORM_DEFINED">
                 <span class="flex-1">Platform defined</span>
@@ -64,8 +64,8 @@ import { AppListComponent } from '../../../../components/app-list.component';
         <app-list
           class="mt-lg"
         >
-          <ion-list>
-            <header>AVAILABLE TIMEZONES</header>
+          <ion-list [inset]="true">
+            <header>SUPPORTED TIMEZONES</header>
             <ion-item>
               <ion-radio value="Europe/Zurich">** Europe/Zurich **</ion-radio>
             </ion-item>

@@ -18,11 +18,11 @@ import {
 } from '@ionic/angular/standalone';
 
 
-import { AppListComponent } from '../../components/app-list.component';
-import { blurActiveElement, BlurOnClickDirective } from '../../directives/blur-on-click.directive';
-import { BackdropDirective } from '../../directives/backdrop.directive';
-import { AuthService } from '../../__Archives__/auth2.service';
-import { User } from '../../types/User';
+import { AppListComponent } from '../../../../components/app-list.component';
+import { blurActiveElement, BlurOnClickDirective } from '../../../../directives/blur-on-click.directive';
+import { BackdropDirective } from '../../../../directives/backdrop.directive';
+// import { AuthService } from '../../__Archives__/auth2.service';
+import { User } from '../../../../types/User';
 
 import { UserStateComponent } from './components/user-state.component';
 
@@ -51,16 +51,13 @@ import { UserStateComponent } from './components/user-state.component';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-buttons>
-          <ion-back-button text="" defaultHref="/tabs/home"></ion-back-button>
-        </ion-buttons>
         <ion-title>Settings</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
 
-      <user-state2
+      <user-state
        [user]="userList.user()"
        (login)="userList.onLogin()" 
        (logout)="userList.onLogout()"
@@ -80,7 +77,7 @@ import { UserStateComponent } from './components/user-state.component';
         </ion-list>
       </app-list>
 
-      <ng-container *ngIf="AuthService.user() !== null">
+      <ng-container *ngIf="true">
         <ion-alert
           appBackdrop
           [isOpen]="confirmLogoutAlert.show"
@@ -117,7 +114,7 @@ export class SettingsPage {
   // - when accessing Settings page, user item flickering on load. --> load user before accessing SettingsPage?
 
   // DEPENDENCIES
-  AuthService = inject(AuthService)
+  // AuthService = inject(AuthService)
   router = inject(Router)
 
 
@@ -130,7 +127,7 @@ export class SettingsPage {
     user: this.USER,
     onLogin: () => {
       blurActiveElement()
-      this.router.navigateByUrl('/settings-authenticate')
+      this.router.navigateByUrl('/tabs/settings/authenticate')
     },
     onLogout: () => {
       this.USER.set(null)
@@ -153,7 +150,7 @@ export class SettingsPage {
         {
           text: 'OK',
           handler: () => {
-            this.AuthService.logout()
+            // this.AuthService.logout()
           }
         }
       ]

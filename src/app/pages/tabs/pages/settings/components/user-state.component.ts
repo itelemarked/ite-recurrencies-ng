@@ -6,11 +6,11 @@ import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
 import { NgIf } from '@angular/common';
-import { User } from '../../../types/User';
-import { AppListComponent } from '../../../components/app-list.component';
+import { User } from '../../../../../types/User';
+import { AppListComponent } from '../../../../../components/app-list.component';
 
 @Component({
-  selector: 'user-state2',
+  selector: 'user-state',
   standalone: true,
   imports: [
     NgIf,
@@ -42,7 +42,7 @@ import { AppListComponent } from '../../../components/app-list.component';
           </ion-item>
         </ion-list>
       </ng-container>
-      <footer>**Logged-in users have their datas backed-up on a google server. The datas of unregistered users are stored in the browser memory (data lost is not guaranteed...)**</footer>
+      <footer>**Logged-in users have their datas backed up on a google server. The datas of unregistered users are stored in the browser memory (data persistence is not guaranteed...)**</footer>
     </app-list>
   `,
   styles: `
