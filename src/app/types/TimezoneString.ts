@@ -23,4 +23,8 @@ export function toTimezoneString(val: string): TimezoneString {
 
 
 
-
+export enum Timezone {
+  INDIAN_MAURITIUS = 'Indian/Mauritius',
+  EUROPE_ZURICH = 'Europe/Zurich',
+  UTC = 'UTC'
+}

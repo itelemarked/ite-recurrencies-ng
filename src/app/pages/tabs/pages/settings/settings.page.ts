@@ -1,12 +1,10 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 import {
   AlertOptions,
   IonAlert,
-  IonBackButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonItem,
@@ -25,6 +23,9 @@ import { BackdropDirective } from '../../../../directives/backdrop.directive';
 import { User } from '../../../../types/User';
 
 import { UserStateComponent } from './components/user-state.component';
+import { UserSettingsListComponent } from './components/user-settings-list.component';
+import { DateSettingsListComponent } from './components/date-settings-list.component';
+import { DateFormat } from '../../../../types/DateFormatOptions';
 
 @Component({
   selector: 'app-settings',
@@ -32,21 +33,21 @@ import { UserStateComponent } from './components/user-state.component';
   imports: [
     RouterLink,
     NgIf,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
     IonItem,
     IonLabel,
-    IonButtons,
-    IonBackButton,
     IonNote,
     IonList,
     IonAlert,
     BlurOnClickDirective,
     BackdropDirective,
     AppListComponent,
-    UserStateComponent
+    UserStateComponent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    UserSettingsListComponent,
+    DateSettingsListComponent
   ],
   template: `
     <ion-header>
@@ -57,11 +58,22 @@ import { UserStateComponent } from './components/user-state.component';
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
 
-      <user-state
+      <!-- <user-state
        [user]="userList.user()"
        (login)="userList.onLogin()" 
        (logout)="userList.onLogout()"
-      />
+      /> -->
+
+      <!-- <app-list>
+        <header>USER</header>
+        <ion-list [inset]="true" class="mx-0">
+          <app-user-state 
+            [user]="{uid: 'abcd', email: 'xxx@xxx.com'}" 
+            (logout)="userList.onLogout()"
+          />
+        </ion-list>
+        <footer>**Logged-in users have their datas backed up on a google server. The datas of unregistered users are stored in the browser memory (data persistence is not guaranteed...)**</footer>
+      </app-list>
 
       <app-list>
         <header>DATE SETTINGS</header>
@@ -86,7 +98,15 @@ import { UserStateComponent } from './components/user-state.component';
           [buttons]="confirmLogoutAlert.options.buttons"
           (didDismiss)="confirmLogoutAlert.show = false"
         />
-      </ng-container>
+      </ng-container> -->
+
+      <app-user-settings-list
+        [user]="null"
+      />
+
+      <app-date-settings-list
+        [dateFormat]="dateFormat()"
+      />
       
     </ion-content>
   `,
@@ -110,53 +130,56 @@ import { UserStateComponent } from './components/user-state.component';
 })
 export class SettingsPage {
 
-  // - when clicking on alert backdrop, a error "Blocked aria-hidden on an element because its descendant retained focus."
-  // - when accessing Settings page, user item flickering on load. --> load user before accessing SettingsPage?
+  dateFormat = computed(() => DateFormat.CH)
 
-  // DEPENDENCIES
-  // AuthService = inject(AuthService)
-  router = inject(Router)
+  // // - when clicking on alert backdrop, a error "Blocked aria-hidden on an element because its descendant retained focus."
+  // // - when accessing Settings page, user item flickering on load. --> load user before accessing SettingsPage?
 
-
-  // TEMP/TODO: replace USER by an AuthService!
-  USER: WritableSignal<User | null> = signal(null)
+  // // DEPENDENCIES
+  // // AuthService = inject(AuthService)
+  // router = inject(Router)
 
 
-  // VARS
-  userList = {
-    user: this.USER,
-    onLogin: () => {
-      blurActiveElement()
-      this.router.navigateByUrl('/tabs/settings/authenticate')
-    },
-    onLogout: () => {
-      this.USER.set(null)
-    }
-  }
+  // // TEMP/TODO: replace by services!
+  // USER: WritableSignal<User | null> = signal(null)
+  // dateFormat = computed(() => DateFormat.CH)
 
-  // TODO: everything in the template??
-  confirmLogoutAlert: {show: boolean, options: AlertOptions} = {
-    show: false,
-    options: {
-      header: 'Do you really want to logout?',
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: 'cancel',
-          handler: () => {
-            console.log('cancel clicked')
-          }
-        },
-        {
-          text: 'OK',
-          handler: () => {
-            // this.AuthService.logout()
-          }
-        }
-      ]
-    }
-  }
 
-  ngOnInit() {}
+  // // VARS
+  // userList = {
+  //   user: this.USER,
+  //   onLogin: () => {
+  //     blurActiveElement()
+  //     this.router.navigateByUrl('/tabs/settings/authenticate')
+  //   },
+  //   onLogout: () => {
+  //     this.USER.set(null)
+  //   }
+  // }
+
+  // // TODO: everything in the template??
+  // confirmLogoutAlert: {show: boolean, options: AlertOptions} = {
+  //   show: false,
+  //   options: {
+  //     header: 'Do you really want to logout?',
+  //     backdropDismiss: false,
+  //     buttons: [
+  //       {
+  //         text: 'cancel',
+  //         handler: () => {
+  //           console.log('cancel clicked')
+  //         }
+  //       },
+  //       {
+  //         text: 'OK',
+  //         handler: () => {
+  //           // this.AuthService.logout()
+  //         }
+  //       }
+  //     ]
+  //   }
+  // }
+
+  // ngOnInit() {}
 
 }

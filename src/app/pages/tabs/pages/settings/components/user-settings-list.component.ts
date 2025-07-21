@@ -1,46 +1,27 @@
 import { Component, computed, input, output } from '@angular/core';
-
-
+import { CommonModule } from '@angular/common';
 import { IonButton, IonIcon, IonItem, IonLabel, IonList } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { personCircleOutline } from 'ionicons/icons';
 
-import { NgIf } from '@angular/common';
+import { AppListComponent } from '../../../../../components/app-list.component';
 import { User } from '../../../../../types/User';
 
 @Component({
-  selector: 'app-user-state',
+  selector: 'app-user-settings-list',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
+    AppListComponent,
     IonList,
     IonItem,
     IonIcon,
     IonLabel,
-    IonButton,
+    IonButton
   ],
   template: `
-    <ng-container *ngIf="isLoggedIn()">
-      <ion-list [inset]="true" class="mx-0">
-        <ion-item>
-          <ion-icon name="person-circle-outline" slot="start" color="primary" />
-          <ion-label>{{ user()!.email }}</ion-label>
-          <ion-button color="danger" fill="outline" (click)="logout.emit()">logout</ion-button>
-        </ion-item>
-      </ion-list>
-    </ng-container>
-
-    <ng-container *ngIf="!isLoggedIn()">
-      <ion-list [inset]="true" class="mx-0">
-        <ion-item button (click)="login.emit()">
-          <ion-icon name="person-circle-outline" slot="start" color="danger" />
-          <ion-label>Need to login?</ion-label>
-        </ion-item>
-      </ion-list>
-    </ng-container>
-
-    <!-- <app-list>
-      <header>USER</header>
+    <app-list>
+      <header>USER SETTINGS</header>
       <ng-container *ngIf="isLoggedIn()">
         <ion-list [inset]="true" class="mx-0">
           <ion-item>
@@ -51,16 +32,16 @@ import { User } from '../../../../../types/User';
         </ion-list>
       </ng-container>
 
-      <ng-container *ngIf="isLoggedOut()">
+      <ng-container *ngIf="!isLoggedIn()">
         <ion-list [inset]="true" class="mx-0">
-          <ion-item button (click)="login.emit()">
+          <ion-item button (click)="authenticate.emit()">
             <ion-icon name="person-circle-outline" slot="start" color="danger" />
             <ion-label>Need to login?</ion-label>
           </ion-item>
         </ion-list>
       </ng-container>
       <footer>**Logged-in users have their datas backed up on a google server. The datas of unregistered users are stored in the browser memory (data persistence is not guaranteed...)**</footer>
-    </app-list> -->
+    </app-list>
   `,
   styles: `
     ion-icon {
@@ -68,21 +49,10 @@ import { User } from '../../../../../types/User';
     }
   `,
 })
-export class UserStateComponent {
-
-  // user = input.required<User | null | undefined>()
-  // login = output<void>()
-  // logout = output<void>()
-
-  // isLoggedOut = computed(() => this.user() === null)
-  // isLoggedIn = computed(() => this.user() !== null && this.user() !== undefined)
-
-  // constructor() {
-  //   addIcons({ personCircleOutline })
-  // }
+export class UserSettingsListComponent {
 
   user = input.required<User | null | undefined>()
-  login = output<void>()
+  authenticate = output<void>()
   logout = output<void>()
 
   isLoggedIn = computed(() => this.user() !== null && this.user() !== undefined)
