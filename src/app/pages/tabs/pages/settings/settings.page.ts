@@ -1,4 +1,4 @@
-import { Component, computed, inject, Injector } from '@angular/core';
+import { Component, computed, inject, Injector, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -6,13 +6,16 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
+  ModalController
 } from '@ionic/angular/standalone';
 
 
+import { SettingsService } from '@app/services/settings.service';
+import { AuthService } from '@app/services/auth.service';
 import { UserSettingsListComponent } from './components/user-settings-list.component';
 import { DateSettingsListComponent } from './components/date-settings-list.component';
-import { SettingsService } from '../../../../services/settings.service';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthenticateModal } from './components/authenticate.modal';
+import { blurActiveElement } from '@app/directives/blur-on-click.directive';
 
 @Component({
   selector: 'app-settings',
@@ -38,18 +41,15 @@ import { AuthService } from '../../../../services/auth.service';
       <app-user-settings-list
         [loading]="showLoading()"
         [user]="authService.user()"
+        (logout)="authService.logout()"
+        (authenticate)="showAuthModal()"
       />
 
       <app-date-settings-list
-        [forceLoading]="showLoading()"
+        [loading]="showLoading()"
         [dateFormat]="settingsService.dateFormat()"
         [timezone]="settingsService.timezone()"
       />
-      <!-- <app-date-settings-list
-        [loading]="user() === undefined || dateFormatString() === undefined || timezoneString() === undefined"
-        [dateFormat]="dateFormatString()"
-        [timezone]="timezoneString()"
-      /> -->
       
     </ion-content>
   `,
@@ -75,13 +75,45 @@ export class SettingsPage {
 
   settingsService = inject(SettingsService)
   authService = inject(AuthService)
+  modalCtrl = inject(ModalController)
+
+  triggerLoading = signal(false)
 
   showLoading = computed(() => {
     return this.authService.user() === undefined || 
-    this.settingsService.settings() === undefined
+    this.settingsService.settings() === undefined ||
+    this.triggerLoading() === true
   })
 
   constructor() {}
+
+  async showAuthModal() {
+    const modal = await this.modalCtrl.create({
+      component: AuthenticateModal,
+      breakpoints: [0, 0.9],
+      initialBreakpoint: 0.9,
+      componentProps: {
+        user: this.authService.user()
+      }
+    });
+    blurActiveElement()
+    modal.present()
+
+    const { data, role } = await modal.onWillDismiss()
+    blurActiveElement()
+
+    this.triggerLoading.set(true)
+    if(data === 'aaa') {
+      await this.authService.login('aaa@aaa.com', '111111')
+      this.triggerLoading.set(false)
+    } else if(data === 'bbb') {
+      await this.authService.login('bbb@bbb.com', '222222')
+      this.triggerLoading.set(false)
+    } else {
+      this.authService.logout()
+      this.triggerLoading.set(false)
+    }
+  }
 
   // private getDateFormatString(settingsService: SettingsService, injector: Injector) {
   //   const initialValue = new Date('2025-12-31').toLocaleDateString()

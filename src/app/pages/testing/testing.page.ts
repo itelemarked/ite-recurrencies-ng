@@ -1,5 +1,5 @@
 
-import { Component, inject, Injector } from '@angular/core';
+import { Component, computed, inject, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -7,6 +7,7 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonItem,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -14,9 +15,11 @@ import { format, getPlatformTimezone } from '../../utils/date';
 import { DateFormat, isDateFormat } from '../../types/DateFormat.enum';
 import { Timezone } from '../../types/Timezone.enum';
 import { SettingsService } from '../../services/settings.service';
-import { distinctUntilChanged, interval, map, of, take } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, interval, map, of, startWith, take } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AuthService } from '@app/services/auth.service';
 
 
 @Component({
@@ -29,7 +32,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton
+    IonButton,
+    IonItem
 ],
   template: `
     <ion-header>
@@ -38,33 +42,50 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false" class="p-xl">
-      <!-- <p>
-        DateFormat: {{ settingsService.dateFormat() }} 
-        <ion-button size="small" (click)="updateCH()">CH</ion-button>
-        <ion-button size="small" (click)="updateUS()">US</ion-button>
-        <ion-button size="small" (click)="deleteDateFormat()">delete</ion-button>
-      </p>
-      <p>
-        Timezone: {{ settingsService.timezone() }}
-        <ion-button size="small" (click)="updateZU()">Zurich</ion-button>
-        <ion-button size="small" (click)="updateMAU()">Mauritius</ion-button>
-        <ion-button size="small" (click)="deleteTimezone()">delete</ion-button>
-      </p>
-      <ion-button size="small" (click)="deleteAll()">deleteAll</ion-button> -->
+    <ion-content [forceOverscroll]="false" class="ion-padding">
+      
+      <div class="flex items-center px-md my-md outline">
+        <span class="flex-1">User info:</span>
+        <span> {{ userInfo() }}</span>
+      </div>
+
+      <div class="flex items-center px-md my-md outline">
+        <span class="flex-1">Log 'aaa' in</span>
+        <ion-button size="small" (click)="authService.login('aaa@aaa.com', '111111')">aaa</ion-button>
+      </div>
+
+      <div class="flex items-center px-md my-md outline">
+        <span class="flex-1">Log 'bbb' in</span>
+        <ion-button size="small" (click)="authService.login('bbb@bbb.com', '222222')">bbb</ion-button>
+      </div>
+
+      <div class="flex items-center px-md my-md outline">
+        <span class="flex-1">Logout</span>
+        <ion-button size="small" color="danger" (click)="authService.logout()">Logout</ion-button>
+      </div>
+
     </ion-content>
   `,
-  styles: ``,
+  styles: `
+    .outline {
+      border: solid 1px grey;
+      height: 50px;
+    }
+  `,
 })
 export class TestingPage {
 
   settingsService = inject(SettingsService)
+  authService = inject(AuthService)
 
-  constructor() {
+  userInfo = computed(() => {
+    const usr = this.authService.user()
+    if(usr === undefined) return 'loading'
+    if(usr === null) return 'not-authenticated'
+    return usr.email
+  })
 
-    this.settingsService.settings$.subscribe(console.log)
-
-  }
+  constructor() {}
 
 
 

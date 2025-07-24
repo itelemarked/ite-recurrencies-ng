@@ -28,10 +28,10 @@ import { Timezone } from '@app/types/Timezone.enum';
           routerLink="./dateformat-options"
         >
           <ion-label>Date format</ion-label>
-          <ng-container *ngIf="!forceLoading()">
+          <ng-container *ngIf="!loading()">
             <ion-note>**{{ dateFormatString() }}**</ion-note>
           </ng-container>
-          <ng-container *ngIf="forceLoading()">
+          <ng-container *ngIf="loading()">
             <ion-note style="width: 50%;">
               <ion-skeleton-text [animated]="true"/>
             </ion-note>
@@ -43,10 +43,10 @@ import { Timezone } from '@app/types/Timezone.enum';
           routerLink="./timezone-options"
         >
           <ion-label>Timezone</ion-label>
-          <ng-container *ngIf="!forceLoading()">
+          <ng-container *ngIf="!loading()">
             <ion-note>**{{ timezoneString() }}**</ion-note>
           </ng-container>
-          <ng-container *ngIf="forceLoading()">
+          <ng-container *ngIf="loading()">
             <ion-note style="width: 50%;">
               <ion-skeleton-text [animated]="true"/>
             </ion-note>
@@ -59,7 +59,7 @@ import { Timezone } from '@app/types/Timezone.enum';
 })
 export class DateSettingsListComponent {
 
-  forceLoading = input<boolean>(false)
+  loading = input<boolean>(false)
   dateFormat = input<DateFormat | undefined>()
   timezone = input<Timezone | undefined>()
 

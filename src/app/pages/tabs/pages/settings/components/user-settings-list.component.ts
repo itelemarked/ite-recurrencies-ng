@@ -73,6 +73,7 @@ export class UserSettingsListComponent {
 
   loading = input<boolean>(false)
   user = input<User | null | undefined>(undefined)
+  
   authenticate = output<void>()
   logout = output<void>()
 
