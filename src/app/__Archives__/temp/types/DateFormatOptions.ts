@@ -17,9 +17,4 @@ export function toDateFormat(val: string): DateFormatOptions {
 
 
 
-export enum DateFormat {
-  CH = '31.12.2020',
-  US = '12/31/2025',
-  ISO = '2020-12-31',
-  FULL = '31.12.25 13:59:59.999 TIMEZONE'
-}
+

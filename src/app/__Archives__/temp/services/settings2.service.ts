@@ -1,8 +1,8 @@
 import { computed, inject, Injectable, signal, Signal } from "@angular/core";
-import { Settings, toSettings } from "../types/Settings";
+import { Settings, toSettings } from "../__Archives__/temp/types/Settings";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AuthService } from "./auth.service";
-import { User } from "../types/User";
+import { User } from "../__Archives__/temp/types/User";
 import { map } from "rxjs";
 
 

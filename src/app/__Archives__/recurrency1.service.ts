@@ -6,10 +6,10 @@ import { BehaviorSubject, map, of, skip, switchMap, take, tap } from "rxjs";
 import { AuthService } from "../../__Archives__/auth1.service";
 import { SettingsService } from "./settings1.service";
 
-import { Recurrency, toRecurrency } from "../types/Recurrency";
+import { Recurrency, toRecurrency } from "./temp/types/Recurrency";
 
 import { endOf, format } from "../utils/date/date.utils";
-import { TimezoneString } from "../types/TimezoneString";
+import { TimezoneString } from "./temp/types/TimezoneString";
 
 
 

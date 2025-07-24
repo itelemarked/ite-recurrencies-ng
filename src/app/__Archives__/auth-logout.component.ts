@@ -3,7 +3,7 @@ import { AuthService } from '../services/auth.service';
 import { IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { map, Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { User } from '../types/User';
+import { User } from './temp/types/User';
 
 @Component({
   selector: 'app-auth-logout',

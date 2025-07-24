@@ -1,9 +1,9 @@
 import { computed, effect, inject, Injectable, signal, untracked } from "@angular/core"
 import { AuthService } from "./auth.service"
-import { Recurrency, toRecurrency } from "../types/Recurrency"
+import { Recurrency, toRecurrency } from "../__Archives__/temp/types/Recurrency"
 import { STORE } from "./_MOCK_DATAS"
-import { User } from "../types/User"
-import { TimezoneString, toTimezoneString } from "../types/TimezoneString"
+import { User } from "../__Archives__/temp/types/User"
+import { TimezoneString, toTimezoneString } from "../__Archives__/temp/types/TimezoneString"
 import { format } from "../utils/date/date.utils"
 
 /**

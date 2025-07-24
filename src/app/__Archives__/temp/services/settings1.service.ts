@@ -1,10 +1,10 @@
 import { inject, Injectable } from "@angular/core"
 import { BehaviorSubject, map, of, ReplaySubject, skip, switchMap, take } from "rxjs"
 
-import { Settings, SettingsData } from "../types/Settings"
+import { Settings, SettingsData } from "../__Archives__/temp/types/Settings"
 import { AuthService } from "../__Archives__/auth1.service"
 import { AngularFirestore } from "@angular/fire/compat/firestore"
-import { toTimezoneString } from "../types/TimezoneString"
+import { toTimezoneString } from "../__Archives__/temp/types/TimezoneString"
 
 
 const DEFAUTLT_SETTINGS: Settings = {

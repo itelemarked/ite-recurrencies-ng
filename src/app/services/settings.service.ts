@@ -1,85 +1,133 @@
-import { computed, inject, Injectable, signal, Signal } from "@angular/core";
+import { Injectable, Signal } from "@angular/core";
+import { DateFormat, isDateFormat } from "../types/DateFormat.enum";
+import { BehaviorSubject, distinctUntilChanged, map, Observable, tap } from "rxjs";
+import { isTimezone, Timezone } from "../types/Timezone.enum";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { CustomTypeError } from "@app/utils/errors";
 
 
-type PlainObject = Record<string, any>
 
-type Storable<T> = T & { uid: string }
+/********** MOCK *********/
 
-type IStore<T extends PlainObject> = {
-  getAll: () => Signal<Storable<T>[] | null | undefined>
-  setAll: (val: Storable<T>[]) => Promise<void>
-  addDoc: (doc: T | Storable<T>) => Promise<void>
-  updateDoc: (doc: Storable<Partial<T>>) => Promise<Storable<T>>
-  removeDoc: (uid: string) => Promise<Storable<T>>
+
+let MOCK_DATA: any = {
+  timezone: Timezone.INDIAN_MAURITIUS,
+  dateFormat: DateFormat.US
 }
 
-async function wait(delayMs: number): Promise<void> {
-  return new Promise(resolve => setTimeout(() => resolve(), delayMs))
+// let MOCK_DATA: any = null
+
+// let MOCK_DATA: any = {
+//   timezone: Timezone.INDIAN_MAURITIUS,
+// }
+
+async function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(() => resolve(), ms))
 }
 
-function generatedUid() {
-  const random = () => Math.floor(Math.random() * 1000)
-  return 'uid-' + Date.now() + '-' + random()
+async function fetchData() {
+  await delay(700)
+  return MOCK_DATA === undefined ? null : MOCK_DATA
+}
+
+async function saveData(data: any) {
+  await delay(100)
+  MOCK_DATA = data
+}
+
+/********** MOCK *********/
+
+
+
+type Settings = {
+  timezone: Timezone,
+  dateFormat: DateFormat
 }
 
 
-type MyData = {
-  title: string
-}
 
-let MOCK: Storable<MyData>[] = [
-  {uid: 'uid-0', title: 'Item 0'},
-  {uid: 'uid-1', title: 'Item 1'},
-  {uid: 'uid-2', title: 'Item 2'},
-]
+
+interface SettingsServiceInterface {
+  settings$: Observable<Settings | undefined>
+  settings: Signal<Settings | undefined>
+  dateFormat$: Observable<DateFormat | undefined>
+  dateFormat: Signal<DateFormat | undefined>
+  timezone$: Observable<Timezone | undefined>
+  timezone: Signal<Timezone | undefined>
+  update: (options: Settings) => Promise<void>
+  // delete: (props?: (keyof Settings)[]) => Promise<void>
+}
 
 
 @Injectable({providedIn: 'root'})
-export class SettingsService {
+export class SettingsService implements SettingsServiceInterface {
 
-  private _dataSig = signal< Storable<MyData>[] | undefined | null >(undefined)
+  private DEFAULT_VALUES: Settings = {
+    timezone: Timezone.PLATFORM_DEFINED,
+    dateFormat: DateFormat.PLATFORM_DEFINED
+  }
+
+  private _settings$ = new BehaviorSubject<Settings | undefined>(undefined)
+  settings$ = this._settings$.asObservable().pipe(
+    distinctUntilChanged((prev, curr) => prev?.timezone === curr?.timezone && prev?.dateFormat === curr?.dateFormat)
+  )
+  settings = toSignal(this.settings$, {requireSync: true})
+
+  dateFormat$ = this.fromProp<DateFormat>(this.settings$, 'dateFormat', DateFormat.PLATFORM_DEFINED)
+  dateFormat = toSignal(this.dateFormat$, {requireSync: true})
+
+  timezone$ = this.fromProp<Timezone>(this.settings$, 'timezone', Timezone.PLATFORM_DEFINED)
+  timezone = toSignal(this.timezone$, {requireSync: true})
 
   constructor() {
-    this._fetchMock().then(res => this._dataSig.set(res))
+    fetchData().then(data => {
+      this._settings$.next(this.fromData(data))
+    })
   }
 
-  private async _fetchMock() {
-    await wait(1000)
-    return MOCK
+  async update(options: Settings) {
+    const newSettings = {...this._settings$.value, ...options}
+    await saveData(this.toData(newSettings))
+    this._settings$.next(newSettings)
   }
 
-  private async _saveMock(newMocks: Storable<MyData>[]) {
-    await wait(1000)
-    MOCK = newMocks
-    return MOCK
+  private fromProp<R, T extends Record<string, any> = any>(obs: Observable<T | null | undefined>, prop: keyof T, nullValue: R) {
+    return obs.pipe(
+      map(val => {
+        switch(val) {
+          case undefined: return undefined
+          case null: return nullValue
+          default: return val[prop]  === undefined ? nullValue : val[prop] as R
+        }
+      }),
+      distinctUntilChanged()
+    )
   }
 
-  getAll = computed(() => this._dataSig())
-
-  async addDoc(doc: MyData | Storable<MyData>) {
-    await wait(500)
-    if ('uid' in doc) {
-      MOCK.push(doc as Storable<MyData>)
-    } else {
-      MOCK.push({...doc, uid: generatedUid()})
+  private fromData(data: any): Settings {
+    if(data === null || data === undefined) return this.DEFAULT_VALUES
+    
+    const getDateFormat = (val: any) => {
+      if(!isDateFormat(val)) throw new CustomTypeError(`Invalid dateFormat data: ${val}`)
+      return val
     }
-    this._dataSig.set(MOCK)
+
+    const getTimezone = (val: string | null) => {
+      if(!isTimezone(val)) throw new CustomTypeError(`Invalid timezone data: ${val}`)
+      return val
+    }
+
+    const settings: Settings = {
+      dateFormat: getDateFormat(data.dateFormat),
+      timezone: getTimezone(data.timezone)
+    }
+
+    return settings
   }
 
-  async updateDoc(doc: Storable<Partial<MyData>>) {
-    await wait(500)
-    const idx = MOCK.findIndex(m => m.uid === doc.uid)
-    if (idx === -1) throw new Error('no item to update... uid not found')
-    MOCK[idx] = {...MOCK[idx], ...doc}
-    this._dataSig.set(MOCK)
-  }
-
-  async removeDoc(uid: string) {
-    await wait(500)
-    const idx = MOCK.findIndex(m => m.uid === uid)
-    if (idx === -1) throw new Error('no item to remove... uid not found')
-    MOCK = MOCK.filter(m => m.uid !== uid)
-    this._dataSig.set(MOCK)
+  private toData(data: Settings): Settings | null {
+    const isDefaultObject = data.dateFormat === this.DEFAULT_VALUES.dateFormat && data.timezone === this.DEFAULT_VALUES.timezone
+    return isDefaultObject ? null : data
   }
 
 }

@@ -1,47 +1,24 @@
-import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Component, computed, inject, Injector } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import {
-  AlertOptions,
-  IonAlert,
   IonContent,
   IonHeader,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonNote,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 
 
-import { AppListComponent } from '../../../../components/app-list.component';
-import { blurActiveElement, BlurOnClickDirective } from '../../../../directives/blur-on-click.directive';
-import { BackdropDirective } from '../../../../directives/backdrop.directive';
-// import { AuthService } from '../../__Archives__/auth2.service';
-import { User } from '../../../../types/User';
-
-import { UserStateComponent } from './components/user-state.component';
 import { UserSettingsListComponent } from './components/user-settings-list.component';
 import { DateSettingsListComponent } from './components/date-settings-list.component';
-import { DateFormat } from '../../../../types/DateFormatOptions';
+import { SettingsService } from '../../../../services/settings.service';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [
-    RouterLink,
-    NgIf,
-    IonItem,
-    IonLabel,
-    IonNote,
-    IonList,
-    IonAlert,
-    BlurOnClickDirective,
-    BackdropDirective,
-    AppListComponent,
-    UserStateComponent,
+    CommonModule,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -58,55 +35,21 @@ import { DateFormat } from '../../../../types/DateFormatOptions';
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
 
-      <!-- <user-state
-       [user]="userList.user()"
-       (login)="userList.onLogin()" 
-       (logout)="userList.onLogout()"
-      /> -->
-
-      <!-- <app-list>
-        <header>USER</header>
-        <ion-list [inset]="true" class="mx-0">
-          <app-user-state 
-            [user]="{uid: 'abcd', email: 'xxx@xxx.com'}" 
-            (logout)="userList.onLogout()"
-          />
-        </ion-list>
-        <footer>**Logged-in users have their datas backed up on a google server. The datas of unregistered users are stored in the browser memory (data persistence is not guaranteed...)**</footer>
-      </app-list>
-
-      <app-list>
-        <header>DATE SETTINGS</header>
-        <ion-list [inset]="true">
-          <ion-item [button]="true" appBlurOnClick routerLink="./dateformat-options">
-            <ion-label>Date format</ion-label>
-            <ion-note>**01.06.2025**</ion-note>
-          </ion-item>
-          <ion-item [button]="true" appBlurOnClick routerLink="./timezone-options">
-            <ion-label>Timezone</ion-label>
-            <ion-note>**Europe/Zurich**</ion-note>
-          </ion-item>
-        </ion-list>
-      </app-list>
-
-      <ng-container *ngIf="true">
-        <ion-alert
-          appBackdrop
-          [isOpen]="confirmLogoutAlert.show"
-          [header]="confirmLogoutAlert.options.header"
-          [backdropDismiss]="confirmLogoutAlert.options.backdropDismiss"
-          [buttons]="confirmLogoutAlert.options.buttons"
-          (didDismiss)="confirmLogoutAlert.show = false"
-        />
-      </ng-container> -->
-
       <app-user-settings-list
-        [user]="null"
+        [loading]="showLoading()"
+        [user]="authService.user()"
       />
 
       <app-date-settings-list
-        [dateFormat]="dateFormat()"
+        [forceLoading]="showLoading()"
+        [dateFormat]="settingsService.dateFormat()"
+        [timezone]="settingsService.timezone()"
       />
+      <!-- <app-date-settings-list
+        [loading]="user() === undefined || dateFormatString() === undefined || timezoneString() === undefined"
+        [dateFormat]="dateFormatString()"
+        [timezone]="timezoneString()"
+      /> -->
       
     </ion-content>
   `,
@@ -130,56 +73,46 @@ import { DateFormat } from '../../../../types/DateFormatOptions';
 })
 export class SettingsPage {
 
-  dateFormat = computed(() => DateFormat.CH)
+  settingsService = inject(SettingsService)
+  authService = inject(AuthService)
 
-  // // - when clicking on alert backdrop, a error "Blocked aria-hidden on an element because its descendant retained focus."
-  // // - when accessing Settings page, user item flickering on load. --> load user before accessing SettingsPage?
+  showLoading = computed(() => {
+    return this.authService.user() === undefined || 
+    this.settingsService.settings() === undefined
+  })
 
-  // // DEPENDENCIES
-  // // AuthService = inject(AuthService)
-  // router = inject(Router)
+  constructor() {}
 
-
-  // // TEMP/TODO: replace by services!
-  // USER: WritableSignal<User | null> = signal(null)
-  // dateFormat = computed(() => DateFormat.CH)
-
-
-  // // VARS
-  // userList = {
-  //   user: this.USER,
-  //   onLogin: () => {
-  //     blurActiveElement()
-  //     this.router.navigateByUrl('/tabs/settings/authenticate')
-  //   },
-  //   onLogout: () => {
-  //     this.USER.set(null)
+  // private getDateFormatString(settingsService: SettingsService, injector: Injector) {
+  //   const initialValue = new Date('2025-12-31').toLocaleDateString()
+  //   const mapData = (data: DateFormat | null | undefined): string | undefined => {
+  //     switch(data) {
+  //       case undefined: return undefined
+  //       case null: return initialValue
+  //       case DateFormat.CH: return '31.12.25'
+  //       case DateFormat.US: return '12/31/25'
+  //       case DateFormat.ISO: return '2025-12-31'
+  //     }
   //   }
+  //   const dateFormatString$ = settingsService.dateFormat$.pipe(map(mapData))
+  //   return toSignal(dateFormatString$, {injector})
+  // }
+  
+  // private getTimezoneString(settingsService: SettingsService, injector: Injector) {
+  //   const initialValue = Intl.DateTimeFormat().resolvedOptions().timeZone
+  //   const mapData = (data: Timezone | null | undefined): string | undefined => {
+  //     switch(data) {
+  //       case undefined: return undefined
+  //       case null: return initialValue
+  //       default: return data
+  //     }
+  //   }
+  //   const timezoneString$ = settingsService.timezone$.pipe(map(mapData))
+  //   return toSignal(timezoneString$, {injector, initialValue})
   // }
 
-  // // TODO: everything in the template??
-  // confirmLogoutAlert: {show: boolean, options: AlertOptions} = {
-  //   show: false,
-  //   options: {
-  //     header: 'Do you really want to logout?',
-  //     backdropDismiss: false,
-  //     buttons: [
-  //       {
-  //         text: 'cancel',
-  //         handler: () => {
-  //           console.log('cancel clicked')
-  //         }
-  //       },
-  //       {
-  //         text: 'OK',
-  //         handler: () => {
-  //           // this.AuthService.logout()
-  //         }
-  //       }
-  //     ]
-  //   }
+  // private getUser(authService: AuthService, injector: Injector) {
+  //   return toSignal(authService.user$, {injector})
   // }
-
-  // ngOnInit() {}
-
+  
 }

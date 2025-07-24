@@ -9,7 +9,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { homeOutline, alarmOutline, listOutline, cogOutline } from 'ionicons/icons';
+import { alarmOutline, listOutline, cogOutline } from 'ionicons/icons';
 
 @Component({
   standalone: true,
@@ -50,7 +50,6 @@ import { homeOutline, alarmOutline, listOutline, cogOutline } from 'ionicons/ico
 export class TabsPage {
   constructor() {
     addIcons({ 
-      // homeOutline, 
       alarmOutline, 
       listOutline,
       cogOutline

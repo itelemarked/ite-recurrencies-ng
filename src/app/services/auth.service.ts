@@ -1,91 +1,54 @@
-import { computed, Injectable, signal } from "@angular/core"
-import { User } from "../types/User"
-import { AUTH } from "./_MOCK_DATAS"
+import { Injectable, Signal } from "@angular/core";
+import { User } from "../types/User.type";
+import { BehaviorSubject, Observable } from "rxjs";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 
-/**
- * This is a MOCK Service...
- */
+interface AuthServiceInterface {
+  user$: Observable<User | null | undefined>
+  user: Signal<User | null | undefined>
+  login(email: string, password: string): Promise<User>
+  signup(email: string, password: string): Promise<User>
+  logout(): Promise<void>
+}
+
+
+// TEMPORARY UTILITY FUNCTIONS
+async function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(() => resolve(), ms))
+}
+
 
 @Injectable({providedIn: 'root'})
-export class AuthService {
+export class AuthService implements AuthServiceInterface {
 
-  // DEPENDENCIES
-  MOCK_AUTH: any = AUTH
+  private _user$ = new BehaviorSubject<User | null | undefined>(undefined)
+  user$ = this._user$.asObservable()
 
-  private _user = signal<User | null | undefined>(undefined)
-  public user = computed(() => this._user())
-
-  // User states
-  public isLoading = computed(() => this._user() === undefined)
-  public isLoggedOut = computed(() => this._user() === null)
-  public isLoggedIn = computed(() => this._user() !== null && this._user() !== undefined)
-
-  // VARS
-  private DELAY = 300
+  user = toSignal(this.user$)
 
   constructor() {
-    setTimeout(() => {
-      const user: User | null = this.MOCK_AUTH.currentUser
-      this._user.set(user)
-    }, this.DELAY);
+    this.login('aa', 'bb')
+    // this.logout()
   }
 
-  async login(email: string, password: string): Promise<User> {
-    const foundData: any = Object.entries(this.MOCK_AUTH.users).find(([uid, emailPassword]: [any, any]) => {
-      return emailPassword.email === email && emailPassword.password === password
-    })
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (foundData === undefined) {
-          reject(`Invalid email or password`)
-        } else {
-          const activeUser = {email: foundData[1].email, uid: foundData[0]}
-          this.MOCK_AUTH.currentUser = activeUser
-          this._user.set(activeUser)
-          resolve(activeUser)
-        }
-      }, this.DELAY);
-    })
-  }
-  
-  async signup(email: string, password: string): Promise<User> {
-    const emailAlreadyUsed: any = Object.entries(this.MOCK_AUTH.users).find(([uid, emailPassword]: [any, any]) => {
-      return emailPassword.email === email
-    })
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (emailAlreadyUsed !== undefined) {
-          reject('Email already used')
-        } else {
-          const uid = Math.random().toString()
-          this.MOCK_AUTH.currentUser = {email, uid}
-          this._user.set({email, uid})
-          resolve({email, uid})
-        }
-      }, this.DELAY);
-    })
+  async login(email: string, password: string) {
+    await delay(400)
+    const user: User = {uid: 'xyz', email: 'xxx@xxx.com'}
+    this._user$.next(user)
+    return user
   }
 
-  async logout(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.MOCK_AUTH.currentUser = null
-        this._user.set(null)
-        resolve()
-      }, this.DELAY);
-    })
+  async signup(email: string, password: string) {
+    await delay(400)
+    const user: User = {uid: 'xyz', email: 'xxx@xxx.com'}
+    this._user$.next(user)
+    return user
   }
 
-  private simulatedFetch(DELAY = 0): Promise<User | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const fetchedUser: User | null = this.MOCK_AUTH.currentUser
-        resolve(fetchedUser)
-      }, DELAY);
-    })
+  async logout() {
+    await delay(400)
+    this._user$.next(null)
   }
 
 }
