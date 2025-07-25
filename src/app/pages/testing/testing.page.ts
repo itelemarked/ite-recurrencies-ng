@@ -13,13 +13,15 @@ import {
 } from '@ionic/angular/standalone';
 import { format, getPlatformTimezone } from '../../utils/date';
 import { DateFormat, isDateFormat } from '../../types/DateFormat.enum';
-import { Timezone } from '../../types/Timezone.enum';
+import { isTimezone, Timezone } from '../../types/Timezone.enum';
 import { SettingsService } from '../../services/settings.service';
 import { BehaviorSubject, distinctUntilChanged, interval, map, of, startWith, take } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from '@app/services/auth.service';
+import { testAllTypes } from '@app/utils/testing';
+import { isNull, isNumber, isObject, isOptional, isString, isUndefined } from '@app/utils/validation';
 
 
 @Component({
@@ -44,24 +46,25 @@ import { AuthService } from '@app/services/auth.service';
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
       
-      <div class="flex items-center px-md my-md outline">
-        <span class="flex-1">User info:</span>
-        <span> {{ userInfo() }}</span>
+      <div>User</div>
+      <div class="outline">
+        <div class="flex items-center px-md my-md">
+          <span class="flex-1">User info:</span>
+          <span> {{ userInfo() }}</span>
+        </div>
+        <div class="flex">
+          <ion-button class="flex-1" size="small" (click)="authService.login('aaa@aaa.com', '111111')">login aaa</ion-button>
+          <ion-button class="flex-1" size="small" (click)="authService.login('bbb@bbb.com', '222222')">login bbb</ion-button>
+          <ion-button class="flex-1" size="small" color="danger" (click)="authService.logout()">Logout</ion-button>
+        </div>
       </div>
 
-      <div class="flex items-center px-md my-md outline">
-        <span class="flex-1">Log 'aaa' in</span>
-        <ion-button size="small" (click)="authService.login('aaa@aaa.com', '111111')">aaa</ion-button>
-      </div>
-
-      <div class="flex items-center px-md my-md outline">
-        <span class="flex-1">Log 'bbb' in</span>
-        <ion-button size="small" (click)="authService.login('bbb@bbb.com', '222222')">bbb</ion-button>
-      </div>
-
-      <div class="flex items-center px-md my-md outline">
-        <span class="flex-1">Logout</span>
-        <ion-button size="small" color="danger" (click)="authService.logout()">Logout</ion-button>
+      <div class="mt-md">Settings</div>
+      <div>
+        <div class="flex item-center outline">
+          <span class="flex-1">dateFormat</span>
+          <span>{{ dateFormat() }}</span>
+        </div>
       </div>
 
     </ion-content>
@@ -69,7 +72,7 @@ import { AuthService } from '@app/services/auth.service';
   styles: `
     .outline {
       border: solid 1px grey;
-      height: 50px;
+      min-height: 50px;
     }
   `,
 })
@@ -85,8 +88,20 @@ export class TestingPage {
     return usr.email
   })
 
-  constructor() {}
+  fbStore = inject(AngularFirestore)
 
+  dateFormat = computed(() => {
+    const res = this.settingsService.settings()?.dateFormat
+    if(res === undefined) return 'undefined'
+    if(res === null) return 'null'
+    return res
+  })
+
+  constructor() {
+    // this.fbStore.doc(`users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/settings/SETTINGS_UIDD`).snapshotChanges().subscribe(val => console.log(val.payload.data()))
+    // testAllTypes(isPlainObject, [{key: 'Europe/Zurich', val: 'Europe/Zurich'}, {key: 'Europe/Zuric', val: 'Europe/Zuric'}])
+    this.settingsService.settings$.subscribe(console.log)
+  }
 
 
 

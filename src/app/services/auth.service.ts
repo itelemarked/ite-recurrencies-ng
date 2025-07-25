@@ -28,7 +28,8 @@ export class AuthService implements AuthServiceInterface {
   private _user$ = new BehaviorSubject<User | null | undefined>(undefined)
 
   /**
-   * Fires when a DIFFERENT user has been chosen (when it really changed!)
+   * Fires first on subscription after initial fetch,
+   * and then when a DIFFERENT user has been chosen (when it really changed!)
    * Possible values are of type User or null (undefined is not applicable here)
    */
   private fbUser$ = this.fbAuth.authState.pipe(
