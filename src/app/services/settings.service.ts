@@ -61,6 +61,7 @@ export class SettingsService {
   private _settings$ = new BehaviorSubject<Settings | undefined>(undefined)
 
   private fbSettings$ = this.authService.user$.pipe(
+    /** result: undefined (loading), null (non-authenticated) or User (authenticated) */
     switchMap(this.fetchData.bind(this)),
     map(this.validateData.bind(this))
   )
@@ -77,16 +78,17 @@ export class SettingsService {
     this.fbSettings$.subscribe(res => this._settings$.next(res))
   }
 
-  private fetchData(user: User | null | undefined): Observable<any | null | undefined> {
+  private fetchData(user: User | null | undefined) {
     if(user === undefined) return of(undefined)
-    if(user === null) return of(null)
-    const data = this.fbStore.doc(`users/${user.uid}/settings/SETTINGS_UID`).snapshotChanges().pipe(
+    if(user === null) return of(null) 
+    const data = this.fbStore.doc<Settings>(`users/${user.uid}/settings/SETTINGS_UID`).snapshotChanges().pipe(
       map(data => data.payload.data() === undefined ? null : data.payload.data())
     )
     return data
   }
 
-  private validateData(data: any | null | undefined): Settings {
+  private validateData(data: any | null | undefined): Settings | undefined {
+    if(data === undefined) return undefined
     if(data === null || data === undefined) return this.DEFAULT_VALUES
 
     const isSettings = isObject<Settings>(data, {

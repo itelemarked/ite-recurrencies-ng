@@ -15,13 +15,14 @@ import { format, getPlatformTimezone } from '../../utils/date';
 import { DateFormat, isDateFormat } from '../../types/DateFormat.enum';
 import { isTimezone, Timezone } from '../../types/Timezone.enum';
 import { SettingsService } from '../../services/settings.service';
-import { BehaviorSubject, distinctUntilChanged, interval, map, of, startWith, take } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, interval, map, of, startWith, switchMap, take } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from '@app/services/auth.service';
 import { testAllTypes } from '@app/utils/testing';
 import { isNull, isNumber, isObject, isOptional, isString, isUndefined } from '@app/utils/validation';
+import { Auth2Service } from '@app/services/auth2.service';
 
 
 @Component({
@@ -79,16 +80,18 @@ import { isNull, isNumber, isObject, isOptional, isString, isUndefined } from '@
 export class TestingPage {
 
   settingsService = inject(SettingsService)
-  authService = inject(AuthService)
+  authService = inject(Auth2Service)
 
   userInfo = computed(() => {
     const usr = this.authService.user()
-    if(usr === undefined) return 'loading'
-    if(usr === null) return 'not-authenticated'
-    return usr.email
+    if(usr.state === 'loading') return 'loading'
+    if(usr.state === 'data-not-found') return 'data-not-found'
+    if(usr.state === 'error') return 'error'
+    return usr.value.email
   })
 
   fbStore = inject(AngularFirestore)
+  fbAuth = inject(AngularFireAuth)
 
   dateFormat = computed(() => {
     const res = this.settingsService.settings()?.dateFormat
@@ -98,9 +101,24 @@ export class TestingPage {
   })
 
   constructor() {
-    // this.fbStore.doc(`users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/settings/SETTINGS_UIDD`).snapshotChanges().subscribe(val => console.log(val.payload.data()))
-    // testAllTypes(isPlainObject, [{key: 'Europe/Zurich', val: 'Europe/Zurich'}, {key: 'Europe/Zuric', val: 'Europe/Zuric'}])
     this.settingsService.settings$.subscribe(console.log)
+
+    // this.settingsService.fbSettings$.subscribe(console.log)
+    // this.authService.user$.subscribe(console.log)
+
+    // this.fbAuth.authState.pipe(
+    //   switchMap(usr => {
+    //     if(usr === null) return of(null)
+    //     const data = this.fbStore.doc(`users/${usr.uid}/settings/SETTINGS_UID`).snapshotChanges().pipe(
+    //     map(data => data.payload.data() === undefined ? null : data.payload.data())
+    //   )
+    //   return data
+    //   })
+    // ).subscribe(console.log)
+
+    // this.fbStore.doc(`users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/settings/SETTINGS_UID`).snapshotChanges().subscribe(val => console.log(val.payload.data()))
+    // testAllTypes(isPlainObject, [{key: 'Europe/Zurich', val: 'Europe/Zurich'}, {key: 'Europe/Zuric', val: 'Europe/Zuric'}])
+    // this.settingsService.settings$.subscribe(console.log)
   }
 
 
