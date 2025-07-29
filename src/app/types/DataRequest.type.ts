@@ -12,9 +12,9 @@ export type DataRequestDataFound<T> = {
   value: T
 }
 
-export type DataRequestError = {
-  state: 'error',
-  error: Error
-}
+// export type DataRequestError = {
+//   state: 'error',
+//   error: Error
+// }
 
-export type DataRequest<T> = DataRequestLoading | DataRequestNoDataFound | DataRequestDataFound<T> | DataRequestError
+export type DataRequest<T> = DataRequestLoading | DataRequestNoDataFound | DataRequestDataFound<T>

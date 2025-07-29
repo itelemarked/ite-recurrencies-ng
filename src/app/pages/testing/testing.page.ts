@@ -15,14 +15,15 @@ import { format, getPlatformTimezone } from '../../utils/date';
 import { DateFormat, isDateFormat } from '../../types/DateFormat.enum';
 import { isTimezone, Timezone } from '../../types/Timezone.enum';
 import { SettingsService } from '../../services/settings.service';
-import { BehaviorSubject, distinctUntilChanged, interval, map, of, startWith, switchMap, take } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, interval, map, Observable, of, startWith, switchMap, take, tap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AuthService } from '@app/services/auth.service';
 import { testAllTypes } from '@app/utils/testing';
-import { isNull, isNumber, isObject, isOptional, isString, isUndefined } from '@app/utils/validation';
 import { Auth2Service } from '@app/services/auth2.service';
+import { DataRequest } from '@app/types/DataRequest.type';
+import { Settings2Service } from '@app/services/settings2.service';
 
 
 @Component({
@@ -35,8 +36,7 @@ import { Auth2Service } from '@app/services/auth2.service';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
-    IonItem
+    IonButton
 ],
   template: `
     <ion-header>
@@ -79,14 +79,13 @@ import { Auth2Service } from '@app/services/auth2.service';
 })
 export class TestingPage {
 
-  settingsService = inject(SettingsService)
+  settingsService = inject(Settings2Service)
   authService = inject(Auth2Service)
 
   userInfo = computed(() => {
     const usr = this.authService.user()
     if(usr.state === 'loading') return 'loading'
     if(usr.state === 'data-not-found') return 'data-not-found'
-    if(usr.state === 'error') return 'error'
     return usr.value.email
   })
 
@@ -94,31 +93,82 @@ export class TestingPage {
   fbAuth = inject(AngularFireAuth)
 
   dateFormat = computed(() => {
-    const res = this.settingsService.settings()?.dateFormat
+    const res = this.settingsService.dateFormat()
     if(res === undefined) return 'undefined'
     if(res === null) return 'null'
     return res
   })
 
   constructor() {
-    this.settingsService.settings$.subscribe(console.log)
 
-    // this.settingsService.fbSettings$.subscribe(console.log)
-    // this.authService.user$.subscribe(console.log)
+    this.settingsService.fbSettings$.subscribe()
+
+    // this.authService.user$.pipe(
+    //   tap(usrReq => {
+    //     if(usrReq.state === 'loading') {
+    //       console.log('user: loading')
+    //     } else if(usrReq.state === 'data-not-found') {
+    //       console.log('user: data-not-found')
+    //     } else {
+    //       console.log(`user: ${usrReq.value.email}`)
+    //     }
+    //   }),
+    //   switchMap((usrReq) => {
+    //     if(usrReq.state === 'loading') {
+    //       return of({state: 'loading'} as DataRequest<{timezone: Timezone, dateFormat: DateFormat}>)
+    //     }
+    //     if(usrReq.state === 'data-not-found') {
+    //       return of({state: 'data-not-found'} as DataRequest<{timezone: Timezone, dateFormat: DateFormat}>).pipe(
+    //         startWith({state: 'loading'} as DataRequest<{timezone: Timezone, dateFormat: DateFormat}>),
+    //         tap(res => {
+    //           if(res.state === 'loading') {
+    //             console.log('settings: loading')
+    //           } else if(res.state === 'data-not-found') {
+    //             console.log('settings: data-not-found')
+    //           } else {
+    //             console.log(`settings: ${res.value}`)
+    //           }
+    //         }),
+    //       )
+    //     }
+
+    //     return this.fbStore.doc<{timezone: Timezone, dateFormat: DateFormat}>(`users/${usrReq.value.uid}/settings/SETTINGS_UID`).snapshotChanges().pipe(
+    //       map((res): DataRequest<{timezone: Timezone, dateFormat: DateFormat}> => {
+    //         const data = res.payload.data()
+    //         if(data === undefined) return {state: 'data-not-found'}
+    //         return {state: 'data-found', value: data}
+    //       }),
+    //       startWith({state: 'loading'} as DataRequest<{timezone: Timezone, dateFormat: DateFormat}>),
+    //       tap(res => {
+    //         if(res.state === 'loading') {
+    //           console.log('settings: loading')
+    //         } else if(res.state === 'data-not-found') {
+    //           console.log('settings: data-not-found')
+    //         } else {
+    //           console.log(`settings: ${res.value}`)
+    //         }
+    //       }),
+    //     )
+    //   }),
+      
+    // ).subscribe()
+
+
+
+
+
 
     // this.fbAuth.authState.pipe(
-    //   switchMap(usr => {
-    //     if(usr === null) return of(null)
-    //     const data = this.fbStore.doc(`users/${usr.uid}/settings/SETTINGS_UID`).snapshotChanges().pipe(
-    //     map(data => data.payload.data() === undefined ? null : data.payload.data())
-    //   )
-    //   return data
+    //   tap(usr => {
+    //     if(usr === undefined) {
+    //       console.log('user: undefined')
+    //     } else if(usr === null) {
+    //       console.log('user: null')
+    //     } else {
+    //       console.log(`user: ${usr.email}`)
+    //     }
     //   })
-    // ).subscribe(console.log)
-
-    // this.fbStore.doc(`users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/settings/SETTINGS_UID`).snapshotChanges().subscribe(val => console.log(val.payload.data()))
-    // testAllTypes(isPlainObject, [{key: 'Europe/Zurich', val: 'Europe/Zurich'}, {key: 'Europe/Zuric', val: 'Europe/Zuric'}])
-    // this.settingsService.settings$.subscribe(console.log)
+    // ).subscribe()
   }
 
 

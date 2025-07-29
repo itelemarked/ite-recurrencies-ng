@@ -7,7 +7,7 @@ import { CustomTypeError } from "@app/utils/errors";
 import { AuthService } from "./auth.service";
 import { User } from "@app/types/User.type";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { isObject } from "@app/utils/validation";
+import { isInterface } from "@app/utils/validation/validation";
 
 
 
@@ -91,10 +91,10 @@ export class SettingsService {
     if(data === undefined) return undefined
     if(data === null || data === undefined) return this.DEFAULT_VALUES
 
-    const isSettings = isObject<Settings>(data, {
+    const isSettings = isInterface<Settings>({
       timezone: [isTimezone],
       dateFormat: [isDateFormat]
-    })
+    })(data)
 
     if(!isSettings) throw new CustomTypeError(`Fetched Data are invalid, not Settings: ${data}`)
     return data

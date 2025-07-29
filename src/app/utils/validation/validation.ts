@@ -73,3 +73,4 @@ export const isInterface = <T extends Record<string, any>>(fns: Record<string, (
   // CHECKS EVERY PROPS OF 'val' FULLFILLS THE REQUIRED CONDITIONS ('isOptional' IS REMOVED FROM THE REQUIRED CONDITIONS LIST)
   return Object.entries(val).every(([key, value]) => fns[key].filter(fn => fn.name !== 'isOptional').some(fn => fn(value)))
 }
+
