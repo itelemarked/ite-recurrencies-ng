@@ -119,7 +119,8 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "exclude": ["src/app/__Archives__/**/*.spec.ts"]
           }
         },
         "ionic-cordova-serve": {
