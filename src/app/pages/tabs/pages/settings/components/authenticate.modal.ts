@@ -8,7 +8,7 @@ import {
   IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
-import { AuthService } from '@app/services/auth.service';
+
 import { User } from '@app/types/User.type';
 
 @Component({

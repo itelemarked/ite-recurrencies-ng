@@ -3,7 +3,7 @@ import { DateFormat, isDateFormat } from "../types/DateFormat.enum";
 import { BehaviorSubject, distinctUntilChanged, map, Observable, of, switchMap, tap } from "rxjs";
 import { isTimezone, Timezone } from "../types/Timezone.enum";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { CustomTypeError } from "@app/utils/errors";
+import { CustomTypeError } from "@app/utils/errors/custom-type-error.model";
 import { AuthService } from "./auth.service";
 import { User } from "@app/types/User.type";
 import { AngularFirestore } from "@angular/fire/compat/firestore";

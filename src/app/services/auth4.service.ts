@@ -1,45 +1,47 @@
-import { inject, Injectable, Signal } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { toSignal } from "@angular/core/rxjs-interop";
 
 import firebase from 'firebase/compat/app';
 
-import { BehaviorSubject, map, Observable, startWith, tap } from "rxjs";
-import { DataRequest } from "@app/types/DataRequest.type";
+import { BehaviorSubject, map, tap} from "rxjs";
+
+import { DataRequest, DataRequestDataFound, DataRequestNoDataFound } from "@app/types/DataRequest.type";
 import { User } from "@app/types/User.type";
+import { isInterface, isString } from "@app/utils/validation/validation";
 
 
 
-interface AuthServiceInterface {
-  user$: Observable<DataRequest<User>>
-  user: Signal<DataRequest<User>>
-  login(email: string, password: string): Promise<User>
-  signup(email: string, password: string): Promise<User>
-  logout(): Promise<void>
-}
+// interface AuthServiceInterface {
+//   user$: Observable<DataRequest<User>>
+//   user: Signal<DataRequest<User>>
+//   login(email: string, password: string): Promise<User>
+//   signup(email: string, password: string): Promise<User>
+//   logout(): Promise<void>
+// }
 
 
 
 @Injectable({providedIn: 'root'})
-export class Auth2Service implements AuthServiceInterface {
+export class Auth4Service {
 
   private fbAuth = inject(AngularFireAuth)
 
-  /**
-   * Needed to trigger changes manually (e.g: set 'loading' state by defining 'undefined')
-   * 'fbUser$' changes must also be reflected here!
-   */
   private _user$ = new BehaviorSubject<DataRequest<User>>({state: 'loading'})
 
   /**
-   * Fires first on subscription after initial fetch,
-   * and then when a DIFFERENT user has been chosen (when it really changed!)
-   * Possible values are of type User or null (undefined is not applicable here)
+   * emits when the user changes on the firebase backend
    */
-  private fbUser$ = this.fbAuth.authState.pipe(
-    map((usr: firebase.User | null): DataRequest<User> => {
+  private _userChange$ = this.fbAuth.authState.pipe(
+    map((usr: firebase.User | null): DataRequestDataFound<User> | DataRequestNoDataFound => {
       if(usr === null) return {state: 'data-not-found'}
-      const user: User = { uid: usr.uid, email: usr.email! }
+      
+      const user = {uid: usr.uid, email: usr.email}
+      if(!isInterface<User>({
+        email: [isString],
+        uid: [isString]
+      })(user)) throw new Error(`Invalid data. Is not an User Interface: ${usr}`)
+
       return { state: 'data-found', value: user }
     })
   )
@@ -52,9 +54,9 @@ export class Auth2Service implements AuthServiceInterface {
 
   constructor() {
     /**
-     * reflects 'fbUser$' changes to '_user$'
+     * update 'user$' when changes occur on the firebase backend.
      */
-    this.fbUser$.subscribe(usr => this._user$.next(usr))
+    this._userChange$.subscribe(usr => this._user$.next(usr))
   }
 
   async login(email: string, password: string) {

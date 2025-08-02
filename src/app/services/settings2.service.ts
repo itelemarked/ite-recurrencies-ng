@@ -1,5 +1,9 @@
 import { inject, Injectable, Signal } from '@angular/core';
-import { DateFormat, isDateFormat } from '../types/DateFormat.enum';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { DateFormat } from '@app/types/DateFormat.enum';
+import { Timezone } from '@app/types/Timezone.enum';
+
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -10,14 +14,13 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { isTimezone, Timezone } from '../types/Timezone.enum';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { CustomTypeError } from '@app/utils/errors';
-import { AuthService } from './auth.service';
-import { User } from '@app/types/User.type';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+
 import { Auth2Service } from './auth2.service';
 import { DataRequest } from '@app/types/DataRequest.type';
+
+
+
+
 
 type Settings = {
   timezone: Timezone;
@@ -46,6 +49,9 @@ interface SettingsServiceInterface {
    */
   reset: () => Promise<void>;
 }
+
+
+
 
 @Injectable({ providedIn: 'root' })
 export class Settings2Service {
