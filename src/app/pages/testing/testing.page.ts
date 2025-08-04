@@ -7,6 +7,8 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonLoading,
+  IonProgressBar,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -17,6 +19,7 @@ import { Settings5Service } from '@app/services/settings5.service';
 import { Auth5Service } from '@app/services/auth5.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { BackdropDirective } from '@app/directives/backdrop.directive';
 
 
 
@@ -31,16 +34,24 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton
+    IonButton,
+    IonProgressBar,
+    IonLoading,
+    BackdropDirective
 ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-title>Testing</ion-title>
+        <ion-progress-bar [type]="settingsService.isLoading() || authService.isLoading() ? 'indeterminate' : 'determinate'"/>
+        <!-- <ion-progress-bar [buffer]="settingsService.isLoading() || authService.isLoading() ? 0 : 1" [reversed]="true"/> -->
       </ion-toolbar>
     </ion-header>
 
     <ion-content [forceOverscroll]="false" class="ion-padding">
+
+      <!-- <ion-loading [isOpen]="settingsService.isLoading() || authService.isLoading()"/> -->
+      <!-- <ion-loading appBackdrop [isOpen]="true"/> -->
       
       <div>User</div>
       <div class="outline">
@@ -49,8 +60,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
           <span> {{ userInfo() }}</span>
         </div>
         <div class="flex">
-          <!-- <ion-button class="flex-1" size="small" (click)="authService.login('aaa@aaa.com', '111111')">login aaa</ion-button> -->
-          <ion-button class="flex-1" size="small" (click)="wrongLogin()">login aaa</ion-button>
+          <ion-button class="flex-1" size="small" (click)="authService.login('aaa@aaa.com', '111111')">login aaa</ion-button>
+          <!-- <ion-button class="flex-1" size="small" (click)="wrongLogin()">login aaa</ion-button> -->
           <ion-button class="flex-1" size="small" (click)="authService.login('bbb@bbb.com', '222222')">login bbb</ion-button>
           <ion-button class="flex-1" size="small" color="danger" (click)="authService.logout()">Logout</ion-button>
         </div>
@@ -70,6 +81,11 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
     .outline {
       border: solid 1px grey;
       min-height: 50px;
+    }
+
+    ion-loading {
+      
+      --background: transparent;
     }
   `,
 })
@@ -95,7 +111,9 @@ export class TestingPage {
     return res.dateFormat
   })
 
-  constructor() {}
+  constructor() {
+    
+  }
 
   wrongLogin() {
     this.authService.login('aaa@aaa.com', '11111').catch(err => {
