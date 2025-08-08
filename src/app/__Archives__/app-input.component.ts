@@ -1,4 +1,4 @@
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { Component, computed, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,6 +10,7 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   selector: 'app-input',
   standalone: true,
   imports: [
+    NgIf,
     NgClass,
     FormsModule,
     ReactiveFormsModule,
