@@ -1,15 +1,44 @@
 
-// import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 
-// import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
-// import { addIcons } from 'ionicons';
-// import { createOutline, trashOutline } from 'ionicons/icons';
-// import { Recurrency } from '../../../../../_shared/types/Recurrency';
-// import { add, format } from '../../../../../_shared/utils/date/date.utils';
-// import { toInteger } from '../../../../../_shared/types/Integer';
-// import { SettingsService } from '../../../../../_shared/services/settings1.service';
+import { IonIcon, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonProgressBar } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { createOutline, trashOutline } from 'ionicons/icons';
 
 
+@Component({
+  selector: 'app-recurrency-list-item',
+  standalone: true,
+  imports: [IonItemSliding, IonItem, IonLabel, IonItemOptions, IonItemOption, IonIcon, IonProgressBar],
+  template: `
+    <ion-item-sliding #ionItemSlidingRef>
+      <ion-item>
+        <ion-label>
+          <h2>PU</h2>
+          <p>Last event: 30.06.25</p>
+          <p>Period: 94 days</p>
+          <p>Expires: 30.09.25 (63 days left...)</p>
+        </ion-label>
+      </ion-item>
+      
+      <ion-item-options>
+        <ion-item-option color="danger">
+          <ion-icon slot="icon-only" icon="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-progress-bar [value]="0.3" [color]="'primary'"></ion-progress-bar>
+  `,
+  styles: ``,
+})
+export class RecurrencyListItemComponent {
+
+  constructor() {
+    addIcons({createOutline, trashOutline})
+  }
+
+}
 
 
 // @Component({
