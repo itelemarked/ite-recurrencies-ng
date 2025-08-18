@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab-brb',
@@ -8,7 +8,8 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonContent
+    IonContent,
+    IonButton
   ],
   template: `
     <ion-header>
@@ -19,6 +20,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
 
     <ion-content [forceOverscroll]="false">
       <p>BrbPage works</p>
+      <ion-button>btn</ion-button>
     </ion-content>
   `,
   styles: ``,

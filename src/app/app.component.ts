@@ -1,21 +1,55 @@
 import { Component } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+
 import {
-  IonApp,
-  IonRouterOutlet,
+  IonIcon,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { alarmOutline, listOutline, cogOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    IonApp,
-    IonRouterOutlet,
-  ],
+  imports: [IonApp, IonTabs, IonTabBar, IonTabButton, IonIcon],
   template: `
     <ion-app>
-      <ion-router-outlet></ion-router-outlet>
+      <ion-tabs>
+        <ion-tab-bar slot="bottom">
+          <!-- <ion-tab-button tab="home">
+          <ion-icon name="home-outline"></ion-icon>
+          Home
+        </ion-tab-button> -->
+          <ion-tab-button tab="recurrencies">
+            <ion-icon name="alarm-outline"></ion-icon>
+            Recurrencies
+          </ion-tab-button>
+          <ion-tab-button tab="brb">
+            <ion-icon name="list-outline"></ion-icon>
+            BRB
+          </ion-tab-button>
+          <ion-tab-button tab="settings">
+            <ion-icon name="cog-outline"></ion-icon>
+            Settings
+          </ion-tab-button>
+        </ion-tab-bar>
+      </ion-tabs>
     </ion-app>
   `,
   styles: ``,
+  host: {
+    '[attr.aria-hidden]': 'false',
+  },
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor() {
+    addIcons({
+      alarmOutline,
+      listOutline,
+      cogOutline,
+    });
+  }
+}

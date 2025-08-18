@@ -10,6 +10,7 @@ import { AuthenticatePage } from './pages/tabs/pages/settings/pages/authenticate
 import { TestingPage } from './pages/testing/testing.page';
 
 
+
 /**
  * All routing in one file in the root app folder for better SA.
  * 
@@ -24,32 +25,36 @@ import { TestingPage } from './pages/testing/testing.page';
 const ORIGIN = '/tabs'
 
 export const routes: Routes = [
-  { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
+  { path: 'recurrencies', component: RecurrenciesPage },
+  { path: 'brb', component: BrbPage },
+]
+// export const routes: Routes = [
+  // { path: '', redirectTo: ORIGIN, pathMatch: 'full' },
 
-  { path: 'tabs', component: TabsPage, children: [
-    { path: '', redirectTo: 'recurrencies', pathMatch: 'full' },
-    { path: 'recurrencies', component: RecurrenciesPage },
-    { path: 'brb', component: BrbPage },
-    { path: 'settings', children: [
-      { path: '', component: SettingsPage },
-      { path: 'dateformat-options', component: DateformatOptionsPage },
-      { path: 'timezone-options', component: TimezoneOptionsPage },
-      { path: 'authenticate', component: AuthenticatePage },
-      // { path: '**', redirectTo: '', pathMatch: 'full' }
-    ]},
-    { path: '**', redirectTo: 'recurrencies', pathMatch: 'full' }
-  ]},
-
-  // { path: 'settings', children: [
-  //   { path: '', component: SettingsPage },
-  //   { path: 'dateformat-options', component: DateformatOptionsPage },
-  //   { path: 'timezone-options', component: TimezoneOptionsPage },
-  //   { path: 'authenticate', component: AuthenticatePage },
-  //   { path: '**', redirectTo: '', pathMatch: 'full' }
+  // { path: 'tabs', component: TabsPage, children: [
+  //   { path: '', redirectTo: 'recurrencies', pathMatch: 'full' },
+  //   { path: 'recurrencies', component: RecurrenciesPage },
+  //   { path: 'brb', component: BrbPage },
+  //   { path: 'settings', children: [
+  //     { path: '', component: SettingsPage },
+  //     { path: 'dateformat-options', component: DateformatOptionsPage },
+  //     { path: 'timezone-options', component: TimezoneOptionsPage },
+  //     { path: 'authenticate', component: AuthenticatePage },
+  //     // { path: '**', redirectTo: '', pathMatch: 'full' }
+  //   ]},
+  //   { path: '**', redirectTo: 'recurrencies', pathMatch: 'full' }
   // ]},
 
-  { path: 'testing', component: TestingPage },
+  // // { path: 'settings', children: [
+  // //   { path: '', component: SettingsPage },
+  // //   { path: 'dateformat-options', component: DateformatOptionsPage },
+  // //   { path: 'timezone-options', component: TimezoneOptionsPage },
+  // //   { path: 'authenticate', component: AuthenticatePage },
+  // //   { path: '**', redirectTo: '', pathMatch: 'full' }
+  // // ]},
+
+  // { path: 'testing', component: TestingPage },
   
-  { path: '**', redirectTo: ORIGIN, pathMatch: 'full' }
-];
+  // { path: '**', redirectTo: ORIGIN, pathMatch: 'full' }
+// ];
 
