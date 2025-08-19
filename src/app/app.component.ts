@@ -19,10 +19,6 @@ import { alarmOutline, listOutline, cogOutline } from 'ionicons/icons';
     <ion-app>
       <ion-tabs>
         <ion-tab-bar slot="bottom">
-          <!-- <ion-tab-button tab="home">
-          <ion-icon name="home-outline"></ion-icon>
-          Home
-        </ion-tab-button> -->
           <ion-tab-button tab="recurrencies">
             <ion-icon name="alarm-outline"></ion-icon>
             Recurrencies
