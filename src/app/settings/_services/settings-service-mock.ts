@@ -1,10 +1,12 @@
 import { Injectable, Signal } from "@angular/core";
-import { SettingsServiceInterface } from "../_types/SettingsServiceInterface";
+import { toSignal } from "@angular/core/rxjs-interop";
+
+import { BehaviorSubject, Observable } from "rxjs";
+
+import { SettingsServiceInterface } from "../_types/SettingsService";
 import { Settings } from "../_types/Settings";
 import { DateFormat } from "../_types/DateFormat";
 import { Timezone } from "../_types/Timezone";
-import { BehaviorSubject, Observable } from "rxjs";
-import { toSignal } from "@angular/core/rxjs-interop";
 
 
 

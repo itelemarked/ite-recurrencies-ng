@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { RecurrencyServiceFirebase } from "../_services/recurrency-service-firebase";
 
 @Component({
   selector: 'app-recurrency-list',
@@ -25,5 +26,11 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/stan
   styles: [``]
 })
 export class RecurrencyListPage {
+
+  recurrencies = inject(RecurrencyServiceFirebase).recurrencies
+
+  constructor() {
+    
+  }
 
 }

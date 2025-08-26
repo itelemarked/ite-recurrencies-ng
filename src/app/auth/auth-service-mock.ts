@@ -2,7 +2,6 @@ import { Injectable, Signal } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 
 import { User } from "./_types/User"
-import { AuthServiceInterface } from "./_types/AuthServiceInterface"
 import { toSignal } from "@angular/core/rxjs-interop";
 
 
@@ -13,7 +12,7 @@ const REGISTERED_USER: User = {
 
 
 @Injectable({providedIn: 'root'})
-export class AuthServiceMock implements AuthServiceInterface {
+export class AuthServiceMock {
 
   private _user$: BehaviorSubject<User | null | undefined>
   user$: Observable<User | null | undefined>
