@@ -1,122 +1,135 @@
 import { inject, Injectable, Signal } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 
-import { BehaviorSubject, catchError, map, Observable, of } from "rxjs";
-import { isUser, User } from "./_types/User";
-import { CustomTypeError } from "@app/_utils/errors/CustomTypeError";
-import { FirebaseError } from "@angular/fire/app";
-import { AuthError } from "./AuthError";
-import { tryCatch } from "@app/_utils/try-catch";
+import { BehaviorSubject, catchError, delay, empty, EMPTY, filter, finalize, from, interval, map, materialize, NEVER, Observable, of, retry, retryWhen, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
+
+import { CustomTypeError, LooseAutocomplete, tryCatch, isUser, User } from "./__imports";
 
 
 
-
-interface AuthServiceInterface {
-  user$: Observable<User | null | undefined>
-  user: Signal<User | null | undefined>
-  login(email: string, password: string): Promise<User>
-  signup(email: string, password: string): Promise<User>
-  logout(): Promise<void>
+type AuthState = {
+  status: 'success' | 'error' | 'loading',
+  user: User | null
+  error: string | null
 }
+
+type ResponseSuccess = {response: 'success'}
+type ResponseError = {response: 'error', error: string}
 
 
 
 @Injectable({providedIn: 'root'})
-export class AuthServiceFirebase implements AuthServiceInterface {
+export class AuthServiceFirebase {
 
   private fbAuth = inject(AngularFireAuth)
 
-  private _user$ = new BehaviorSubject<User | null | undefined>(undefined)
-  user$ = this._user$.asObservable()
-  user = toSignal(this._user$, {requireSync: true})
+  // STATE
+  private _state$ = new BehaviorSubject<AuthState>({
+    status: 'loading',
+    user: null,
+    error: null
+  })
 
-  private _errors$ = new BehaviorSubject<AuthError[]>([])
-  errors$ = this._errors$.asObservable()
-  errors = toSignal(this._errors$, {requireSync: true})
+  // ACTIONS
+  private _login$ = new Subject<{email: string, password: string}>()
+  
+  private _loginResponse$ = this._login$.pipe(
+    switchMap(({email, password}) => {
+      return from(this.fbAuth.signInWithEmailAndPassword(email, password)).pipe(
+        map(_ => {
+          return {response: 'success'} as ResponseSuccess
+        }),
+        catchError(err => {
+          return of({response: 'error', error: err.message} as ResponseError)
+        })
+      )
+    })
+  )
+
+  private _logout$ = new Subject<void>()
+  
+  private _logoutResponse$ = this._logout$.pipe(
+    switchMap(() => {
+      return from(this.fbAuth.signOut()).pipe(
+        map(_ => {
+          return {response: 'success'} as ResponseSuccess
+        }),
+        catchError(err => {
+          return of({response: 'error', error: err.message} as ResponseError)
+        })
+      )
+    })
+  )
+
+  private _userChange$ = this.fbAuth.authState.pipe(
+    map(firebaseUser => {
+      if (firebaseUser === null) {
+        return null
+      }
+      const uid = firebaseUser.uid
+      const email = firebaseUser.email!
+      return {uid, email} as User
+    })
+  )
 
   constructor() {
-    /**
-     * reflects 'fbUser$' changes to '_user$'
-     */
-      /**
-     * Fires first on subscription after initial fetch,
-     * and then when a DIFFERENT user has been chosen (when it really changed!)
-     * Possible values are of type User or null (undefined is not applicable here)
-     */
-    this.fbAuth.authState.pipe(
-      map(firebaseUser => {
-        if(firebaseUser === null || firebaseUser === undefined) return firebaseUser
-        if(firebaseUser.email === null) throw new AuthError('user-without-email', 'The user fetched has no email, and therefore is not of required type User: {uid: string, email: string}')
-        return {uid: firebaseUser.uid, email: firebaseUser.email}
-      }),
-      catchError(err => {
-        this._errors$.next(err)
-        return of(null)
-      })
-    ).subscribe(this._user$)
+    // REDUCERS
+
+    this._login$.pipe(takeUntilDestroyed()).subscribe(_ => {
+      this._updateState({status: 'loading', error: null})
+    })
+
+    this._loginResponse$.pipe(takeUntilDestroyed()).subscribe(result => {
+      if (result.response === 'success') {
+        this._updateState({status: 'success'})
+      } else {
+        this._updateState({status: 'error', error: result.error})
+      }
+    })
+
+    this._logout$.pipe(takeUntilDestroyed()).subscribe(_ => {
+      this._updateState({status: 'loading', error: null})
+    })
+
+    this._logoutResponse$.pipe(takeUntilDestroyed()).subscribe(result => {
+      if (result.response === 'success') {
+        this._updateState({status: 'success'})
+      } else {
+        this._updateState({status: 'error', error: result.error})
+      }
+    })
+
+    this._userChange$.pipe(takeUntilDestroyed()).subscribe(user => {
+      this._updateState({user, status: 'success', error: null})
+    })
+
   }
 
-  async login(email: string, password: string) {
-    /**
-     * RMK:
-     * - signInWithEmailAndPassword() with resolve a Promise EVERY TIME it is called
-     * - authState observable will fire ONLY if there is a CHANGE in the user
-     * 
-     * When calling signInWithEmailAndPassword() multiple times for the same user, the observables will fire only at most once: the first time (if the user really change)!
-     * It is not necessary to let signInWithEmailAndPassword() be called multiple times for the same user... although it won't make any difference...
-     * BUT: Be sure to reset the _user$ observable in order to reflect the 'loading state' ['this._user$.next(undefined)'] only when signInWithEmailAndPassword() is called for a different user!!  
-     */
-    this._errors$.next([])
+  // PUBLIC API
+  state$ = this._state$.asObservable()
+  state = toSignal(this.state$, {requireSync: true})
 
-    if(this._user$?.value?.email === email) {
-      return this._user$?.value
-    }
+  user$ = this._state$.pipe(map(state => state.user))
+  user = toSignal(this.user$, {requireSync: true})
 
-    this._user$.next(undefined)
+  status$ = this._state$.pipe(map(state => state.status))
+  status = toSignal(this.status$, {requireSync: true})
 
-    // const data = await this.fbAuth.signInWithEmailAndPassword(email, password)
-    // const user = {uid: data?.user?.uid, email: data?.user?.email}
-    // if(!isUser(user)) throw new CustomTypeError(`Data received after login() is not of type User...`)
-    // return user
+  error$ = this._state$.pipe(map(state => state.error))
+  error = toSignal(this.error$, {requireSync: true})
 
-    const [error, data] = await tryCatch(this.fbAuth.signInWithEmailAndPassword(email, password))
-    if(error) throw new AuthError((error as any).code, error.message)
-    if(data.user === null) throw new AuthError('user-is-null-after-login', 'User shouldn\'t return null after logging in...')
-    if(data.user.email === null) throw new AuthError('user-email-is-null-after-login', 'User email shouldn\'t return null after logging in...')
-    return { uid: data.user.uid, email: data.user.email }
+  login = (email: string, password: string) => {
+    this._login$.next({email, password})
   }
 
-  async signup(email: string, password: string) {
-    /**
-     * see login() RMK: also applicable for 'createUserWithEmailAndPassword()'!
-     */
-    this._errors$.next([])
-
-    if(this._user$?.value?.email === email) {
-      return this._user$?.value
-    }
-
-    this._user$.next(undefined)
-
-    const returnedData: any = await this.fbAuth.createUserWithEmailAndPassword(email, password)
-    const user = {uid: returnedData.user.uid, email: returnedData.user.email}
-    if(!isUser(user)) throw new CustomTypeError(`Data received after login() is not of type User...`)
-    return user
+  logout = () => {
+    this._logout$.next()
   }
 
-  async logout() {
-    /**
-     * see login() RMK: also applicable for 'signOut()'!
-     */
-    this._errors$.next([])
-
-    if(this._user$?.value === null) {
-      return
-    }
-
-    this._user$.next(undefined)
-    await this.fbAuth.signOut()
+  private _updateState(opts: Partial<AuthState>) {
+    const state = this._state$.value
+    this._state$.next({...state, ...opts})
   }
 
 }
