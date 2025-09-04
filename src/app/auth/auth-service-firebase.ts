@@ -1,11 +1,10 @@
-import { inject, Injectable, Signal } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 
-import { BehaviorSubject, catchError, delay, empty, EMPTY, filter, finalize, from, interval, map, materialize, NEVER, Observable, of, retry, retryWhen, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
+import { BehaviorSubject, catchError, from, map, of, Subject, switchMap, tap } from "rxjs";
 
-import { CustomTypeError, LooseAutocomplete, tryCatch, isUser, User } from "./__imports";
-
+import { User } from "./__imports";
 
 
 type AuthState = {
@@ -14,7 +13,8 @@ type AuthState = {
   error: string | null
 }
 
-type ResponseSuccess = {response: 'success'}
+
+type ResponseSuccess = {response: 'success', payload?: Record<string, any>}
 type ResponseError = {response: 'error', error: string}
 
 
@@ -31,23 +31,22 @@ export class AuthServiceFirebase {
     error: null
   })
 
-  // ACTIONS
+  // ACTIONS - SOURCES
   private _login$ = new Subject<{email: string, password: string}>()
+  private _logout$ = new Subject<void>()
   
   private _loginResponse$ = this._login$.pipe(
     switchMap(({email, password}) => {
       return from(this.fbAuth.signInWithEmailAndPassword(email, password)).pipe(
-        map(_ => {
-          return {response: 'success'} as ResponseSuccess
+        map((result) => {
+          return { response: 'success', payload: {userUid: result.user!.uid} } as ResponseSuccess
         }),
         catchError(err => {
           return of({response: 'error', error: err.message} as ResponseError)
         })
       )
-    })
+    }),
   )
-
-  private _logout$ = new Subject<void>()
   
   private _logoutResponse$ = this._logout$.pipe(
     switchMap(() => {
@@ -63,7 +62,7 @@ export class AuthServiceFirebase {
   )
 
   private _userChange$ = this.fbAuth.authState.pipe(
-    map(firebaseUser => {
+    map((firebaseUser) => {
       if (firebaseUser === null) {
         return null
       }
@@ -74,34 +73,60 @@ export class AuthServiceFirebase {
   )
 
   constructor() {
-    // REDUCERS
+    // EFFECTS (applies side effects (calls http requests, dispatches other actions, etc...))
 
-    this._login$.pipe(takeUntilDestroyed()).subscribe(_ => {
-      this._updateState({status: 'loading', error: null})
+
+    // REDUCERS (changes state only!)
+
+    this._login$.pipe(
+      takeUntilDestroyed(),
+      tap((res) => console.log(`REUCER - login$ emits: ${JSON.stringify(res)}`))
+    ).subscribe(_ => {
+      const state = this._state$.value
+      this._state$.next({...state, status: 'loading', error: null})
     })
 
-    this._loginResponse$.pipe(takeUntilDestroyed()).subscribe(result => {
-      if (result.response === 'success') {
-        this._updateState({status: 'success'})
+    this._loginResponse$.pipe(
+      takeUntilDestroyed(),
+      tap((res) => console.log(`REUCER - loginResponse$ emits: ${JSON.stringify(res)}`))
+    ).subscribe(result => {
+      const state = this._state$.value
+      const sameUser = result.response === 'success' && state.user !== null && result.payload!['userUid'] === state.user.uid
+      if (sameUser) {
+        this._state$.next({...state, status: 'success'})
+      } else if (result.response === 'success') {
+        this._state$.next({...state, status: 'success', error: null})
       } else {
-        this._updateState({status: 'error', error: result.error})
+        this._state$.next({...state, status: 'error', error: result.error})
       }
     })
 
-    this._logout$.pipe(takeUntilDestroyed()).subscribe(_ => {
-      this._updateState({status: 'loading', error: null})
+    this._logout$.pipe(
+      takeUntilDestroyed(),
+      tap((res) => console.log(`REUCER - logout$ emits: ${JSON.stringify(res)}`))
+    ).subscribe(_ => {
+      const state = this._state$.value
+      this._state$.next({...state, status: 'loading', error: null})
     })
 
-    this._logoutResponse$.pipe(takeUntilDestroyed()).subscribe(result => {
+    this._logoutResponse$.pipe(
+      takeUntilDestroyed(),
+      tap((res) => console.log(`REUCER - logoutResponse$ emits: ${JSON.stringify(res)}`))
+    ).subscribe(result => {
+      const state = this._state$.value
       if (result.response === 'success') {
-        this._updateState({status: 'success'})
+        this._state$.next({...state, status: 'success', error: null})
       } else {
-        this._updateState({status: 'error', error: result.error})
+        this._state$.next({...state, status: 'error', error: result.error})
       }
     })
 
-    this._userChange$.pipe(takeUntilDestroyed()).subscribe(user => {
-      this._updateState({user, status: 'success', error: null})
+    this._userChange$.pipe(
+      takeUntilDestroyed(),
+      tap((res) => console.log(`REUCER - userChange$ emits: ${JSON.stringify(res)}`))
+    ).subscribe((user) => {
+      const state = this._state$.value
+      this._state$.next({...state, user, status: 'success', error: null})
     })
 
   }
@@ -125,11 +150,6 @@ export class AuthServiceFirebase {
 
   logout = () => {
     this._logout$.next()
-  }
-
-  private _updateState(opts: Partial<AuthState>) {
-    const state = this._state$.value
-    this._state$.next({...state, ...opts})
   }
 
 }
