@@ -20,7 +20,7 @@ import { RecurrencyServiceFirebase } from "../_services/recurrency-service-fireb
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
-      RecurrencyListPage works!
+      RecurrencyListPage works!!
     </ion-content>
   `,
   styles: [``]
@@ -29,8 +29,6 @@ export class RecurrencyListPage {
 
   recurrencies = inject(RecurrencyServiceFirebase).recurrencies
 
-  constructor() {
-    
-  }
+  constructor() {}
 
 }

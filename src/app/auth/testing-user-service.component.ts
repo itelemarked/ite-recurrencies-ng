@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { IonButton } from "@ionic/angular/standalone";
 import { NgFor, NgIf } from "@angular/common";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AuthServiceFirebase } from "./auth-service-firebase";
+import { AuthServiceFirebase } from "./auth-service-firebase8";
 import { catchError, fromEvent, map, of, retry, Subject, tap } from "rxjs";
 
 @Component({
@@ -17,11 +17,10 @@ import { catchError, fromEvent, map, of, retry, Subject, tap } from "rxjs";
     <p>user: {{ userInfo() }}</p>
     <p>status: {{ statusInfo() }}</p>
     <p>error message: {{ errorMessage() }}</p>
-    <ion-button size="small" (click)="login('ccc@ccc.com', '3333333')">wrong</ion-button>
-    <ion-button size="small" (click)="login('aaa@aaa.com', '111111')">aaa</ion-button>
-    <ion-button size="small" (click)="login('ccc@ccc.com', '333333')">ccc</ion-button>
-    <!-- <ion-button size="small" (click)="loginCCC()">ccc</ion-button> -->
-    <ion-button size="small" (click)="logout()">logout</ion-button>
+    <ion-button size="small" (click)="authService.login('ccc@ccc.com', '3333333')">wrong</ion-button>
+    <ion-button size="small" (click)="authService.login('aaa@aaa.com', '111111')">aaa</ion-button>
+    <ion-button size="small" (click)="authService.login('ccc@ccc.com', '333333')">ccc</ion-button>
+    <!-- <ion-button size="small" (click)="authService.logout()">logout</ion-button> -->
   `,
   styles: [``]
 })
@@ -48,12 +47,4 @@ export class TestingUserServiceComponent {
     return state.error === null ? 'null' : state.error
   })
 
-  login = (email: string, password: string) => this.authService.login(email, password)
-  logout = () => this.authService.logout()
-
-  loginCCC = () => {
-    this.fbAuth.signInWithEmailAndPassword('ccc@ccc.com', '333333')
-    .then(console.log)
-    .catch(console.warn)
-  }
 }
