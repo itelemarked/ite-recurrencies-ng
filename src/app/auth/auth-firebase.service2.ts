@@ -1,50 +1,21 @@
-import { inject, Injectable, Signal } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { toSignal } from "@angular/core/rxjs-interop";
 
-import { BehaviorSubject, catchError, map, Observable, of, tap, throwError } from "rxjs";
-
-import { CustomTypeError, LooseAutocomplete, tryCatch, isUser, User } from "./__imports";
-
-
+import { BehaviorSubject, catchError, map, of, tap } from "rxjs";
+import { User } from "./User";
+import { AuthServiceInterface } from "./AuthServiceInterface";
 
 
-
-
-// type LooseAutocomplete<T extends string> = T | Omit<string, T>
-
-type AuthCustomErrorCode = 'user-is-null' | 'user-email-is-null' | 'unknown-auth-error'
-
-
-
-type AuthErrorCode = LooseAutocomplete<AuthCustomErrorCode>
-
-type AuthError = { code: string, message: string }
-
-type FirebaseAuthError = AuthError
-
-interface AuthServiceInterface {
-  user$: Observable<User | null | undefined>
-  user: Signal<User | null | undefined>
-  errorCodes$: Observable<AuthErrorCode[]>
-  errorCode: Signal<AuthErrorCode[]>
-  login(email: string, password: string): Promise<User> // promise which never rejects. Use 'errorCode' instead!
-  signup(email: string, password: string): Promise<User> // promise which never rejects. Use 'errorCode' instead!
-  logout(): Promise<void> // promise which never rejects. Use 'errorCode' instead!
-}
 
 @Injectable({providedIn: 'root'})
-export class AuthServiceFirebase2 {
+export class AuthFirebaseService implements AuthServiceInterface {
 
   private fbAuth = inject(AngularFireAuth)
 
   private _user$ = new BehaviorSubject<User | null | undefined>(undefined)
   user$ = this._user$.asObservable()
   user = toSignal(this._user$, {requireSync: true})
-
-  private _errors$ = new BehaviorSubject<AuthError[]>([])
-  errors$ = this._errors$.asObservable()
-  errors = toSignal(this._errors$, {requireSync: true})
 
 
   constructor() {
@@ -71,16 +42,16 @@ export class AuthServiceFirebase2 {
     ).subscribe(this._user$)
   }
 
+  /**
+   * RMK:
+   * - signInWithEmailAndPassword() with resolve a Promise EVERY TIME it is called
+   * - authState observable will fire ONLY if there is a CHANGE in the user
+   * 
+   * When calling signInWithEmailAndPassword() multiple times for the same user, the observables will fire only at most once: the first time (if the user really change)!
+   * It is not necessary to let signInWithEmailAndPassword() be called multiple times for the same user... although it won't make any difference...
+   * BUT: Be sure to reset the _user$ observable in order to reflect the 'loading state' ['this._user$.next(undefined)'] only when signInWithEmailAndPassword() is called for a different user!!  
+   */
   async login(email: string, password: string) {
-    /**
-     * RMK:
-     * - signInWithEmailAndPassword() with resolve a Promise EVERY TIME it is called
-     * - authState observable will fire ONLY if there is a CHANGE in the user
-     * 
-     * When calling signInWithEmailAndPassword() multiple times for the same user, the observables will fire only at most once: the first time (if the user really change)!
-     * It is not necessary to let signInWithEmailAndPassword() be called multiple times for the same user... although it won't make any difference...
-     * BUT: Be sure to reset the _user$ observable in order to reflect the 'loading state' ['this._user$.next(undefined)'] only when signInWithEmailAndPassword() is called for a different user!!  
-     */
     const oldUser = this._user$.value
 
     if(oldUser?.email === email) {

@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { IonButton } from "@ionic/angular/standalone";
 import { NgFor, NgIf } from "@angular/common";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AuthServiceFirebase } from "./auth-service-firebase8";
+import { AuthFirebaseService } from "./auth-firebase.service";
 import { catchError, fromEvent, map, of, retry, Subject, tap } from "rxjs";
 
 @Component({
@@ -10,8 +10,6 @@ import { catchError, fromEvent, map, of, retry, Subject, tap } from "rxjs";
   standalone: true,
   imports: [
     IonButton,
-    NgFor,
-    NgIf
 ],
   template: `
     <p>user: {{ userInfo() }}</p>
@@ -26,25 +24,25 @@ import { catchError, fromEvent, map, of, retry, Subject, tap } from "rxjs";
 })
 export class TestingUserServiceComponent {
   
-  authService = inject(AuthServiceFirebase)
+  authService = inject(AuthFirebaseService)
 
   private fbAuth = inject(AngularFireAuth)
 
   userInfo = computed(() => {
-    const state = this.authService.state()
-    if (state.user === null) return 'null'
-    if (state.user === undefined) return 'undefined'
-    return state.user.email
+    const data = this.authService.userData()
+    if (data.status === 'loading') return 'user-loading'
+    if (data.status === 'error') return 'mmmhhh... some error occured for user...'
+    return data.value === null ? 'user-not-authenticated' : data.value.email
   })
 
   statusInfo = computed(() => {
-    const state = this.authService.state()
-    return state.status
+    const data = this.authService.userData()
+    return data.status
   })
 
   errorMessage = computed(() => {
-    const state = this.authService.state()
-    return state.error === null ? 'null' : state.error
+    const data = this.authService.userData()
+    return data.status === 'error' ? data.error : 'no-errors'
   })
 
 }

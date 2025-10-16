@@ -1,7 +1,5 @@
-import { Component, inject } from "@angular/core";
+import { Component } from "@angular/core";
 import { TestingUserServiceComponent } from "@app/auth/testing-user-service.component";
-import { RecurrencyServiceFirebase } from "@app/recurrencies/_services/recurrency-service-firebase";
-import { isRecurrency } from "@app/recurrencies/_types/Recurrency";
 import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 
 
