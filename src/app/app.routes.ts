@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { RecurrencyListPage } from './recurrencies/_pages/recurrency-list.page';
+import { RecurrencyListPage } from './recurrencies/recurrency-list.page';
 import { BrbListPage } from './brb/_pages/brb-list';
 import { SettingsMainPage } from './settings/_pages/settings-main';
 import { TestingPage } from './testing/testing.page';
