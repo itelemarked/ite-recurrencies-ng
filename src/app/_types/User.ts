@@ -1,4 +1,4 @@
-import { isInterface, isString } from "@app/_utils/validation/validation"
+import { isInterface, isString } from "@app/_utils/type-validation"
 
 export type User = {
   uid: string,

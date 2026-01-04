@@ -3,9 +3,9 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { toSignal } from "@angular/core/rxjs-interop";
 
 import { BehaviorSubject, catchError, map, of, tap } from "rxjs";
-import { User } from "./User";
 import { AuthServiceInterface, Data } from "./AuthServiceInterface";
-import { tryCatch } from "@app/_utils/try-catch";
+import { User } from "@app/_types/User";
+import { tryCatch } from "@app/_utils/errors";
 
 
 

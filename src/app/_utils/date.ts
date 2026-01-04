@@ -1,7 +1,12 @@
 import dayjs, { ManipulateType } from "dayjs";
 import utc  from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { DateFormat, PeriodUnit, PositiveInteger, Timezone } from "./date.types";
+
+import { DateFormat } from "@app/_types/DateFormat";
+import { Timezone } from "@app/_types/Timezone";
+import { PositiveInteger } from "@app/_types/PositiveInteger";
+import { PeriodUnit } from "@app/_types/PeriodUnit";
+
 
 
 // ----------  INIT DAYJS  ----------------------

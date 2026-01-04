@@ -3,5 +3,6 @@
   "outline.problems.colors": true,
   "problems.decorations.enabled": true,
   "outline.problems.enabled": true,
-  "outline.problems.badges": true
+  "outline.problems.badges": true,
+  "prettier.semi": false
 }

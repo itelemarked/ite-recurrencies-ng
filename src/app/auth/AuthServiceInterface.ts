@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { User } from "./User";
+import { User } from "../_types/User";
 import { Signal } from "@angular/core";
 
 type DataLoading = {

@@ -2,18 +2,23 @@ import { inject, Injectable, Signal } from "@angular/core"
 import { toSignal } from "@angular/core/rxjs-interop"
 import { AngularFirestore } from "@angular/fire/compat/firestore"
 import { BehaviorSubject, map, Observable } from "rxjs"
-import { Data, isRecurrency, Recurrency } from "./recurrency.types"
+
+import { Identifiable } from "@app/_types/Identifiable"
+import { Recurrency } from "@app/_types/Recurrency"
+
+
+
 
 
 @Injectable({providedIn: 'root'})
-export class RecurrencyServiceFirebase {
+export class RecurrencyFirebaseService {
 
   fbStore = inject(AngularFirestore)
 
   // TODO: replace with authService user!!
   private userId = '0yuA0RLZFJdbRKtVSfW4y5HSQMq1'
   
-  private _data$ = new BehaviorSubject<Data<Recurrency>[]>([])
+  private _data$ = new BehaviorSubject<Identifiable<Recurrency>[]>([])
 
   constructor() {
 
@@ -23,9 +28,9 @@ export class RecurrencyServiceFirebase {
           return []
         }
 
-        if(!collSnap.every(docSnap => isRecurrency(docSnap.payload.doc.data()))) {
-          throw new Error(`at least one of the data received is not of type 'Recurrency'...`) 
-        }
+        // if(!collSnap.every(docSnap => isRecurrency(docSnap.payload.doc.data()))) {
+        //   throw new Error(`at least one of the data received is not of type 'Recurrency'...`) 
+        // }
 
         return collSnap.map(docSnap => {
           const uid = docSnap.payload.doc.id

@@ -10,7 +10,6 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trash } from 'ionicons/icons';
-import { Recurrency } from './recurrency.types';
 
 
 // @Component({
@@ -71,7 +70,7 @@ import { Recurrency } from './recurrency.types';
 
 
 @Component({
-  selector: 'recurrency-list-item',
+  selector: 'recurrency-list-item2',
   standalone: true,
   imports: [
     IonItem,
@@ -101,7 +100,7 @@ import { Recurrency } from './recurrency.types';
   `,
   styles: ``,
 })
-export class RecurrencyListItemComponent {
+export class RecurrencyListItem2Component {
   title = input.required<string>();
   description = input.required<string>();
   note = input.required<string>();

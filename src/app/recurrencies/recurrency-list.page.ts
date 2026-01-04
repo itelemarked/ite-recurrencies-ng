@@ -1,11 +1,17 @@
 import { Component, computed, inject } from "@angular/core";
-import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonNote, IonTitle, IonToolbar } from "@ionic/angular/standalone";
-import { Data, isRecurrency, Recurrency } from "./recurrency.types";
-import { RecurrencyServiceFirebase } from "./recurrency.service";
-import { CommonModule, NgFor } from "@angular/common";
-import { RecurrencyListItemComponent } from "./recurrency-list-item.component";
-import { add, diff, endOf, format, getPlatformTimezone } from "@app/_utils/date/date";
-import { DATE_FORMAT, DateFormat, PERIOD_UNIT, Timezone, TIMEZONE } from "@app/_utils/date/date.types";
+import { IonContent, IonHeader, IonItem, IonList, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { CommonModule } from "@angular/common";
+
+import { RecurrencyFirebaseService } from "./services/recurrency-firebase.service";
+import { RecurrencyListItemComponent } from "./components/recurrency-list-item.component";
+import { add, diff, endOf, format } from "@app/_utils/date";
+import { DATE_FORMAT, DateFormat } from "@app/_types/DateFormat";
+import { Timezone, TIMEZONE } from "@app/_types/Timezone";
+import { Identifiable } from "@app/_types/Identifiable";
+import { TimezoneDate } from "./models/TimezoneDate.model";
+import { RecurrencyMockService, TempoSettingsService, TempoUserService } from "./services/recurrency-mock.service";
+import { MOCK_DATAS } from "./services/mock-datas";
+import { Recurrency } from "./models/Recurrency.model";
 
 @Component({
   selector: 'app-recurrency-list',
@@ -18,8 +24,6 @@ import { DATE_FORMAT, DateFormat, PERIOD_UNIT, Timezone, TIMEZONE } from "@app/_
     IonContent,
     IonList,
     IonItem,
-    IonLabel,
-    IonNote,
     RecurrencyListItemComponent
   ],
   template: `
@@ -32,63 +36,34 @@ import { DATE_FORMAT, DateFormat, PERIOD_UNIT, Timezone, TIMEZONE } from "@app/_
     </ion-header>
     <ion-content [forceOverscroll]="false">
 
-       <ion-list>
-        <ng-container *ngFor="let item of items()">
+      <!-- TODO: With inset set: the lines disappeared if a container wraps the ion-item tags... -->
+      <ion-list [inset]="true">
+        <ng-container *ngFor="let recurrency of recurrencyService.recurrencies()">
           <recurrency-list-item
-            [title]="item.title"
-            [description]="item.description"
-            [note]="item.note"
+            [recurrency]="recurrency"
           />
         </ng-container>
-       </ion-list>
+      </ion-list>
 
     </ion-content>
   `,
   styles: [``]
 })
 export class RecurrencyListPage {
-  recurrencies = inject(RecurrencyServiceFirebase).get()
 
-  sortBy: 'title' | 'expiryDate' = 'expiryDate'
+  userService = inject(TempoUserService)
+  settingsService = inject(TempoSettingsService)
+  recurrencyService = inject(RecurrencyMockService)
 
-  items = computed(() => {
-    return this.recurrencies().map(r => {
-      const title = r.title
-      const uid = r.uid
-      const expiryDate = endOf(add(new Date(r.lastEvent), r.periodNb, r.periodUnit),'days', 'Europe/Zurich')
-      const todayDate = endOf(new Date(), 'days', 'Europe/Zurich')
-      const description = `Expires: ${format(expiryDate, DATE_FORMAT.CH, TIMEZONE.ZURICH)}`
-      const daysLeft = diff(expiryDate, todayDate, 'days')
-      const note = daysLeft < 0 ? 
-        'expired...': 
-        daysLeft === 0 ?
-        'expires today evening!!':
-        `${daysLeft} days left...`
-        return { title, description, note, uid, expiryDate }
-    })
-    // .sort((a,b) => {
-    //   switch(this.sortBy) {
-    //     case 'expiryDate': {
-    //       return a.expiryDate.valueOf() - b.expiryDate.valueOf()
-    //     }
-    //     case 'title': {
-    //       return a.title - b.title
-    //     }
-    //   }
-    // })
-  })
+  // recurrencies!: Recurrency[]
 
   constructor() {
-    // const d1 = new Date('2025-06-06T12:00')
-    // const d2 = new Date('2025-06-08T11:59')
-    // console.log(diff(d1, d2, 'days'))
-  }
-  
-  // items = computed(() => this.toItems(this.recurrencies(), this.dateFormat, this.timezone))
-
-  // // Utils
-  private toRecurrencyItem(recurrencyData: Data<Recurrency>, dateFormat: DateFormat, timezone: Timezone) {
-    return []
+    this.userService.user$.subscribe(console.log)
+    this.settingsService.settings$.subscribe(console.log)
+    // this.recurrencyService.getAll$().subscribe(res => {
+    //   // console.log(res.map(r => r.getExpiryDate().toString('ISO')))
+    //   this.recurrencies = res
+    // })
   }
 
 }
