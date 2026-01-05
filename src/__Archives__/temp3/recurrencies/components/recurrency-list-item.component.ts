@@ -10,8 +10,8 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trash } from 'ionicons/icons';
+import { RecurrencyInterface } from '../types/RecurrencyInterface';
 import { DATE_FORMAT } from 'src/__Archives__/temp3/_types/DateFormat';
-import { Recurrency } from '../types/Recurrency.type';
 
 
 @Component({
@@ -31,9 +31,9 @@ import { Recurrency } from '../types/Recurrency.type';
       <ion-item [button]="true">
         <ion-label>
           <strong>{{ recurrency().title }}</strong>
-          <p style="font-size: 0.8em;">Expires: {{ expiry() }}</p>
+          <p>Expires: {{ expiry() }}</p>
         </ion-label>
-        <ion-note slot="end" style="font-size: 0.8em;">{{ daysLeft() }}</ion-note>
+        <ion-note slot="end">{{ daysLeft() }}</ion-note>
       </ion-item>
 
       <ion-item-options side="end">
@@ -46,16 +46,11 @@ import { Recurrency } from '../types/Recurrency.type';
   styles: ``,
 })
 export class RecurrencyListItemComponent {
-  recurrency = input.required<Recurrency>();
-  
+  recurrency = input.required<RecurrencyInterface>();
   delete = output()
 
-  expiry = computed(() => {
-    return '01.02.2099'
-  })
-  daysLeft = computed(() => {
-    return '99 days left'
-  })
+  expiry = computed(() => this.recurrency().getExpiryDate().toString(DATE_FORMAT.CH) )
+  daysLeft = computed(() => `${this.recurrency().getExpiryDate().diff('days')} days left...`)
 
   constructor() {
     addIcons({trash})

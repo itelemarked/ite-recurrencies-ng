@@ -1,21 +1,16 @@
 import { inject, Injectable } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { RecurrencyServiceInterface } from "../types/RecurrencyServiceInterface";
 import { combineLatest, delay, Observable, of, startWith, switchMap, tap } from "rxjs";
+import { User } from "src/__Archives__/temp3/_types/User";
 import { MOCK_DATAS } from "./mock-datas";
-import { TIMEZONE, Timezone } from "../types/Timezone";
-import { TimeString } from "../types/TimeString";
-import { isRecurrency, Recurrency } from "../types/Recurrency.type";
-
-
-// TODO: export whereelse...
-type User = {
-  uid: string,
-  email: string
-}
+import { Recurrency } from "../models/Recurrency.model";
+import { TimezoneDate } from "../models/TimezoneDate.model";
+import { TimeString } from "src/__Archives__/temp3/_types/TimeString";
+import { TIMEZONE, Timezone } from "src/__Archives__/temp3/_types/Timezone";
+import { toSignal } from "@angular/core/rxjs-interop";
 
 
 // TODO: implement in auth instead of here... only TEMPO!
-// NULL --> 300ms --> USER
 @Injectable({providedIn: "root"})
 export class TempoUserService {
   user$ = of<User>({
@@ -28,7 +23,6 @@ export class TempoUserService {
 }
 
 // TODO: only TEMPO!
-// MAURITIUS --> 2000ms --> ZURICH
 @Injectable({providedIn: "root"})
 export class TempoSettingsService {
   settings$ = of<{
@@ -43,18 +37,16 @@ export class TempoSettingsService {
   )
 }
 
-// TODO: move whereelse??
 const SHORT_BEFORE_MIDNIGHT = '23:59:59.999' as TimeString
 
 
 
 @Injectable({providedIn: "root"})
-export class RecurrencyMockService {
+export class RecurrencyMockService implements RecurrencyServiceInterface {
 
   private userService = inject(TempoUserService)
   private settingsService = inject(TempoSettingsService)
 
-  // getter as Observable
   recurrencies$(): Observable<Recurrency[]> {
     return combineLatest([this.userService.user$, this.settingsService.settings$]).pipe(
       switchMap(([usr, settings]) => {
@@ -66,10 +58,17 @@ export class RecurrencyMockService {
         if(data === undefined) return of([])
 
         const mappedData = Object.entries(data)
-        if(mappedData.some(([key, value]) => !isRecurrency({uid: key, ...value as any}))) return of([])
+        // TODO: validate data!
+        const isRecurrency = (val: any) => true
+        if(mappedData.some(([_, value]) => !isRecurrency(value))) return of([])
 
         const recurrencies = mappedData.map(([key, value]: [string, any]) => {
-          return {uid: key, ...value}
+          const uid = key
+          const title = value.title
+          const lastEvent = new TimezoneDate(value.lastEvent, SHORT_BEFORE_MIDNIGHT, settings.timezone)
+          const periodNb = value.periodNb
+          const periodUnit = value.periodUnit
+          return new Recurrency(uid, title, lastEvent, periodNb, periodUnit)
         })
 
         return of(recurrencies)
@@ -78,7 +77,6 @@ export class RecurrencyMockService {
     )
   }
 
-  // getter as Signal
   recurrencies = toSignal(this.recurrencies$(), {requireSync: true})
 
 }

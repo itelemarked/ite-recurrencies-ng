@@ -1,17 +1,26 @@
-import { Component, computed, inject } from "@angular/core";
-import { IonContent, IonHeader, IonItem, IonList, IonTitle, IonToolbar } from "@ionic/angular/standalone";
-import { CommonModule } from "@angular/common";
-
-import { RecurrencyFirebaseService } from "./services/recurrency-firebase.service";
-import { RecurrencyListItemComponent } from "./components/recurrency-list-item.component";
-import { add, diff, endOf, format } from "@app/_utils/date";
-import { DATE_FORMAT, DateFormat } from "@app/_types/DateFormat";
-import { Timezone, TIMEZONE } from "@app/_types/Timezone";
-import { Identifiable } from "@app/_types/Identifiable";
-import { TimezoneDate } from "./models/TimezoneDate.model";
-import { RecurrencyMockService, TempoSettingsService, TempoUserService } from "./services/recurrency-mock.service";
-import { MOCK_DATAS } from "./services/mock-datas";
-import { Recurrency } from "./models/Recurrency.model";
+import { Component, computed, inject, Signal } from '@angular/core';
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonLabel,
+  IonNote,
+  IonList,
+  IonListHeader,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { isRecurrency, Recurrency } from './types/Recurrency.type';
+import { getPlatformTimezone } from './utils/date';
+import { PositiveInteger } from './types/PositiveInteger.type';
+import { DateString } from './types/DateString.type';
+import { RecurrencyListItemComponent } from './components/recurrency-list-item.component';
+import { RecurrencyMockService } from './services/recurrency-mock.service';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -23,47 +32,64 @@ import { Recurrency } from "./models/Recurrency.model";
     IonTitle,
     IonContent,
     IonList,
+    IonListHeader,
+    RecurrencyListItemComponent,
+
+    IonIcon,
     IonItem,
-    RecurrencyListItemComponent
+    IonItemOption,
+    IonItemOptions,
+    IonItemSliding,
+    IonLabel,
+    IonNote,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>
-          RecurrencyList
-        </ion-title>
+        <ion-title> RecurrencyList </ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
-
-      <!-- TODO: With inset set: the lines disappeared if a container wraps the ion-item tags... -->
-      <ion-list [inset]="true">
-        <ng-container *ngFor="let recurrency of recurrencyService.recurrencies()">
-          <recurrency-list-item
-            [recurrency]="recurrency"
-          />
-        </ng-container>
-      </ion-list>
-
+      <ng-container *ngFor="let grouped of recurrenciesGroupedByCategory()">
+        <ion-list [inset]="true">
+          <ion-list-header>
+            <ion-label>{{ grouped[0] }}</ion-label>
+          </ion-list-header>
+          <ng-container *ngFor="let recurrency of grouped[1]">
+            <recurrency-list-item [recurrency]="recurrency" />
+          </ng-container>
+        </ion-list>
+      </ng-container>
     </ion-content>
   `,
-  styles: [``]
+  styles: [``],
 })
 export class RecurrencyListPage {
+  private recurrencyService = inject(RecurrencyMockService);
 
-  userService = inject(TempoUserService)
-  settingsService = inject(TempoSettingsService)
-  recurrencyService = inject(RecurrencyMockService)
+  recurrencies = this.recurrencyService.recurrencies;
 
-  // recurrencies!: Recurrency[]
-
-  constructor() {
-    this.userService.user$.subscribe(console.log)
-    this.settingsService.settings$.subscribe(console.log)
-    // this.recurrencyService.getAll$().subscribe(res => {
-    //   // console.log(res.map(r => r.getExpiryDate().toString('ISO')))
-    //   this.recurrencies = res
-    // })
+  groupBy<T extends Record<string, unknown>>(items: T[], fn: (item: T) => string): [string, T[]][] {
+    let result: any = {};
+    items.forEach((item) => {
+      if (result[fn(item)] === undefined) {
+        result[fn(item)] = [];
+        result[fn(item)].push(item);
+      } else {
+        result[fn(item)].push(item);
+      }
+    });
+    return Object.entries(result);
   }
 
+  recurrenciesGroupedByCategory: Signal<any> = computed(() => {
+    return this.groupBy(this.recurrencies(), ({category}) => category)
+  });
+
+  constructor() {
+    
+    this.recurrencyService.recurrencies$().subscribe((res) => {
+      console.log(this.groupBy(this.recurrencies(), ({category}) => category));
+    });
+  }
 }

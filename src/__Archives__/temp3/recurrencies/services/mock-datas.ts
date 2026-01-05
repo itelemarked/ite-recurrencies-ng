@@ -7,21 +7,12 @@ export const MOCK_DATAS: any = {
           lastEvent: '2025-12-16',
           periodNb: 66,
           periodUnit: 'days',
-          category: 'Aircrafts'
         },
         adjdioenssadfe: {
           title: 'PU',
           lastEvent: '2025-11-15',
           periodNb: 66,
           periodUnit: 'days',
-          category: 'Aircrafts'
-        },
-        adjfjjksksls: {
-          title: 'Sere Sea',
-          lastEvent: '2025-11-15',
-          periodNb: 66,
-          periodUnit: 'days',
-          category: 'Survival'
         },
       },
     },

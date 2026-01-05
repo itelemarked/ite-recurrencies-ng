@@ -149,7 +149,7 @@
 
   .ios body {
     /* new */
-    --ion-background-color: #1c1c1c;
+    --ion-background-color: #0c0c0c;
     --ion-background-color-rgb: 28,28,28;
   
     --ion-text-color: #ffffff;
