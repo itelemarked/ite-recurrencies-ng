@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import {
+  createAnimation,
   IonActionSheet,
   IonButton,
   IonButtons,
@@ -13,6 +14,7 @@ import {
   IonList,
   IonListHeader,
   IonModal,
+  IonNote,
   IonSelect,
   IonSelectOption,
   IonTitle,
@@ -29,6 +31,55 @@ import { blurActiveElement } from './utils/ionic-fixes';
 import { TIMEZONE } from './types/Timezone';
 import { DATE_FORMAT } from './types/DateFormat';
 import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
+
+
+const slideInLeft = (baseEl: HTMLElement) => {
+  const root = baseEl.shadowRoot;
+
+  const backdropAnimation = createAnimation()
+    backdropAnimation
+    .addElement(root!.querySelector('ion-backdrop')!)
+    .fromTo('opacity', '0.01', '1');
+
+  const wrapperAnimation = createAnimation()
+  wrapperAnimation
+    .addElement(root!.querySelector('.modal-wrapper')!)
+    .keyframes([
+      { offset: 0, transform: 'translateX(100%)' },
+      { offset: 1, transform: 'translateX(0)' },
+    ]);
+
+  return createAnimation()
+    .addElement(baseEl)
+    .easing('ease-out')
+    .duration(200)
+    .addAnimation([wrapperAnimation, backdropAnimation])
+};
+
+const slideInRight = (baseEl: HTMLElement) => {
+  const root = baseEl.shadowRoot;
+
+  const backdropAnimation = createAnimation()
+    backdropAnimation
+    .addElement(root!.querySelector('ion-backdrop')!)
+    .fromTo('opacity', '1', '0.01');
+
+  const wrapperAnimation = createAnimation()
+  wrapperAnimation
+    .addElement(root!.querySelector('.modal-wrapper')!)
+    .keyframes([
+      { offset: 0, transform: 'translateX(0)' },
+      { offset: 1, transform: 'translateX(100%)' },
+    ]);
+
+  return createAnimation()
+    .addElement(baseEl)
+    .easing('ease-out')
+    .duration(200)
+    .addAnimation([wrapperAnimation, backdropAnimation])
+};
+
+
 
 @Component({
   selector: 'app-recurrency-list',
@@ -48,6 +99,7 @@ import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
     IonItem,
     IonActionSheet,
     IonModal,
+    IonNote,
     IonInput,
     IonDatetime,
     IonSelect,
@@ -99,17 +151,19 @@ import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
       <div class="edit-recurrency">
         <div>
         <ion-modal
+          style="--ion-background-color: #121212;"
           #modalEdit
           [isOpen]="editModal.isOpen"
           [initialBreakpoint]="0.7"
           (willDismiss)="editModal.isOpen = false"
           [canDismiss]="false"
+          [enterAnimation]="editModal.slideInLeft"
+          [leaveAnimation]="editModal.slideInRight"
         >
           <ng-template>
             <ion-header>
               <ion-toolbar>
-                <ion-title> Edit </ion-title>
-                <ion-buttons slot="end">
+                <ion-buttons slot="start">
                   <!-- TODO: when opening modal, set canDismiss to false -->
                   <ion-button (click)="modalEdit.canDismiss = true; modalEdit.isOpen = false">
                     <!-- <ion-icon
@@ -119,10 +173,39 @@ import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
                     Close
                   </ion-button>
                 </ion-buttons>
+                <ion-title> Edit </ion-title>
               </ion-toolbar>
             </ion-header>
             <ion-content [forceOverscroll]="false">
-              <ion-list>
+
+              <ion-list [inset]="true">
+                <ion-item [button]="true">
+                  <ion-label>Title</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+                <ion-item [button]="true">
+                  <ion-label>Last Event</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+                <ion-item [button]="true">
+                  <ion-label>Period Nb</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+                <ion-item [button]="true">
+                  <ion-label>Period Unit</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+                <ion-item [button]="true">
+                  <ion-label>Expiry</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+                <ion-item [button]="true">
+                  <ion-label>Category</ion-label>
+                  <ion-note>choose</ion-note>
+                </ion-item>
+              </ion-list>
+
+              <!-- <ion-list>
                 <div class="app-item">
                   <div class="app-item-inner">
                     <label>Title</label>
@@ -163,7 +246,7 @@ import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
                     <label>Category</label>
                     <input type="text" placeholder="category"/>
                   </div>
-                </div>
+                </div> -->
 <!--                 
                 <ion-item>
                   <ion-input
@@ -219,8 +302,8 @@ import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
                 <ion-item>
                   <ion-label>Something4</ion-label>
                   <input type="text" placeholder="data">
-                </ion-item> -->
-              </ion-list>
+                </ion-item> 
+              </ion-list>-->
             </ion-content>
           </ng-template>
         </ion-modal>
@@ -314,6 +397,8 @@ export class RecurrencyListPage {
 
   editModal = {
     isOpen: true,
+    slideInLeft,
+    slideInRight
   };
 
   constructor() {
