@@ -1,10 +1,12 @@
 import { inject, Injectable } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { combineLatest, delay, Observable, of, startWith, switchMap, tap } from "rxjs";
-import { MOCK_DATAS } from "./mock-datas";
+import { BehaviorSubject, combineLatest, delay, map, Observable, of, startWith, switchMap, tap } from "rxjs";
+
 import { TIMEZONE, Timezone } from "../types/Timezone";
 import { TimeString } from "../types/TimeString";
 import { isRecurrency, Recurrency } from "../types/Recurrency.type";
+import { get$ } from "./mock-datas";
+import { isPlainObject } from "../utils/valid-type";
 
 
 // TODO: export whereelse...
@@ -21,10 +23,11 @@ export class TempoUserService {
   user$ = of<User>({
     uid: '0yuA0RLZFJdbRKtVSfW4y5HSQMq1',
     email: 'aaa@aaa.com'
-  }).pipe(
-    delay(300),
-    startWith(null),
-  )
+  })
+  // .pipe(
+  //   delay(300),
+  //   startWith(null),
+  // )
 }
 
 // TODO: only TEMPO!
@@ -35,16 +38,14 @@ export class TempoSettingsService {
     timezone: Timezone
   }>({
     timezone: TIMEZONE.ZURICH
-  }).pipe(
-    delay(2000),
-    startWith({
-      timezone: TIMEZONE.MAURITIUS
-    }),
-  )
+  })
+  // .pipe(
+  //   delay(2000),
+  //   startWith({
+  //     timezone: TIMEZONE.MAURITIUS
+  //   }),
+  // )
 }
-
-// TODO: move whereelse??
-const SHORT_BEFORE_MIDNIGHT = '23:59:59.999' as TimeString
 
 
 
@@ -55,30 +56,37 @@ export class RecurrencyMockService {
   private settingsService = inject(TempoSettingsService)
 
   // getter as Observable
-  recurrencies$(): Observable<Recurrency[]> {
-    return combineLatest([this.userService.user$, this.settingsService.settings$]).pipe(
-      switchMap(([usr, settings]) => {
+  recurrencies$() {
+    return this.userService.user$.pipe(
+      switchMap((usr) => {
         if(usr === null) {
-          return of([]).pipe(delay(400))
+          return of([] as Recurrency[])
         } 
 
-        const data = MOCK_DATAS?.users?.['0yuA0RLZFJdbRKtVSfW4y5HSQMq1']?.recurrencies
-        if(data === undefined) return of([])
-
-        const mappedData = Object.entries(data)
-        if(mappedData.some(([key, value]) => !isRecurrency({uid: key, ...value as any}))) return of([])
-
-        const recurrencies = mappedData.map(([key, value]: [string, any]) => {
-          return {uid: key, ...value}
-        })
-
-        return of(recurrencies)
+        return get$(`users/${usr.uid}/recurrencies`).pipe(
+          map(data => {
+            if(data === null) return []
+            if(!isPlainObject(data)) return []
+            const recurrencies = Object.entries(data).map(([uid, value]) => ({uid, ...value}))
+            if(recurrencies.some(rec => !isRecurrency(rec))) return []
+            return recurrencies as Recurrency[]
+          })
+        )
       }),
-      startWith([])
+      startWith([] as Recurrency[])
     )
   }
 
   // getter as Signal
   recurrencies = toSignal(this.recurrencies$(), {requireSync: true})
+
+  // add
+  // add(): Promise<string> {
+  //   const uid = this.generateUUID()
+  // }
+
+  private generateUUID() {
+    return (Math.random() * 1000000000).toString()
+  }
 
 }

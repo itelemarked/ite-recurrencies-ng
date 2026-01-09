@@ -6,6 +6,9 @@ import { DateFormat } from "src/__Archives__/temp3/_types/DateFormat";
 import { Timezone } from "src/__Archives__/temp3/_types/Timezone";
 import { PositiveInteger } from "src/__Archives__/temp3/_types/PositiveInteger";
 import { PeriodUnit } from "src/__Archives__/temp3/_types/PeriodUnit";
+import { DateString } from "../types/DateString.type";
+import { TimeString } from "../types/TimeString";
+import { TimezoneString } from "src/__Archives__/temp1/types/TimezoneString";
 
 
 
@@ -19,6 +22,9 @@ const LOCALE_OPTIONS = {
 }
 dayjs.locale(LOCALE, LOCALE_OPTIONS)
 // ----------------------------------------------
+
+
+export const SHORT_BEFORE_MIDNIGHT = '23:59:59.999' as TimeString
 
 
 export function format(d: Date, format: DateFormat, timezone: Timezone) {
@@ -64,37 +70,11 @@ export function diff(date1: Date, date2: Date, unit: PeriodUnit): number {
 
 
 
-// export function createTimezoneDate({ dateString, timeString , timezone }: { dateString: DateString, timeString: TimeString, timezone: TimezoneString }): Date {  
-//   const dateStr = dateString
-//   const timeStr = timeString ?? '00:00:00.000'
-//   const timezoneStr = timezone ?? 'UTC'
+export function createTimezoneDate({ dateString, timeString , timezone }: { dateString: DateString, timeString: TimeString, timezone: TimezoneString }): Date {  
+  const dateStr = dateString
+  const timeStr = timeString ?? '00:00:00.000'
+  const timezoneStr = timezone ?? 'UTC'
 
-//   const dateTime = `${dateStr}T${timeStr}`
-//   return dayjs(dateTime).tz(timezoneStr, true).toDate()
-// }
-
-// export function format(date: Date, format: DateFormatOptions, timezone: TimezoneString): string {
-//   switch(format) {
-//     case 'DD.MM.YYYY':
-//       return dayjs(date).tz(timezone).format('DD.MM.YYYY')
-//     case 'UTC':
-//     case 'DD.MM.YY HH:mm:ss.SSS TIMEZONE':
-//       return dayjs(date).tz(timezone).format(`DD.MM.YY HH:mm:ss.SSS [${timezone}]`)
-//     case 'YYYY-MM-DD':
-//       return dayjs(date).tz(timezone).format(`YYYY-MM-DD`)
-//   }
-// }
-
-// function convertToDayjsPeriodUnit(unit: PeriodUnit): ManipulateType {
-//   const DAYJS_UNIT: Record<PeriodUnit, ManipulateType> = {
-//     'milliseconds': 'milliseconds',
-//     'seconds': 'seconds',
-//     'minutes': 'minutes',
-//     'hours': 'hours',
-//     'days': 'days',
-//     'weeks': 'weeks',
-//     'months': 'months',
-//     'years': 'years',
-//   }
-//   return DAYJS_UNIT[unit]
-// }
+  const dateTime = `${dateStr}T${timeStr}`
+  return dayjs(dateTime).tz(timezoneStr, true).toDate()
+}

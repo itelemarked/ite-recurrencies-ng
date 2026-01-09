@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import {
+  IonButton,
   IonIcon,
   IonItem,
   IonItemOption,
@@ -10,8 +11,12 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trash } from 'ionicons/icons';
-import { DATE_FORMAT } from 'src/__Archives__/temp3/_types/DateFormat';
 import { Recurrency } from '../types/Recurrency.type';
+import { add, createTimezoneDate, diff, endOf, format } from '../utils/date';
+import { TimeString } from '../types/TimeString';
+import { Timezone, TIMEZONE } from '../types/Timezone';
+import { PERIOD_UNIT } from '../types/PeriodUnit.type';
+import { DateFormat } from '../types/DateFormat';
 
 
 @Component({
@@ -25,9 +30,17 @@ import { Recurrency } from '../types/Recurrency.type';
     IonItemOptions,
     IonItemOption,
     IonIcon,
+    IonButton
   ],
   template: `
     <ion-item-sliding #slidingItem>
+      <ion-item-options side="start">
+        <ion-item-option color="primary">
+          <ion-button size="small" (click)="slidingItem.close();">Today</ion-button>
+          <!-- <ion-icon slot="icon-only" name="trash" (click)="slidingItem.close(); delete.emit()"></ion-icon> -->
+        </ion-item-option>
+      </ion-item-options>
+
       <ion-item [button]="true">
         <ion-label>
           <strong>{{ recurrency().title }}</strong>
@@ -46,19 +59,36 @@ import { Recurrency } from '../types/Recurrency.type';
   styles: ``,
 })
 export class RecurrencyListItemComponent {
-  recurrency = input.required<Recurrency>();
+  recurrency = input.required<Recurrency>()
+  dateFormat = input.required<DateFormat>()
+  timezone = input.required<Timezone>()
   
   delete = output()
 
   expiry = computed(() => {
-    return '01.02.2099'
+    return format(this._getExpiryDate(), this.dateFormat(), this.timezone())
   })
+
   daysLeft = computed(() => {
-    return '99 days left'
+    const expiryDate = this._getExpiryDate()
+    const todayDate = endOf(new Date(), PERIOD_UNIT.DAYS, this.timezone())
+    const difference = diff(expiryDate, todayDate, PERIOD_UNIT.DAYS)
+    return difference < 0 ? 'expired...' : difference.toString() + ' ' + 'days' + ' left'
   })
 
   constructor() {
     addIcons({trash})
+  }
+
+  private _getExpiryDate() {
+    const recurrency = this.recurrency()
+    const lastEventDate = createTimezoneDate({
+      dateString: recurrency.lastEvent, 
+      timeString: '23:59:59.999' as TimeString, 
+      timezone: TIMEZONE.ZURICH
+    })
+    const expiryDate = endOf( add(lastEventDate, recurrency.periodNb, recurrency.periodUnit) , recurrency.periodUnit, TIMEZONE.ZURICH)
+    return expiryDate
   }
 }
 

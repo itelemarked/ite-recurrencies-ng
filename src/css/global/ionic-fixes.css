@@ -1,0 +1,10 @@
+
+/* fixes ion-tab-bar bottom space which is too small */
+ion-tab-bar {
+  padding-bottom: 20px!important;
+}
+
+/* fixes ion-toolbar top space which is too small */
+ion-header ion-toolbar {
+  padding-top: 10px!important;
+}
