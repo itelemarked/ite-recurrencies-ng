@@ -8,3 +8,7 @@ ion-tab-bar {
 ion-header ion-toolbar {
   padding-top: 10px!important;
 }
+
+ion-item {
+  --min-height: 55px;
+}
