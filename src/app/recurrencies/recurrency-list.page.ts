@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import {
   createAnimation,
   IonActionSheet,
@@ -31,6 +31,7 @@ import { blurActiveElement } from './utils/ionic-fixes';
 import { TIMEZONE } from './types/Timezone';
 import { DATE_FORMAT } from './types/DateFormat';
 import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
+import { Recurrency } from './types/Recurrency.type';
 
 
 const slideInLeft = (baseEl: HTMLElement) => {
@@ -107,7 +108,7 @@ const slideInRight = (baseEl: HTMLElement) => {
     RecurrencyListItemComponent,
   ],
   template: `
-    <ion-header>
+    <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
         <ion-title> RecurrencyList </ion-title>
         <ion-buttons slot="end">
@@ -125,15 +126,17 @@ const slideInRight = (baseEl: HTMLElement) => {
 
       <div class="recurrencyList">
         @for(grouped of recurrencyList.groupedByCategory(); track grouped[0]) {
-        <ion-list [inset]="true">
-          <ion-list-header>
+        <label style="margin-left: 16px; color: grey; font-weight: bold;">{{ grouped[0] }}</label>
+        <ion-list [inset]="true" class="mt-sm">
+          <!-- <ion-list-header>
             <ion-label>{{ grouped[0] }}</ion-label>
-          </ion-list-header>
+          </ion-list-header> -->
           @for( recurrency of grouped[1]; track recurrency.uid ) {
           <recurrency-list-item
             [recurrency]="recurrency"
             [timezone]="timezone"
             [dateFormat]="dateFormat"
+            (click)="onItemClick(recurrency)"
           />
           }
         </ion-list>
@@ -148,7 +151,7 @@ const slideInRight = (baseEl: HTMLElement) => {
         ></ion-action-sheet>
       </div>
 
-      <div class="edit-recurrency">
+      <div class="edit-modal">
         <div>
         <ion-modal
           style="--ion-background-color: #121212;"
@@ -161,7 +164,7 @@ const slideInRight = (baseEl: HTMLElement) => {
           [leaveAnimation]="editModal.slideInRight"
         >
           <ng-template>
-            <ion-header>
+            <ion-header collapse="fade" [translucent]="true">
               <ion-toolbar>
                 <ion-buttons slot="start">
                   <!-- TODO: when opening modal, set canDismiss to false -->
@@ -179,7 +182,7 @@ const slideInRight = (baseEl: HTMLElement) => {
             <ion-content [forceOverscroll]="false">
 
               <ion-list [inset]="true">
-                <ion-item [button]="true">
+                <ion-item [button]="true" (click)="onItemTitleClick()">
                   <ion-label>Title</ion-label>
                   <ion-note>choose</ion-note>
                 </ion-item>
@@ -309,6 +312,49 @@ const slideInRight = (baseEl: HTMLElement) => {
         </ion-modal>
         </div>
       </div>
+
+      <div class="edit-title-modal">
+        <ion-modal
+          style="--ion-background-color: #121212;"
+          [isOpen]="editTitleModal.isOpen"
+          [enterAnimation]="editModal.slideInLeft"
+          [leaveAnimation]="editModal.slideInRight"
+          (ionModalDidPresent)="onEditTitleModalDidPresent()"
+          (willDismiss)="editTitleModal.isOpen = false"
+        >
+          <ng-template>
+            <ion-header collapse="fade" [translucent]="true">
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <!-- TODO: when opening modal, set canDismiss to false -->
+                  <ion-button (click)="editTitleModal.isOpen = false">
+                    <!-- <ion-icon
+                      slot="icon-only"
+                      name="ellipsis-horizontal-outline"
+                    /> -->
+                    Close
+                  </ion-button>
+                </ion-buttons>
+                <ion-title> Title </ion-title>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content [forceOverscroll]="false">
+
+              <ion-list [inset]="true">
+                <ion-item>
+                  <ion-input
+                    id="titleInputEl"
+                    #titleInputEl
+                    type="text"
+                    placeholder="Enter a title"
+                  />
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-modal>
+      </div>
+
     </ion-content>
   `,
   styles: [`
@@ -396,23 +442,51 @@ export class RecurrencyListPage {
   };
 
   editModal = {
-    isOpen: true,
+    isOpen: false,
     slideInLeft,
     slideInRight
   };
+
+  
+
+  editTitleModal = {
+    isOpen: false,
+  }
 
   constructor() {
     addIcons({ ellipsisHorizontalOutline });
 
     // TESTING ONLY...
-    setTimeout(() => {
-      set('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/jdfkalswerus', {
-        title: 'PT',
-        lastEvent: '2025-12-31',
-        periodNb: 9,
-        periodUnit: 'days',
-        category: 'Aircrafts',
-      });
-    }, 3000);
+    // setTimeout(() => {
+    //   set('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/jdfkalswerus', {
+    //     title: 'PT',
+    //     lastEvent: '2025-12-31',
+    //     periodNb: 9,
+    //     periodUnit: 'days',
+    //     category: 'Aircrafts',
+    //   });
+    // }, 3000);
+  }
+
+  onItemClick(recurrency: Recurrency) {
+    this.editModal.isOpen = true
+  }
+
+  onItemTitleClick() {
+    this.editTitleModal.isOpen = true
+  }
+
+  titleInputEl = viewChild('titleInputEl', {
+    read: IonInput
+  })
+
+  onEditTitleModalDidPresent() {
+    const titleInputEl = document.getElementById('titleInputEl') as unknown as IonInput
+    console.log(titleInputEl)
+    // setTimeout(() => {
+      titleInputEl.setFocus()
+    // }, 1000);
+    // this.titleInputEl()!.setFocus()
   }
 }
+
