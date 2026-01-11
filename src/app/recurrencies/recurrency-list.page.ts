@@ -5,20 +5,12 @@ import {
   IonButton,
   IonButtons,
   IonContent,
-  IonDatetime,
   IonHeader,
   IonIcon,
-  IonInput,
-  IonItem,
-  IonLabel,
   IonList,
-  IonListHeader,
-  IonModal,
-  IonNote,
-  IonSelect,
-  IonSelectOption,
   IonTitle,
   IonToolbar,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
@@ -30,11 +22,11 @@ import { groupBy } from './utils/array';
 import { blurActiveElement } from './utils/ionic-fixes';
 import { TIMEZONE } from './types/Timezone';
 import { DATE_FORMAT } from './types/DateFormat';
-import { get, get$, MOCK_DATAS, remove, set } from './services/mock-datas';
 import { Recurrency } from './types/Recurrency.type';
+import { RecurrencyListItemDetailsModal } from './components/recurrency-list-item-details.modal';
 
 
-const slideInLeft = (baseEl: HTMLElement) => {
+export const slideInLeft = (baseEl: HTMLElement) => {
   const root = baseEl.shadowRoot;
 
   const backdropAnimation = createAnimation()
@@ -57,7 +49,7 @@ const slideInLeft = (baseEl: HTMLElement) => {
     .addAnimation([wrapperAnimation, backdropAnimation])
 };
 
-const slideInRight = (baseEl: HTMLElement) => {
+export const slideInRight = (baseEl: HTMLElement) => {
   const root = baseEl.shadowRoot;
 
   const backdropAnimation = createAnimation()
@@ -92,19 +84,10 @@ const slideInRight = (baseEl: HTMLElement) => {
     IonTitle,
     IonContent,
     IonList,
-    IonListHeader,
     IonButtons,
     IonButton,
     IonIcon,
-    IonLabel,
-    IonItem,
     IonActionSheet,
-    IonModal,
-    IonNote,
-    IonInput,
-    IonDatetime,
-    IonSelect,
-    IonSelectOption,
     RecurrencyListItemComponent,
   ],
   template: `
@@ -112,7 +95,7 @@ const slideInRight = (baseEl: HTMLElement) => {
       <ion-toolbar>
         <ion-title> RecurrencyList </ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="menuButton.onPresentListActions()">
+          <ion-button (click)="onMenuButtonClick()">
             <ion-icon
               slot="icon-only"
               name="ellipsis-horizontal-outline"
@@ -151,254 +134,17 @@ const slideInRight = (baseEl: HTMLElement) => {
         ></ion-action-sheet>
       </div>
 
-      <div class="edit-modal">
-        <div>
-        <ion-modal
-          style="--ion-background-color: #121212;"
-          #modalEdit
-          [isOpen]="editModal.isOpen"
-          [initialBreakpoint]="0.7"
-          (willDismiss)="editModal.isOpen = false"
-          [canDismiss]="false"
-          [enterAnimation]="editModal.slideInLeft"
-          [leaveAnimation]="editModal.slideInRight"
-        >
-          <ng-template>
-            <ion-header collapse="fade" [translucent]="true">
-              <ion-toolbar>
-                <ion-buttons slot="start">
-                  <!-- TODO: when opening modal, set canDismiss to false -->
-                  <ion-button (click)="modalEdit.canDismiss = true; modalEdit.isOpen = false">
-                    <!-- <ion-icon
-                      slot="icon-only"
-                      name="ellipsis-horizontal-outline"
-                    /> -->
-                    Close
-                  </ion-button>
-                </ion-buttons>
-                <ion-title> Edit </ion-title>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content [forceOverscroll]="false">
-
-              <ion-list [inset]="true">
-                <ion-item [button]="true" (click)="onItemTitleClick()">
-                  <ion-label>Title</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-                <ion-item [button]="true">
-                  <ion-label>Last Event</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-                <ion-item [button]="true">
-                  <ion-label>Period Nb</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-                <ion-item [button]="true">
-                  <ion-label>Period Unit</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-                <ion-item [button]="true">
-                  <ion-label>Expiry</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-                <ion-item [button]="true">
-                  <ion-label>Category</ion-label>
-                  <ion-note>choose</ion-note>
-                </ion-item>
-              </ion-list>
-
-              <!-- <ion-list>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Title</label>
-                    <input type="text" placeholder="title"/>
-                  </div>
-                </div>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Last Event</label>
-                    <input type="date" value="2000-01-01"/>
-                  </div>
-                </div>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Period Number</label>
-                    <input type="number" placeholder="choose"/>
-                  </div>
-                </div>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Period Unit</label>
-                    <select name="cars" id="cars">
-                      <option value="empty"></option>
-                      <option value="days">Days</option>
-                      <option value="months">Months</option>
-                      <option value="years">Years</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Expiry</label>
-                    <input type="date"  value="2000-01-01"/>
-                  </div>
-                </div>
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Category</label>
-                    <input type="text" placeholder="category"/>
-                  </div>
-                </div> -->
-<!--                 
-                <ion-item>
-                  <ion-input
-                    label="Title"
-                    placeholder="title"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                    label="Last event"
-                    placeholder="date"
-                    [disabled]="true"
-                    style="opacity: 1;"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                    label="Period number"
-                    placeholder="number"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-select label="Period unit" placeholder="unit">
-                    <ion-select-option value="days">Days</ion-select-option>
-                    <ion-select-option value="months">Months</ion-select-option>
-                    <ion-select-option value="years">Years</ion-select-option>
-                  </ion-select>
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                    label="Expiry"
-                    placeholder="date"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                    label="Category"
-                    placeholder="category"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-label>Something</ion-label>
-                  <input type="text" placeholder="data" style="background: none; border: none; text-align: right; outline: none;">
-                </ion-item>
-
-                <div class="app-item">
-                  <div class="app-item-inner">
-                    <label>Something3</label>
-                    <input type="text" placeholder="abcd"/>
-                  </div>
-                </div>
-
-                <ion-item>
-                  <ion-label>Something4</ion-label>
-                  <input type="text" placeholder="data">
-                </ion-item> 
-              </ion-list>-->
-            </ion-content>
-          </ng-template>
-        </ion-modal>
-        </div>
-      </div>
-
-      <div class="edit-title-modal">
-        <ion-modal
-          style="--ion-background-color: #121212;"
-          [isOpen]="editTitleModal.isOpen"
-          [enterAnimation]="editModal.slideInLeft"
-          [leaveAnimation]="editModal.slideInRight"
-          (ionModalDidPresent)="onEditTitleModalDidPresent()"
-          (willDismiss)="editTitleModal.isOpen = false"
-        >
-          <ng-template>
-            <ion-header collapse="fade" [translucent]="true">
-              <ion-toolbar>
-                <ion-buttons slot="start">
-                  <!-- TODO: when opening modal, set canDismiss to false -->
-                  <ion-button (click)="editTitleModal.isOpen = false">
-                    <!-- <ion-icon
-                      slot="icon-only"
-                      name="ellipsis-horizontal-outline"
-                    /> -->
-                    Close
-                  </ion-button>
-                </ion-buttons>
-                <ion-title> Title </ion-title>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content [forceOverscroll]="false">
-
-              <ion-list [inset]="true">
-                <ion-item>
-                  <ion-input
-                    id="titleInputEl"
-                    #titleInputEl
-                    type="text"
-                    placeholder="Enter a title"
-                  />
-                </ion-item>
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-modal>
-      </div>
-
     </ion-content>
   `,
-  styles: [`
-    .app-item {
-      background-color: var(--ion-color-step-50);
-    }  
-
-    .app-item-inner {
-      display: flex;
-      min-height: 44px;
-      margin-left: 16px;
-      margin-right: 16px;
-      align-items: center;
-      border-bottom: 1px solid var(--ion-color-step-250, #c8c7cc);
-    }
-
-    .app-item-inner label{
-      flex-grow: 1;
-    }
-
-    .app-item-inner input,
-    .app-item-inner select {
-      background: none; 
-      border: none; 
-      outline: none;
-    }
-
-    .app-item-inner input[type="text"],
-    .app-item-inner input[type="number"] {
-      field-sizing: content;
-    }
-  `],
+  styles: [``],
 })
 export class RecurrencyListPage {
   private recurrencyService = inject(RecurrencyMockService);
+  private modalCtrl = inject(ModalController)
+
+  // TODO: replace by settingsservice
   timezone = TIMEZONE.ZURICH;
   dateFormat = DATE_FORMAT.CH;
-
-  menuButton = {
-    onPresentListActions: () => {
-      blurActiveElement();
-      this.listActions.isOpen.set(true);
-    },
-  };
 
   recurrencyList = {
     groupedByCategory: computed(() => {
@@ -414,11 +160,7 @@ export class RecurrencyListPage {
     buttons: [
       {
         text: 'Add Item',
-        handler: () => {
-          console.log('add item clicked');
-          blurActiveElement();
-          this.editModal.isOpen = true;
-        },
+        handler: this.onAddItemClicked.bind(this),
       },
       {
         text: 'Filter by "name"',
@@ -441,52 +183,43 @@ export class RecurrencyListPage {
     ],
   };
 
-  editModal = {
-    isOpen: false,
-    slideInLeft,
-    slideInRight
-  };
-
-  
-
-  editTitleModal = {
-    isOpen: false,
-  }
-
   constructor() {
     addIcons({ ellipsisHorizontalOutline });
+  }
 
-    // TESTING ONLY...
-    // setTimeout(() => {
-    //   set('users/0yuA0RLZFJdbRKtVSfW4y5HSQMq1/recurrencies/jdfkalswerus', {
-    //     title: 'PT',
-    //     lastEvent: '2025-12-31',
-    //     periodNb: 9,
-    //     periodUnit: 'days',
-    //     category: 'Aircrafts',
-    //   });
-    // }, 3000);
+  onMenuButtonClick() {
+    blurActiveElement();
+    this.listActions.isOpen.set(true);
   }
 
   onItemClick(recurrency: Recurrency) {
-    this.editModal.isOpen = true
+    this._openDetailsModal({
+      modalTitle: 'Edit',
+      data: {
+        recurrency,
+        timezone: this.timezone,
+        dateFormat: this.dateFormat
+      }
+    })
   }
 
-  onItemTitleClick() {
-    this.editTitleModal.isOpen = true
+  onAddItemClicked() {
+    this._openDetailsModal({
+      modalTitle: 'Create',
+    })
   }
 
-  titleInputEl = viewChild('titleInputEl', {
-    read: IonInput
-  })
-
-  onEditTitleModalDidPresent() {
-    const titleInputEl = document.getElementById('titleInputEl') as unknown as IonInput
-    console.log(titleInputEl)
-    // setTimeout(() => {
-      titleInputEl.setFocus()
-    // }, 1000);
-    // this.titleInputEl()!.setFocus()
+  private async _openDetailsModal(componentProps: any) {
+    blurActiveElement()
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsModal,
+      componentProps,
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    console.log(data)
   }
 }
 

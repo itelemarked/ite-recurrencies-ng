@@ -8,7 +8,6 @@ import { PositiveInteger } from "src/__Archives__/temp3/_types/PositiveInteger";
 import { PeriodUnit } from "src/__Archives__/temp3/_types/PeriodUnit";
 import { DateString } from "../types/DateString.type";
 import { TimeString } from "../types/TimeString";
-import { TimezoneString } from "src/__Archives__/temp1/types/TimezoneString";
 
 
 
@@ -70,7 +69,7 @@ export function diff(date1: Date, date2: Date, unit: PeriodUnit): number {
 
 
 
-export function createTimezoneDate({ dateString, timeString , timezone }: { dateString: DateString, timeString: TimeString, timezone: TimezoneString }): Date {  
+export function createTimezoneDate({ dateString, timeString , timezone }: { dateString: DateString, timeString: TimeString, timezone: Timezone }): Date {  
   const dateStr = dateString
   const timeStr = timeString ?? '00:00:00.000'
   const timezoneStr = timezone ?? 'UTC'
