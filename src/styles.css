@@ -8,6 +8,8 @@
 @import "./css/global/text.css";
 @import "./css/global/z-index.css";
 @import "./css/global/border.css";
-@import "./css/ionic/ionic.css";
 
-@import "./css/ionic/variables.css"
+@import "./css/ionic/ionic.css";
+@import "./css/ionic/variables.css";
+@import "./css/ionic/list.css";
+

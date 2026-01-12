@@ -6,8 +6,8 @@ import { DateFormat } from "src/__Archives__/temp3/_types/DateFormat";
 import { Timezone } from "src/__Archives__/temp3/_types/Timezone";
 import { PositiveInteger } from "src/__Archives__/temp3/_types/PositiveInteger";
 import { PeriodUnit } from "src/__Archives__/temp3/_types/PeriodUnit";
-import { DateString } from "../types/DateString.type";
-import { TimeString } from "../types/TimeString";
+import { DateString } from "../app/recurrencies/types/DateString.type";
+import { TimeString } from "../app/recurrencies/types/TimeString";
 
 
 

@@ -6,7 +6,7 @@ import { TIMEZONE, Timezone } from "../types/Timezone";
 import { TimeString } from "../types/TimeString";
 import { isRecurrency, Recurrency } from "../types/Recurrency.type";
 import { get$ } from "./mock-datas";
-import { isPlainObject } from "../utils/valid-type";
+import { isPlainObject } from "../../../js/valid-type";
 
 
 // TODO: export whereelse...

@@ -11,14 +11,14 @@ export const MOCK_DATAS: any = {
         xsxdjdsasddfs: {
           title: 'EC',
           lastEvent: '2025-12-31',
-          periodNb: 20,
+          periodNb: 30,
           periodUnit: 'days',
           category: 'Aircrafts'
         },
         adjdioenssadfe: {
           title: 'PU',
           lastEvent: '2025-12-31',
-          periodNb: 7,
+          periodNb: 27,
           periodUnit: 'days',
           category: 'Aircrafts'
         },
