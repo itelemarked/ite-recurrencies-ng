@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input } from '@angular/core';
+import { Component, computed, inject, Input, input, Optional, signal, Signal } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -22,6 +22,9 @@ import { InputTextModal } from './recurrency-list-item-details-input-text.modal'
 import { slideInLeft, slideInRight } from '../recurrency-list.page';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
+import { PeriodUnit } from '../types/PeriodUnit.type';
+import { DateString } from '../types/DateString.type';
+
 
 @Component({
   selector: 'app-recurrency-list-item-details',
@@ -59,27 +62,27 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
       <ion-list [inset]="true">
         <ion-item [button]="true" (click)="onItemTitleClick()">
           <ion-label>Title</ion-label>
-          <ion-note>{{ title() }}</ion-note>
+          <ion-note>{{ displayTitle() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
           <ion-label>Last Event</ion-label>
-          <ion-note>{{ lastEventString() }}</ion-note>
+          <ion-note>{{ displayLastEvent() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
           <ion-label>Period Nb</ion-label>
-          <ion-note>{{ periodNb() }}</ion-note>
+          <ion-note>{{ displayPeriodNb() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
           <ion-label>Period Unit</ion-label>
-          <ion-note>{{ periodUnit() }}</ion-note>
+          <ion-note>{{ displayPeriodUnit() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
           <ion-label>Expiry</ion-label>
-          <ion-note>{{ expiryString() }}</ion-note>
+          <ion-note>{{ displayExpiry() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
           <ion-label>Category</ion-label>
-          <ion-note>{{ category() }}</ion-note>
+          <ion-note>{{ displayCategory() }}</ion-note>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -96,46 +99,92 @@ export class RecurrencyListItemDetailsModal {
     timezone: Timezone
   }
 
-  title = computed(() => this.data === undefined ? '-----' : this.data.recurrency.title)
-  periodNb = computed(() => this.data === undefined ? '-----' : this.data.recurrency.periodNb)
-  periodUnit = computed(() => this.data  === undefined ? '-----' : this.data.recurrency.periodUnit)
-  category = computed(() => this.data  === undefined ? '-----' : this.data.recurrency.category)
-  lastEventString = computed(() => (
-    this.data  === undefined ? 
-    '-----' : 
-    format(
-      createTimezoneDate({
-        dateString: this.data.recurrency.lastEvent,
-        timeString: SHORT_BEFORE_MIDNIGHT,
-        timezone: this.data.timezone
-      }),
-      this.data.dateFormat,
-      this.data.timezone
-    )
-  ))
-  expiryString = computed(() => (
-    this.data  === undefined ? 
-    '-----' : 
-    format(
-      add(
-        createTimezoneDate({
-          dateString: this.data.recurrency.lastEvent,
-          timeString: SHORT_BEFORE_MIDNIGHT,
-          timezone: this.data.timezone
-        }),
-        this.data.recurrency.periodNb,
-        this.data.recurrency.periodUnit
-      ),
-      this.data.dateFormat,
-      this.data.timezone
-    )
-  ))
+  // title: string | undefined
+  // lastEvent: DateString | undefined
+  // periodNb: number | undefined
+  // periodUnit: PeriodUnit | undefined
+  // category: string | undefined
+
+  currentRecurrency!: Signal<Partial<Recurrency>>
+  dataValueHasChanged!: boolean
+
+  displayTitle = computed(() => {
+    const title = this.currentRecurrency().title
+    return title === undefined ? '-----' : title
+  })
+
+  displayLastEvent = computed(() => {
+    const lastEvent = this.currentRecurrency().lastEvent
+    return lastEvent === undefined ? '-----' : lastEvent
+  })
+
+  displayPeriodNb = computed(() => {
+    const periodNb = this.currentRecurrency().periodNb
+    return periodNb === undefined ? '-----' : periodNb
+  })
+
+  displayPeriodUnit = computed(() => {
+    const periodUnit = this.currentRecurrency().periodUnit
+    return periodUnit === undefined ? '-----' : periodUnit
+  })
+
+
+  displayExpiry = computed(() => {
+    return '--expiry--'
+  })
+
+  displayCategory = computed(() => {
+    const category = this.currentRecurrency().category
+    return category === undefined ? '-----' : category
+  })
+
 
   constructor() {
     addIcons({
       chevronBackOutline,
       closeCircleOutline
     })
+  }
+
+  ngOnInit() {
+    this.currentRecurrency = signal({
+      title: this.data === undefined ? undefined : this.data.recurrency.title,
+      lastEvent: this.data === undefined ? undefined : this.data.recurrency.lastEvent,
+      periodNb: this.data === undefined ? undefined : this.data.recurrency.periodNb,
+      periodUnit: this.data === undefined ? undefined : this.data.recurrency.periodUnit,
+      category: this.data === undefined ? undefined : this.data.recurrency.category,
+    })
+    // this.title = this.data === undefined ? '-----' : this.data.recurrency.title
+    // this.periodNbString = this.data === undefined ? '-----' : this.data.recurrency.periodNb.toString()
+    // this.periodUnit = this.data  === undefined ? '-----' : this.data.recurrency.periodUnit
+    // this.category = this.data  === undefined ? '-----' : this.data.recurrency.category
+    // this.lastEventString = this.data  === undefined ? 
+    //   '-----' : 
+    //   format(
+    //     createTimezoneDate({
+    //       dateString: this.data.recurrency.lastEvent,
+    //       timeString: SHORT_BEFORE_MIDNIGHT,
+    //       timezone: this.data.timezone
+    //     }),
+    //     this.data.dateFormat,
+    //     this.data.timezone
+    //   )
+    // this.expiryString = this.data  === undefined ? 
+    //   '-----' : 
+    //   format(
+    //     add(
+    //       createTimezoneDate({
+    //         dateString: this.data.recurrency.lastEvent,
+    //         timeString: SHORT_BEFORE_MIDNIGHT,
+    //         timezone: this.data.timezone
+    //       }),
+    //       this.data.recurrency.periodNb,
+    //       this.data.recurrency.periodUnit
+    //     ),
+    //     this.data.dateFormat,
+    //     this.data.timezone
+    //   )
+    this.dataValueHasChanged = false
   }
   
   onBackButtonClick() {
@@ -155,8 +204,13 @@ export class RecurrencyListItemDetailsModal {
       leaveAnimation: slideInRight
     });
     modal.present();
-    const { data, role } = await modal.onWillDismiss();
-    console.log(data)
+    const { data }= await modal.onWillDismiss();
+    // this.title = data.trim() === '' || data === undefined ? '-----' : data
+    // this.dataValueHasChanged = this.title === '-----'
   }
+
+  private _isRecurrencyValid() {}
+
+  private _isRecurrencySameAsOriginalInput() {}
 
 }

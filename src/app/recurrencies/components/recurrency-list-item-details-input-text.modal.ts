@@ -70,7 +70,7 @@ export class InputTextModal {
   @Input() data?: string
 
   value!: string
-  valueHasChanged: boolean = false
+  valueHasChanged!: boolean
 
   constructor() {
     addIcons({
@@ -81,10 +81,11 @@ export class InputTextModal {
 
   ngOnInit() {
     this.value = this.data === undefined ? '' : this.data
+    this.valueHasChanged = false
   }
 
   onBackButtonClick() {
-    this.modalCtrl.dismiss()
+    this.modalCtrl.dismiss(this.value)
   }
 
   onValueChange(e: any) {
