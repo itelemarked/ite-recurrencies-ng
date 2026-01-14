@@ -25,6 +25,7 @@ import {
   SHORT_BEFORE_MIDNIGHT,
 } from '../../../js/date';
 import { PERIOD_UNIT } from '../../../js/timezone-date/types/PeriodUnit.type';
+import { DATE_FORMAT } from 'src/__Archives__/temp3/_types/DateFormat';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -102,7 +103,7 @@ export class RecurrencyListComponent {
     const sortFn = {
       title: (a: Recurrency, b: Recurrency) => (a.title < b.title ? -1 : 1),
       expiry: (a: Recurrency, b: Recurrency) =>
-        this._getExpiryDate(a).valueOf() - this._getExpiryDate(b).valueOf(),
+        this._getExpiryDate(a).toDate().valueOf() - this._getExpiryDate(b).toDate().valueOf(),
     }[this.sortBy()];
     const sortedRecurrencies = this.recurrencies().toSorted(sortFn);
     return groupBy<Recurrency>(sortedRecurrencies, ({ category }) => category);
@@ -116,21 +117,27 @@ export class RecurrencyListComponent {
 
   // TODO: not ideal with method... use pipe instead???
   expiryString(recurrency: Recurrency) {
-    return format(
-      this._getExpiryDate(recurrency),
-      this.dateFormat(),
-      this.timezone()
-    );
+    // return format(
+    //   this._getExpiryDate(recurrency),
+    //   this.dateFormat(),
+    //   this.timezone()
+    // );
+    return this._getExpiryDate(recurrency).format(this.dateFormat())
   }
 
   // TODO: not ideal with method... use pipe instead???
   daysLeft(recurrency: Recurrency) {
-    const expiryDate = this._getExpiryDate(recurrency);
-    const todayDate = endOf(new Date(), PERIOD_UNIT.DAYS, this.timezone());
-    const difference = diff(expiryDate, todayDate, PERIOD_UNIT.DAYS);
-    return difference < 0
+    // const expiryDate = this._getExpiryDate(recurrency);
+    // const todayDate = endOf(new Date(), PERIOD_UNIT.DAYS, this.timezone());
+    // const difference = diff(expiryDate, todayDate, PERIOD_UNIT.DAYS);
+    // return difference < 0
+    //   ? 'expired...'
+    //   : difference.toString() + ' ' + 'days' + ' left';
+
+    const differenceInDays = this._getExpiryDate(recurrency).diffToNow(PERIOD_UNIT.DAYS)
+    return differenceInDays < 0
       ? 'expired...'
-      : difference.toString() + ' ' + 'days' + ' left';
+      : differenceInDays.toString() + ' ' + 'days' + ' left';
   }
 
   onDeleteTap(recurrency: Recurrency) {
@@ -149,16 +156,17 @@ export class RecurrencyListComponent {
   }
 
   private _getExpiryDate(recurrency: Recurrency) {
-    const lastEventDate = createTimezoneDate({
-      dateString: recurrency.lastEvent,
-      timeString: SHORT_BEFORE_MIDNIGHT,
-      timezone: TIMEZONE.ZURICH,
-    });
-    const expiryDate = endOf(
-      add(lastEventDate, recurrency.periodNb, recurrency.periodUnit),
-      recurrency.periodUnit,
-      TIMEZONE.ZURICH
-    );
-    return expiryDate;
+    return recurrency.lastEvent.add(recurrency.periodNb, recurrency.periodUnit)
+    // const lastEventDate = createTimezoneDate({
+    //   dateString: recurrency.lastEvent,
+    //   timeString: SHORT_BEFORE_MIDNIGHT,
+    //   timezone: TIMEZONE.ZURICH,
+    // });
+    // const expiryDate = endOf(
+    //   add(lastEventDate, recurrency.periodNb, recurrency.periodUnit),
+    //   recurrency.periodUnit,
+    //   TIMEZONE.ZURICH
+    // );
+    // return expiryDate;
   }
 }

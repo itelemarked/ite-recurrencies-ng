@@ -63,6 +63,15 @@ export function get$<T>(path: string): Observable<T | null> {
   )
 }
 
+// export function getList<T>(path: string, idField: string): (T & {[idField]: string})[] {
+//   return [
+//     {
+//       someField: 'a',
+//       [idField]: 'abcd'
+//     }
+//   ]
+// }
+
 
 export function set<T>(path: string, value: T) {
   let currentObj = MOCK_DATAS

@@ -24,6 +24,9 @@ dayjs.locale(LOCALE, LOCALE_OPTIONS)
 // ----------------------------------------------
 
 
+export const isTimezoneDate = (val: any): val is TimezoneDate => val instanceof TimezoneDate
+
+
 export class TimezoneDate {
 
   private _dateString: DateString

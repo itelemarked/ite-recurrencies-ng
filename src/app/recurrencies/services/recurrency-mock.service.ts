@@ -6,7 +6,12 @@ import { TIMEZONE, Timezone } from "../../../js/timezone-date/types/Timezone";
 import { TimeString } from "../../../js/timezone-date/types/TimeString";
 import { isRecurrency, Recurrency } from "../types/Recurrency.type";
 import { get$ } from "./mock-datas";
-import { isPlainObject } from "../../../js/valid-type";
+import { isInterface, isPlainObject, isString } from "../../../js/valid-type";
+import { isTimezoneDate, TimezoneDate } from "src/js/timezone-date/TimezoneDate";
+import { DateString, isDateString } from "src/js/timezone-date/types/DateString.type";
+import { SHORT_BEFORE_MIDNIGHT } from "src/js/date";
+import { isPositiveInteger, PositiveInteger } from "../types/PositiveInteger.type";
+import { isPeriodUnit, PeriodUnit } from "src/js/timezone-date/types/PeriodUnit.type";
 
 
 // TODO: export whereelse...
@@ -57,19 +62,47 @@ export class RecurrencyMockService {
 
   // getter as Observable
   recurrencies$() {
-    return this.userService.user$.pipe(
-      switchMap((usr) => {
+    return combineLatest([this.userService.user$, this.settingsService.settings$]).pipe(
+      switchMap(([usr, settings]) => {
         if(usr === null) {
           return of([] as Recurrency[])
         } 
 
         return get$(`users/${usr.uid}/recurrencies`).pipe(
-          map(data => {
-            if(data === null) return []
-            if(!isPlainObject(data)) return []
-            const recurrencies = Object.entries(data).map(([uid, value]) => ({uid, ...value}))
-            if(recurrencies.some(rec => !isRecurrency(rec))) return []
-            return recurrencies as Recurrency[]
+          map(dataObj => {
+            if(dataObj === null) return []
+            if(!isPlainObject(dataObj)) return []
+
+            // const recurrencies = Object.entries(data).map(([uid, value]) => ({uid, ...value}))
+            // if(recurrencies.some(rec => !isRecurrency(rec))) return []
+            // return recurrencies as Recurrency[]
+
+            const isValidData = isInterface<{
+              uid: string,
+              title: string,
+              lastEvent: DateString,
+              periodNb: PositiveInteger,
+              periodUnit: PeriodUnit,
+              categroy: string
+            }>({
+              uid: [isString],
+              title: [isString],
+              lastEvent: [isDateString],
+              periodNb: [isPositiveInteger],
+              periodUnit: [isPeriodUnit],
+              category: [isString]
+            })
+
+            const dataArr = Object.entries(dataObj).map(([uid, value]) => ({uid, ...value}))
+
+            if(!dataArr.every(el => isValidData(el))) {
+              return []
+            }
+
+            return dataArr.map((value) => ({
+              ...value,
+              lastEvent: TimezoneDate.create(value.lastEvent, SHORT_BEFORE_MIDNIGHT, settings.timezone)
+            }))
           })
         )
       }),
