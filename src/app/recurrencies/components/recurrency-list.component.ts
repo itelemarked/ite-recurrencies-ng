@@ -14,8 +14,8 @@ import {
   IonLabel,
   IonNote,
 } from '@ionic/angular/standalone';
-import { DateFormat } from '../types/DateFormat';
-import { TIMEZONE, Timezone } from '../types/Timezone';
+import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
+import { TIMEZONE, Timezone } from '../../../js/timezone-date/types/Timezone';
 import {
   add,
   createTimezoneDate,
@@ -24,7 +24,7 @@ import {
   format,
   SHORT_BEFORE_MIDNIGHT,
 } from '../../../js/date';
-import { PERIOD_UNIT } from '../types/PeriodUnit.type';
+import { PERIOD_UNIT } from '../../../js/timezone-date/types/PeriodUnit.type';
 
 @Component({
   selector: 'app-recurrency-list',

@@ -1,6 +1,6 @@
 import { isBoolean, isInterface, isNumber, isString } from "../../../js/valid-type"
-import { DateString, isDateString } from "./DateString.type"
-import { isPeriodUnit, PeriodUnit } from "./PeriodUnit.type"
+import { DateString, isDateString } from "../../../js/timezone-date/types/DateString.type"
+import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit.type"
 import { isPositiveInteger, PositiveInteger } from "./PositiveInteger.type"
 
 export type Recurrency = {

@@ -2,8 +2,8 @@ import { inject, Injectable } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, combineLatest, delay, map, Observable, of, startWith, switchMap, tap } from "rxjs";
 
-import { TIMEZONE, Timezone } from "../types/Timezone";
-import { TimeString } from "../types/TimeString";
+import { TIMEZONE, Timezone } from "../../../js/timezone-date/types/Timezone";
+import { TimeString } from "../../../js/timezone-date/types/TimeString";
 import { isRecurrency, Recurrency } from "../types/Recurrency.type";
 import { get$ } from "./mock-datas";
 import { isPlainObject } from "../../../js/valid-type";

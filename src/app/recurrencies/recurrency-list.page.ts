@@ -17,14 +17,15 @@ import {
 } from '@ionic/angular/standalone';
 
 import { blurActiveElement } from '../../js/ionic-fixes';
-import { TIMEZONE } from './types/Timezone';
-import { DATE_FORMAT } from './types/DateFormat';
+import { TIMEZONE } from '../../js/timezone-date/types/Timezone';
+import { DATE_FORMAT } from '../../js/timezone-date/types/DateFormat';
 import { Recurrency } from './types/Recurrency.type';
 
 import { RecurrencyMockService } from './services/recurrency-mock.service';
 
 import { RecurrencyListItemDetailsModal } from './components/recurrency-list-item-details.modal';
 import { RecurrencyListComponent } from './components/recurrency-list.component';
+import { TESTS } from 'src/js/timezone-date/TimezoneDate';
 
 
 export const slideInLeft = (baseEl: HTMLElement) => {
