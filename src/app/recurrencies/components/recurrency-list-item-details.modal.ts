@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input, Optional, signal, Signal } from '@angular/core';
+import { Component, computed, inject, Input, input, Optional, signal, Signal, WritableSignal } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -25,6 +25,7 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
 import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit.type';
 import { DateString } from '../../../js/timezone-date/types/DateString.type';
 import { TimezoneDate } from 'src/js/timezone-date/TimezoneDate';
+import { PositiveInteger } from '../types/PositiveInteger.type';
 
 
 @Component({
@@ -100,44 +101,23 @@ export class RecurrencyListItemDetailsModal {
     timezone: Timezone
   }
 
-  // title: string | undefined
-  // lastEvent: DateString | undefined
-  // periodNb: number | undefined
-  // periodUnit: PeriodUnit | undefined
-  // category: string | undefined
+  title!: WritableSignal<string | null>
+  lastEvent!: WritableSignal<TimezoneDate | null>
+  periodNb!: WritableSignal<PositiveInteger | null>
+  periodUnit!: WritableSignal<PeriodUnit | null>
+  category!: WritableSignal<string | null>
 
-  currentRecurrency!: Signal<Partial<Recurrency>>
   dataValueHasChanged!: boolean
 
-  displayTitle = computed(() => {
-    const title = this.currentRecurrency().title
-    return title === undefined ? '-----' : title
-  })
-
-  displayLastEvent = computed(() => {
-    const lastEvent = this.currentRecurrency().lastEvent
-    return lastEvent === undefined ? '-----' : lastEvent
-  })
-
-  displayPeriodNb = computed(() => {
-    const periodNb = this.currentRecurrency().periodNb
-    return periodNb === undefined ? '-----' : periodNb
-  })
-
-  displayPeriodUnit = computed(() => {
-    const periodUnit = this.currentRecurrency().periodUnit
-    return periodUnit === undefined ? '-----' : periodUnit
-  })
-
-
-  displayExpiry = computed(() => {
-    return '--expiry--'
-  })
-
-  displayCategory = computed(() => {
-    const category = this.currentRecurrency().category
-    return category === undefined ? '-----' : category
-  })
+  displayTitle = computed(() => this.title() === null ? '-----' : this.title())
+  displayLastEvent = computed(() => this.lastEvent() === null ? '-----' : this.lastEvent()!.format(this.data!.dateFormat))
+  displayPeriodNb = computed(() => this.periodNb() === null ? '-----' : this.periodNb())
+  displayPeriodUnit = computed(() => this.periodUnit() === null ? '-----' : this.periodUnit())
+  displayExpiry = computed(() => this.lastEvent() === null || this.periodNb() === null || this.periodUnit() === null 
+    ? '-----'
+    : this.lastEvent()!.add(this.periodNb()!, this.periodUnit()!).format(this.data!.dateFormat)
+  )
+  displayCategory = computed(() => this.category() === null ? '-----' : this.category())
 
 
   constructor() {
@@ -148,43 +128,12 @@ export class RecurrencyListItemDetailsModal {
   }
 
   ngOnInit() {
-    this.currentRecurrency = signal({
-      title: this.data === undefined ? undefined : this.data.recurrency.title,
-      lastEvent: this.data === undefined ? undefined : this.data.recurrency.lastEvent,
-      periodNb: this.data === undefined ? undefined : this.data.recurrency.periodNb,
-      periodUnit: this.data === undefined ? undefined : this.data.recurrency.periodUnit,
-      category: this.data === undefined ? undefined : this.data.recurrency.category,
-    })
-    // this.title = this.data === undefined ? '-----' : this.data.recurrency.title
-    // this.periodNbString = this.data === undefined ? '-----' : this.data.recurrency.periodNb.toString()
-    // this.periodUnit = this.data  === undefined ? '-----' : this.data.recurrency.periodUnit
-    // this.category = this.data  === undefined ? '-----' : this.data.recurrency.category
-    // this.lastEventString = this.data  === undefined ? 
-    //   '-----' : 
-    //   format(
-    //     createTimezoneDate({
-    //       dateString: this.data.recurrency.lastEvent,
-    //       timeString: SHORT_BEFORE_MIDNIGHT,
-    //       timezone: this.data.timezone
-    //     }),
-    //     this.data.dateFormat,
-    //     this.data.timezone
-    //   )
-    // this.expiryString = this.data  === undefined ? 
-    //   '-----' : 
-    //   format(
-    //     add(
-    //       createTimezoneDate({
-    //         dateString: this.data.recurrency.lastEvent,
-    //         timeString: SHORT_BEFORE_MIDNIGHT,
-    //         timezone: this.data.timezone
-    //       }),
-    //       this.data.recurrency.periodNb,
-    //       this.data.recurrency.periodUnit
-    //     ),
-    //     this.data.dateFormat,
-    //     this.data.timezone
-    //   )
+    this.title = signal(this.data === undefined ? null : this.data.recurrency.title)
+    this.lastEvent = signal(this.data === undefined ? null : this.data.recurrency.lastEvent)
+    this.periodNb = signal(this.data === undefined ? null : this.data.recurrency.periodNb)
+    this.periodUnit = signal(this.data === undefined ? null : this.data.recurrency.periodUnit)
+    this.category = signal(this.data === undefined ? null : this.data.recurrency.category)
+
     this.dataValueHasChanged = false
   }
   
@@ -199,14 +148,18 @@ export class RecurrencyListItemDetailsModal {
       component: InputTextModal,
       componentProps: {
         modalTitle: 'Title',
-        data: this.data === undefined ? undefined : this.data.recurrency.title
+        data: this.title()
       },
       enterAnimation: slideInLeft,
       leaveAnimation: slideInRight
     });
     modal.present();
-    const { data }= await modal.onWillDismiss();
-    // this.title = data.trim() === '' || data === undefined ? '-----' : data
+    // const result: {role: 'ok', data: string} | {role: 'cancel'} = await modal.onWillDismiss<{role: 'ok', data: string} | {role: 'cancel'}>();
+    const { data, role } = await modal.onWillDismiss<string>();
+
+    if(role === 'ok') {
+      this.title.set(data === '' ? null : data!.trim())
+    }
     // this.dataValueHasChanged = this.title === '-----'
   }
 

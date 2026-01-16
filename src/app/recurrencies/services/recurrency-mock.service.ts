@@ -83,7 +83,7 @@ export class RecurrencyMockService {
               lastEvent: DateString,
               periodNb: PositiveInteger,
               periodUnit: PeriodUnit,
-              categroy: string
+              category: string
             }>({
               uid: [isString],
               title: [isString],
@@ -99,10 +99,11 @@ export class RecurrencyMockService {
               return []
             }
 
-            return dataArr.map((value) => ({
+            const recurrencies = dataArr.map((value) => ({
               ...value,
               lastEvent: TimezoneDate.create(value.lastEvent, SHORT_BEFORE_MIDNIGHT, settings.timezone)
-            }))
+            })) 
+            return recurrencies
           })
         )
       }),

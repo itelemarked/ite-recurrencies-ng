@@ -36,7 +36,7 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button (click)="modalCtrl.dismiss(value)">
+          <ion-button (click)="onBackButtonClick()">
             <ion-icon name="chevron-back-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -56,8 +56,6 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
           <ion-input type="text" [(ngModel)]="value" (ionInput)="onValueChange($event)"/>
         </ion-item>
       </ion-list>
-      <p>value: {{ value }}</p>
-      <p>valueHasChanged: {{valueHasChanged}}</p>
     </ion-content>
   `,
   styles: [``],
@@ -67,7 +65,7 @@ export class InputTextModal {
   modalCtrl = inject(ModalController)
 
   @Input({required: true}) modalTitle!: string
-  @Input() data?: string
+  @Input() data!: string | null
 
   value!: string
   valueHasChanged!: boolean
@@ -80,12 +78,12 @@ export class InputTextModal {
   }
 
   ngOnInit() {
-    this.value = this.data === undefined ? '' : this.data
+    this.value = this.data === null ? '' : this.data
     this.valueHasChanged = false
   }
 
   onBackButtonClick() {
-    this.modalCtrl.dismiss(this.value)
+    this.modalCtrl.dismiss(this.value.trim(), 'ok')
   }
 
   onValueChange(e: any) {
