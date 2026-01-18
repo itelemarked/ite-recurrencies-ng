@@ -1,10 +1,9 @@
-import { Component, computed, inject, Signal, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { addIcons } from 'ionicons';
 import { ellipsisHorizontalOutline } from 'ionicons/icons';
 import {
-  createAnimation,
   IonActionSheet,
   IonButton,
   IonButtons,
@@ -16,7 +15,7 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 
-import { blurActiveElement } from '../../js/ionic-fixes';
+import { blurActiveElement } from '../../js/ionic/fixes';
 import { TIMEZONE } from '../../js/timezone-date/types/Timezone';
 import { DATE_FORMAT } from '../../js/timezone-date/types/DateFormat';
 import { Recurrency } from './types/Recurrency.type';
@@ -27,58 +26,12 @@ import { RecurrencyListItemDetailsModal } from './components/recurrency-list-ite
 import { RecurrencyListComponent } from './components/recurrency-list.component';
 
 
-// TEMPORARY!!!!!!!
-export const slideInLeft = (baseEl: HTMLElement) => {
-  const root = baseEl.shadowRoot;
-
-  const backdropAnimation = createAnimation()
-    backdropAnimation
-    .addElement(root!.querySelector('ion-backdrop')!)
-    .fromTo('opacity', '0.01', '1');
-
-  const wrapperAnimation = createAnimation()
-  wrapperAnimation
-    .addElement(root!.querySelector('.modal-wrapper')!)
-    .keyframes([
-      { offset: 0, transform: 'translateX(100%)' },
-      { offset: 1, transform: 'translateX(0)' },
-    ]);
-
-  return createAnimation()
-    .addElement(baseEl)
-    .easing('ease-out')
-    .duration(200)
-    .addAnimation([wrapperAnimation, backdropAnimation])
-};
-
-export const slideInRight = (baseEl: HTMLElement) => {
-  const root = baseEl.shadowRoot;
-
-  const backdropAnimation = createAnimation()
-    backdropAnimation
-    .addElement(root!.querySelector('ion-backdrop')!)
-    .fromTo('opacity', '1', '0.01');
-
-  const wrapperAnimation = createAnimation()
-  wrapperAnimation
-    .addElement(root!.querySelector('.modal-wrapper')!)
-    .keyframes([
-      { offset: 0, transform: 'translateX(0)' },
-      { offset: 1, transform: 'translateX(100%)' },
-    ]);
-
-  return createAnimation()
-    .addElement(baseEl)
-    .easing('ease-out')
-    .duration(200)
-    .addAnimation([wrapperAnimation, backdropAnimation])
-};
-
 
 // TEMPORARY!!!!!!!
 import { PositiveInteger } from './types/PositiveInteger.type';
 import { PeriodUnit } from 'src/js/timezone-date/types/PeriodUnit.type';
 import { DateString } from 'src/js/timezone-date/types/DateString.type';
+import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-in';
 type RecurrencyData = {
   title: string,
   lastEvent: DateString,
@@ -164,11 +117,11 @@ export class RecurrencyListPage {
       },
       {
         text: 'Filter by "Title"',
-        handler: this.onFilterByClick('title').bind(this),
+        handler: this.onFilterBy('title').bind(this),
       },
       {
         text: 'Filter by "Expiry"',
-        handler: this.onFilterByClick('expiry').bind(this),
+        handler: this.onFilterBy('expiry').bind(this),
       },
       {
         text: 'Cancel',
@@ -219,7 +172,7 @@ export class RecurrencyListPage {
     return data
   }
 
-  onFilterByClick(filter: 'title' | 'expiry') {
+  onFilterBy(filter: 'title' | 'expiry') {
     return () => this.state.recurrenciesSortBy.set(filter)
   }
 

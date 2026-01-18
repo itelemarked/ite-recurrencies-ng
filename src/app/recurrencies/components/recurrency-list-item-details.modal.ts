@@ -16,16 +16,14 @@ import {
 import { Recurrency } from '../types/Recurrency.type';
 import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
-import { add, createTimezoneDate, format, SHORT_BEFORE_MIDNIGHT } from '../../../js/date';
-import { blurActiveElement } from '../../../js/ionic-fixes';
+import { blurActiveElement } from '../../../js/ionic/fixes';
 import { InputTextModal } from './recurrency-list-item-details-input-text.modal';
-import { slideInLeft, slideInRight } from '../recurrency-list.page';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
 import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit.type';
-import { DateString } from '../../../js/timezone-date/types/DateString.type';
 import { TimezoneDate } from 'src/js/timezone-date/TimezoneDate';
 import { PositiveInteger } from '../types/PositiveInteger.type';
+import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-in';
 
 
 @Component({
