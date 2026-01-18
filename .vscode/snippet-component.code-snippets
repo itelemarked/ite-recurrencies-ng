@@ -14,6 +14,15 @@
       "  styles: [``]",
       "})",
       "export class $2Component {",
+      "  // DEPENDENCIES",
+      "",
+      "  // STATE",
+      "",
+      "  // SELECTORS",
+      "",
+      "  // ACTIONS",
+      "",
+      "  // PRIVATE",
       "",
       "}"
     ]

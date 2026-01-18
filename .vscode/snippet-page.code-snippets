@@ -46,7 +46,16 @@
 			"  styles: [``]",
 			"})",
 			"export class $2Page {",
-			"",
+			"  // DEPENDENCIES",
+      "",
+      "  // STATE",
+      "",
+      "  // SELECTORS",
+      "",
+      "  // ACTIONS",
+      "",
+      "  // PRIVATE",
+      "",
 			"}"
 		]
 	}
