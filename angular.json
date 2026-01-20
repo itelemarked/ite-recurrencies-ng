@@ -152,6 +152,9 @@
     "schematicCollections": [
       "@ionic/angular-toolkit"
     ],
+    "cache": {
+      "enabled": false
+    },
     "analytics": false
   },
   "schematics": {

@@ -184,14 +184,11 @@ export class RecurrencyListPage {
     addIcons({ ellipsisHorizontalOutline });
   }
 
-  private async getRecurrencyDataByModal(): Promise<RecurrencyData | null> {
+  private async getRecurrencyDataByModal(componentProps: { modalTitle: string, data?: Recurrency }): Promise<RecurrencyData | null> {
     blurActiveElement()
     const modal = await this.modalCtrl.create({
       component: RecurrencyListItemDetailsModal,
-      componentProps: {
-        modalTitle: 'Create Recurrency',
-        data: undefined
-      },
+      componentProps,
       enterAnimation: slideInLeft,
       leaveAnimation: slideInRight
     });

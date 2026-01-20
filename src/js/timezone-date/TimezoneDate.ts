@@ -98,6 +98,7 @@ export class TimezoneDate {
       CH: dayjs(this._date).tz(this._timezone).format('DD.MM.YYYY'),
       US: dayjs(this._date).tz(this._timezone).format('MM/DD/YY'),
       ISO: dayjs(this._date).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'), // same as Date.toISOString(): in UTC (with 'Z' on the end) and millieconds precision format.
+      DATE_STRING: dayjs(this._date).tz(this._timezone).format('YYYY-MM-DD'),
     }
     return convert[dateFormat]
   }

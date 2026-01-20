@@ -2,7 +2,8 @@ export const DATE_FORMAT = {
   PLATFORM_DEFINED: 'PLATFORM_DEFINED',
   CH: 'CH',
   US: 'US',
-  ISO: 'ISO'
+  ISO: 'ISO',
+  DATE_STRING: 'DATE_STRING'
  } as const
 
 export type DateFormat = typeof DATE_FORMAT[keyof typeof DATE_FORMAT]
