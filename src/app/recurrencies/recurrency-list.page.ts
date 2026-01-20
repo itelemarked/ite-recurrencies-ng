@@ -16,8 +16,8 @@ import {
 } from '@ionic/angular/standalone';
 
 import { blurActiveElement } from '../../js/ionic/fixes';
-import { TIMEZONE } from '../../js/timezone-date/types/Timezone';
-import { DATE_FORMAT } from '../../js/timezone-date/types/DateFormat';
+import { Timezone, TIMEZONE } from '../../js/timezone-date/types/Timezone';
+import { DATE_FORMAT, DateFormat } from '../../js/timezone-date/types/DateFormat';
 import { Recurrency } from './types/Recurrency.type';
 
 import { RecurrencyMockService } from './services/recurrency-mock.service';
@@ -32,6 +32,7 @@ import { PositiveInteger } from './types/PositiveInteger.type';
 import { PeriodUnit } from 'src/js/timezone-date/types/PeriodUnit.type';
 import { DateString } from 'src/js/timezone-date/types/DateString.type';
 import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-in';
+import { RecurrencyService } from './services/recurrency.service';
 type RecurrencyData = {
   title: string,
   lastEvent: DateString,
@@ -98,7 +99,7 @@ type RecurrencyData = {
 })
 export class RecurrencyListPage {
   // DEPENDENCIES
-  private recurrencyService = inject(RecurrencyMockService);
+  private recurrencyService = inject(RecurrencyService);
   private modalCtrl = inject(ModalController)
   // TODO: replace by settingsservice
   private settingsService = {
@@ -144,14 +145,13 @@ export class RecurrencyListPage {
     this.state.actionSheetIsOpen.set(true);
   }
 
-  onItemClick(recurrency: Recurrency) {
-    this._openDetailsModal({
-      modalTitle: 'Edit',
-      data: {
-        recurrency,
-        timezone: this.timezone,
-        dateFormat: this.dateFormat
-      }
+  async onItemClick(recurrency: Recurrency) {
+    console.log('onItemClick()')
+    const outputData = await this.getRecurrencyDataByModal({
+      type: 'edit',
+      recurrency,
+      timezone: this.timezone(),
+      dateFormat: this.dateFormat()
     })
   }
 
@@ -166,10 +166,16 @@ export class RecurrencyListPage {
   }
 
   async onAddItemClicked() {
-    const data = await this._openDetailsModal({
-      modalTitle: 'Create',
-    })
-    return data
+    // const data = await this._openDetailsModal({
+    //   modalTitle: 'Create',
+    // })
+    // return data
+    const outputData = await this.getRecurrencyDataByModal({type: 'create', timezone: this.timezone(), dateFormat: this.dateFormat()})
+    if(outputData !== null) {
+      console.log('add recurrency')
+      // this.recurrencyService.add(outputData)
+    }
+    console.log('add canceled...')
   }
 
   onFilterBy(filter: 'title' | 'expiry') {
@@ -181,10 +187,36 @@ export class RecurrencyListPage {
   }
 
   constructor() {
+    // this.recurrencyService.add({
+    //   title: 'EC',
+    //   lastEvent: '2026-01-03' as DateString,
+    //   periodNb: 28 as PositiveInteger,
+    //   periodUnit: 'days' as PeriodUnit,
+    //   category: 'Aircrafts'
+    // })
+    // this.recurrencyService.add({
+    //   title: 'Sere Sea',
+    //   lastEvent: '2026-01-03' as DateString,
+    //   periodNb: 1 as PositiveInteger,
+    //   periodUnit: 'years' as PeriodUnit,
+    //   category: 'Survival'
+    // })
     addIcons({ ellipsisHorizontalOutline });
   }
 
-  private async getRecurrencyDataByModal(componentProps: { modalTitle: string, data?: Recurrency }): Promise<RecurrencyData | null> {
+  private async getRecurrencyDataByModal(componentProps: 
+    | { 
+      type: 'create'
+      timezone: Timezone,
+      dateFormat: DateFormat
+    }
+    | {
+      type: 'edit',
+      recurrency: Recurrency,
+      timezone: Timezone,
+      dateFormat: DateFormat
+    }
+  ): Promise<RecurrencyData | null> {
     blurActiveElement()
     const modal = await this.modalCtrl.create({
       component: RecurrencyListItemDetailsModal,
