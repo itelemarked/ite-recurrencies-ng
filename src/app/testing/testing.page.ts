@@ -48,9 +48,10 @@ export class TestingPage {
   }
 
   constructor() {
-    // setTimeout(() => {
-    //   this.value.set('efgh')
-    // }, 5000);
+    setTimeout(() => {
+      console.log('changed')
+      this.value.set('efgh')
+    }, 5000);
   }
 }
 

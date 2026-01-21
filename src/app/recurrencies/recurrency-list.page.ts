@@ -20,8 +20,6 @@ import { Timezone, TIMEZONE } from '../../js/timezone-date/types/Timezone';
 import { DATE_FORMAT, DateFormat } from '../../js/timezone-date/types/DateFormat';
 import { Recurrency } from './types/Recurrency.type';
 
-import { RecurrencyMockService } from './services/recurrency-mock.service';
-
 import { RecurrencyListItemDetailsModal } from './components/recurrency-list-item-details.modal';
 import { RecurrencyListComponent } from './components/recurrency-list.component';
 
@@ -146,7 +144,6 @@ export class RecurrencyListPage {
   }
 
   async onItemClick(recurrency: Recurrency) {
-    console.log('onItemClick()')
     const outputData = await this.getRecurrencyDataByModal({
       type: 'edit',
       recurrency,
@@ -174,8 +171,9 @@ export class RecurrencyListPage {
     if(outputData !== null) {
       console.log('add recurrency')
       // this.recurrencyService.add(outputData)
+    } else {
+      console.log('add canceled...')
     }
-    console.log('add canceled...')
   }
 
   onFilterBy(filter: 'title' | 'expiry') {
@@ -204,46 +202,28 @@ export class RecurrencyListPage {
     addIcons({ ellipsisHorizontalOutline });
   }
 
-  private async getRecurrencyDataByModal(componentProps: 
-    | { 
+  private async getRecurrencyDataByModal(data: { 
       type: 'create'
       timezone: Timezone,
       dateFormat: DateFormat
-    }
-    | {
+    } | {
       type: 'edit',
       recurrency: Recurrency,
       timezone: Timezone,
       dateFormat: DateFormat
     }
   ): Promise<RecurrencyData | null> {
-    blurActiveElement()
     const modal = await this.modalCtrl.create({
       component: RecurrencyListItemDetailsModal,
-      componentProps,
+      componentProps: {
+        data
+      },
       enterAnimation: slideInLeft,
       leaveAnimation: slideInRight
     });
     modal.present();
-    const { data } = await modal.onWillDismiss() as { data: RecurrencyData | null }
-    return data
-  }
-
-
-  private async _openDetailsModal(componentProps: any) {
-    blurActiveElement()
-    const modal = await this.modalCtrl.create({
-      component: RecurrencyListItemDetailsModal,
-      componentProps,
-      enterAnimation: slideInLeft,
-      leaveAnimation: slideInRight
-    });
-    modal.present();
-    const { data, role } = await modal.onWillDismiss() as {data: Recurrency, role: 'ok'} | {data: null, role: 'cancel'}
-    return {
-      'ok': data,
-      'cancel': null
-    }[role]
+    const { outputData } = await modal.onWillDismiss() as { outputData: RecurrencyData | null }
+    return outputData
   }
 }
 

@@ -1,5 +1,7 @@
-import { Component, inject, Input } from '@angular/core';
-import { FormsModule, NgModel } from '@angular/forms';
+import { NgClass } from '@angular/common';
+import { Component, computed, inject, input, signal, WritableSignal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
   IonButton,
   IonButtons,
@@ -30,7 +32,8 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
     IonList,
     IonItem,
     IonInput,
-    IonIcon
+    IonIcon,
+    NgClass,
   ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
@@ -40,35 +43,47 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
             <ion-icon name="chevron-back-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ modalTitle }}</ion-title>
+        <ion-title>{{ modalTitle() }}</ion-title>
         <ion-buttons slot="end">
-          @if(valueHasChanged) {
-            <ion-button (click)="modalCtrl.dismiss()">
-              <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-            </ion-button>
-          }
+          <ion-button (click)="onCancelClick()">
+            Cancel
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
       <ion-list [inset]="true">
         <ion-item>
-          <ion-input type="text" [(ngModel)]="value" (ionInput)="onValueChange($event)"/>
+          <ion-input 
+            [ngClass]="{'app-invalid': hasErrors() && showErrors()}"
+            type="text" 
+            placeholder="Enter a title" 
+            [clearInput]="true"
+            [(ngModel)]="currentValue"
+          />
         </ion-item>
       </ion-list>
     </ion-content>
   `,
-  styles: [``],
+  styles: [`
+    .app-invalid {
+      --color: var(--ion-color-danger-tint);
+    }
+  `],
 })
-export class InputTextModal {
+export class RecurrencyListItemDetailsInputTextModal {
 
+  // DEPENDENCIES
   modalCtrl = inject(ModalController)
 
-  @Input({required: true}) modalTitle!: string
-  @Input() data!: string | null
+  // STATE
+  modalTitle = input.required<string>()
+  inputValue = input.required<string>()
+  currentValue!: WritableSignal<string>
+  showErrors = signal(false)
 
-  value!: string
-  valueHasChanged!: boolean
+  // SELECTORS
+  hasErrors = computed(() => this.currentValue().trim() === '')
 
   constructor() {
     addIcons({
@@ -78,16 +93,19 @@ export class InputTextModal {
   }
 
   ngOnInit() {
-    this.value = this.data === null ? '' : this.data
-    this.valueHasChanged = false
+    this.currentValue = signal(this.inputValue())
   }
 
   onBackButtonClick() {
-    this.modalCtrl.dismiss(this.value.trim(), 'ok')
+    if(this.hasErrors()) {
+      this.showErrors.set(true)
+    } else {
+      this.modalCtrl.dismiss(this.currentValue())
+    }
   }
 
-  onValueChange(e: any) {
-    this.valueHasChanged = this.value.trim() !== this.data
+  onCancelClick() {
+    this.modalCtrl.dismiss(this.inputValue())
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input, Optional, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import {
   IonButton,
   IonButtons,
@@ -9,21 +9,23 @@ import {
   IonLabel,
   IonList,
   IonNote,
+  IonText,
   IonTitle,
   IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
-import { Recurrency } from '../types/Recurrency.type';
-import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
-import { Timezone } from '../../../js/timezone-date/types/Timezone';
-import { blurActiveElement } from '../../../js/ionic/fixes';
-import { InputTextModal } from './recurrency-list-item-details-input-text.modal';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
-import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit.type';
+
+import { DateFormat } from 'src/js/timezone-date/types/DateFormat';
+import { Timezone } from 'src/js/timezone-date/types/Timezone';
+import { PeriodUnit } from 'src/js/timezone-date/types/PeriodUnit.type';
 import { TimezoneDate } from 'src/js/timezone-date/TimezoneDate';
-import { PositiveInteger } from '../types/PositiveInteger.type';
 import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-in';
+
+import { Recurrency } from '../types/Recurrency.type';
+import { PositiveInteger } from '../types/PositiveInteger.type';
+import { RecurrencyListItemDetailsInputTextModal } from './recurrency-list-item-details-input-text.modal';
 
 
 @Component({
@@ -40,8 +42,9 @@ import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-
     IonItem,
     IonLabel,
     IonNote,
-    IonIcon
-  ],
+    IonIcon,
+    IonText
+],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -50,10 +53,10 @@ import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-
             <ion-icon name="chevron-back-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ displayModalTitle() }}</ion-title>
+        <ion-title>{{ modalTitle() }}</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="onBackButtonClick()">
-            <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+          <ion-button (click)="onCancelClick()">
+            Cancel
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -61,30 +64,31 @@ import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-
     <ion-content [forceOverscroll]="false">
       <ion-list [inset]="true">
         <ion-item [button]="true" (click)="onItemTitleClick()">
-          <ion-label>Title</ion-label>
-          <ion-note>{{ displayTitle() }}</ion-note>
+          <ion-label [color]="titleColor()">Title</ion-label>
+          <ion-note [color]="titleColor()">{{ title() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
-          <ion-label>Last Event</ion-label>
-          <ion-note>{{ displayLastEvent() }}</ion-note>
+          <ion-label [color]="lastEventColor()">Last Event</ion-label>
+          <ion-note [color]="lastEventColor()">{{ lastEvent() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
-          <ion-label>Period Nb</ion-label>
-          <ion-note>{{ displayPeriodNb() }}</ion-note>
+          <ion-label [color]="periodColor()">Period</ion-label>
+          <ion-note [color]="periodColor()">{{ period() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
-          <ion-label>Period Unit</ion-label>
-          <ion-note>{{ displayPeriodUnit() }}</ion-note>
+          <ion-label [color]="expiryColor()">Expiry</ion-label>
+          <ion-note [color]="expiryColor()">{{ expiry() }}</ion-note>
         </ion-item>
         <ion-item [button]="true">
-          <ion-label>Expiry</ion-label>
-          <ion-note>{{ displayExpiry() }}</ion-note>
-        </ion-item>
-        <ion-item [button]="true">
-          <ion-label>Category</ion-label>
-          <ion-note>{{ displayCategory() }}</ion-note>
+          <ion-label [color]="categoryColor()">Category</ion-label>
+          <ion-note [color]="categoryColor()">{{ category() }}</ion-note>
         </ion-item>
       </ion-list>
+        @if (someErrors() && state.showErrors()) {
+        <p class="ml-xl text-xs">
+          <ion-text color="danger">Update the missing fields!</ion-text>
+        </p>
+        }
     </ion-content>
   `,
   styles: [``],
@@ -94,56 +98,52 @@ export class RecurrencyListItemDetailsModal {
   private modalCtrl = inject(ModalController)
 
   // STATE
-  @Input({ required: true }) data!: 
-    | { 
-      type: 'create'
-      timezone: Timezone,
-      dateFormat: DateFormat
-    }
-    | {
-      type: 'edit',
-      recurrency: Recurrency,
-      timezone: Timezone,
-      dateFormat: DateFormat
-    };
+  data = input.required<{ 
+    type: 'create'
+    timezone: Timezone,
+    dateFormat: DateFormat
+  }
+  | {
+    type: 'edit',
+    recurrency: Recurrency,
+    timezone: Timezone,
+    dateFormat: DateFormat
+  }>()
 
-  // data = input.required<
-  //   { 
-  //     type: 'create'
-  //     timezone: Timezone,
-  //     dateFormat: DateFormat
-  //   }
-  //   | {
-  //     type: 'edit',
-  //     recurrency: Recurrency,
-  //     timezone: Timezone,
-  //     dateFormat: DateFormat
-  //   }
-  //   >()
-    
-  // private state = {
-  //   isEditMode: signal<boolean>(true),
-  //   title: signal<string | null>(this.data.type === 'edit' ? this.data.recurrency.title : null),
-  //   lastEvent: signal<TimezoneDate | null>(this.data.type === 'edit' ? this.data.recurrency.lastEvent : null),
-  //   periodNb: signal<PositiveInteger | null>(this.data.type === 'edit' ? this.data.recurrency.periodNb : null),
-  //   periodUnit: signal<PeriodUnit | null>(this.data.type === 'edit' ? this.data.recurrency.periodUnit : null),
-  //   category: signal<string | null>(this.data.type === 'edit' ? this.data.recurrency.category : null),
-  //   dataValueHasChanged: false
-  // }
-  private state!: any
+  state = {
+    title: signal<string | null>(null),
+    lastEvent: signal<TimezoneDate | null>(null),
+    periodNb: signal<PositiveInteger | null>(null),
+    periodUnit: signal<PeriodUnit | null>(null),
+    category: signal<string | null>(null),
+
+    showErrors: signal<boolean>(false),
+  }
 
   // SELECTORS
-  displayModalTitle = computed(() => this.data.type === 'edit' ? 'Edit Recurrency' : 'Create New Recurrency')
-  displayTitle = computed(() => this.state.title() === null ? '-----' : this.state.title())
-  displayLastEvent = computed(() => this.state.lastEvent() === null ? '-----' : this.state.lastEvent()!.format(this.data!.dateFormat))
-  displayPeriodNb = computed(() => this.state.periodNb() === null ? '-----' : this.state.periodNb())
-  displayPeriodUnit = computed(() => this.state.periodUnit() === null ? '-----' : this.state.periodUnit())
-  displayExpiry = computed(() => this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null 
+  modalTitle = computed(() => this.data().type === 'edit' ? 'Edit Recurrency' : 'Create New Recurrency')
+  title = computed(() => this.state.title() === null ? '-----' : this.state.title())
+  lastEvent = computed(() => this.state.lastEvent() === null ? '-----' : this.state.lastEvent()!.format(this.data().dateFormat))
+  period = computed(() => this.state.periodNb() === null || this.state.periodUnit() === null ? '-----' : `${this.state.periodNb()} ${this.state.periodUnit()}`)
+  expiry = computed(() => this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null 
     ? '-----'
-    : this.state.lastEvent()!.add(this.state.periodNb()!, this.state.periodUnit()!).format(this.data!.dateFormat)
+    : this.state.lastEvent()!.add(this.state.periodNb()!, this.state.periodUnit()!).format(this.data().dateFormat)
   )
-  displayCategory = computed(() => this.state.category() === null ? '-----' : this.state.category())
+  category = computed(() => this.state.category() === null ? '-----' : this.state.category())
 
+  titleColor = computed(() => this.state.title() === null && this.state.showErrors() === true ? 'danger' : undefined)
+  lastEventColor = computed(() => this.state.lastEvent() === null && this.state.showErrors() === true ? 'danger' : undefined)
+  periodColor = computed(() => (this.state.periodNb() === null || this.state.periodUnit() === null) && this.state.showErrors() === true ? 'danger' : undefined)
+  expiryColor = computed(() => (this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null) && this.state.showErrors() ? 'danger' : undefined)
+  categoryColor = computed(() => this.state.category() === null && this.state.showErrors() === true ? 'danger' : undefined)
+
+  someErrors = computed(() => (
+    this.state.title() === null
+    || this.state.lastEvent() === null
+    || this.state.periodNb() === null
+    || this.state.periodUnit() === null
+    || this.state.category() === null
+  ))
 
   constructor() {
     addIcons({
@@ -153,45 +153,55 @@ export class RecurrencyListItemDetailsModal {
   }
 
   ngOnInit() {
-    this.state = {
-      isEditMode: signal<boolean>(true),
-      title: signal<string | null>(this.data.type === 'edit' ? this.data.recurrency.title : null),
-      lastEvent: signal<TimezoneDate | null>(this.data.type === 'edit' ? this.data.recurrency.lastEvent : null),
-      periodNb: signal<PositiveInteger | null>(this.data.type === 'edit' ? this.data.recurrency.periodNb : null),
-      periodUnit: signal<PeriodUnit | null>(this.data.type === 'edit' ? this.data.recurrency.periodUnit : null),
-      category: signal<string | null>(this.data.type === 'edit' ? this.data.recurrency.category : null),
-      dataValueHasChanged: false
-    }
+    const data = this.data()
+
+    this.state.title.set(data.type === 'edit' ? data.recurrency.title : null)
+    this.state.lastEvent.set(data.type === 'edit' ? data.recurrency.lastEvent : null)
+    this.state.periodNb.set(data.type === 'edit' ? data.recurrency.periodNb : null)
+    this.state.periodUnit.set(data.type === 'edit' ? data.recurrency.periodUnit : null)
+    this.state.category.set(data.type === 'edit' ? data.recurrency.category : null)
   }
   
   onBackButtonClick() {
-    // TODO: update data and role
-    this.modalCtrl.dismiss('has-been-dismissed')
+    if(this.someErrors()) {
+      this.state.showErrors.set(true)
+    } else {
+      this.modalCtrl.dismiss({
+        title: this.state.title,
+        lastEvent: this.state.lastEvent,
+        periodNb: this.state.periodNb,
+        periodUnit: this.state.periodUnit,
+        category: this.state.category
+      })
+    }
+  }
+
+  onCancelClick() {
+    this.modalCtrl.dismiss(null)
   }
 
   async onItemTitleClick() {
-    // blurActiveElement()
-    // const modal = await this.modalCtrl.create({
-    //   component: InputTextModal,
-    //   componentProps: {
-    //     modalTitle: 'Title',
-    //     data: this.title()
-    //   },
-    //   enterAnimation: slideInLeft,
-    //   leaveAnimation: slideInRight
-    // });
-    // modal.present();
-    // // const result: {role: 'ok', data: string} | {role: 'cancel'} = await modal.onWillDismiss<{role: 'ok', data: string} | {role: 'cancel'}>();
-    // const { data, role } = await modal.onWillDismiss<string>();
-
-    // if(role === 'ok') {
-    //   this.title.set(data === '' ? null : data!.trim())
-    // }
-    // // this.dataValueHasChanged = this.title === '-----'
+    const outputTitle = await this.getTitleByModal({
+      modalTitle: 'Edit Title',
+      inputValue: this.state.title() ?? ''
+    })
+    
+    this.state.title.set(outputTitle)
   }
 
-  private _isRecurrencyValid() {}
-
-  private _isRecurrencySameAsOriginalInput() {}
+  private async getTitleByModal({modalTitle, inputValue}: {modalTitle: string, inputValue: string | null}): Promise<string> {
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsInputTextModal,
+      componentProps: {
+        modalTitle,
+        inputValue
+      },
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    });
+    modal.present();
+    const outputValue = (await modal.onWillDismiss<string>()).data!
+    return outputValue
+  }
 
 }
