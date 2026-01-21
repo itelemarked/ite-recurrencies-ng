@@ -2,7 +2,7 @@
 * INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
 */
 
-:root {
+:root .app-body {
 
   .block {
     display: block;

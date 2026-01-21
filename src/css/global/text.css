@@ -3,22 +3,60 @@
 * INSPIRED BY TAILWIND, SEE ITS API FOR MORE INFORMATIONS
 */
 
-:root {
+:root .app-body {
 
+  /* Size */
   .text-xs {
     font-size: 0.75em;
   }
 
   .text-sm {
-    font-size: 0.9em;
+    font-size: 0.85em;
   }
 
   .text-lg {
-    font-size: 1.1em;
+    font-size: 1.15em;
   }
 
   .text-xl {
     font-size: 1.3em;
   }
 
+  /* Color */
+  .text-primary {
+    color: var(--ion-color-primary);
+  }
+
+  .text-secondary {
+    color: var(--ion-color-secondary);
+  }
+
+  .text-tertiary {
+    color: var(--ion-color-tertiary);
+  }
+
+  .text-success {
+    color: var(--ion-color-success);
+  }
+
+  .text-warning {
+    color: var(--ion-color-warning);
+  }
+
+  .text-danger {
+    color: var(--ion-color-tertiary);
+  }
+  
+  .text-light {
+    color: var(--ion-color-light);
+  }
+
+  .text-medium {
+    color: var(--ion-color-medium);
+  }
+
+  .text-dark {
+    color: var(--ion-color-dark);
+  }
+  
 }
