@@ -1,21 +1,20 @@
 
-import { Component, inject, signal } from "@angular/core";
-import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
-
-import { DetailModalComponent } from "./detail.modal";
+import { Component } from "@angular/core";
+import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-testing-page',
   standalone: true,
   imports: [
+    FormsModule,
     IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton
 ],
   template: `
-    <ion-header>
+    <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
         <ion-title>
           Testing
@@ -23,36 +22,15 @@ import { DetailModalComponent } from "./detail.modal";
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false">
-      TestingPage works!
 
-      <ion-button (click)="onBtnClick()">
-        Click me
-      </ion-button>
+      TestingPage works!
 
     </ion-content>
   `,
   styles: [``]
 })
 export class TestingPage {
-  value = signal('abcd')
-  private modalCtrl = inject(ModalController)
-
-  onBtnClick = async () => {
-    const modal = await this.modalCtrl.create({
-      component: DetailModalComponent,
-      componentProps: {
-        value: this.value()
-      }
-    })
-    modal.present()
-  }
-
-  constructor() {
-    setTimeout(() => {
-      console.log('changed')
-      this.value.set('efgh')
-    }, 5000);
-  }
+  
 }
 
 

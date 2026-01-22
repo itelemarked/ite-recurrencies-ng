@@ -78,7 +78,7 @@ export class RecurrencyListItemDetailsInputTextModal {
 
   // STATE
   modalTitle = input.required<string>()
-  inputValue = input.required<string>()
+  inputValue = input.required<string | null>()
   currentValue!: WritableSignal<string>
   showErrors = signal(false)
 
@@ -93,7 +93,8 @@ export class RecurrencyListItemDetailsInputTextModal {
   }
 
   ngOnInit() {
-    this.currentValue = signal(this.inputValue())
+    const inputValue = this.inputValue()
+    this.currentValue = signal(inputValue === null ? '' : inputValue)
   }
 
   onBackButtonClick() {

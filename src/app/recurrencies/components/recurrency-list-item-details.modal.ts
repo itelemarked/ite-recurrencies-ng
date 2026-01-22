@@ -26,6 +26,7 @@ import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-
 import { Recurrency } from '../types/Recurrency.type';
 import { PositiveInteger } from '../types/PositiveInteger.type';
 import { RecurrencyListItemDetailsInputTextModal } from './recurrency-list-item-details-input-text.modal';
+import { RecurrencyListItemDetailsInputDateComponent } from './recurrency-list-item-details-input-date.modal';
 
 
 @Component({
@@ -67,7 +68,7 @@ import { RecurrencyListItemDetailsInputTextModal } from './recurrency-list-item-
           <ion-label [color]="titleColor()">Title</ion-label>
           <ion-note [color]="titleColor()">{{ title() }}</ion-note>
         </ion-item>
-        <ion-item [button]="true">
+        <ion-item [button]="true" (click)="onItemLastEventClick()">
           <ion-label [color]="lastEventColor()">Last Event</ion-label>
           <ion-note [color]="lastEventColor()">{{ lastEvent() }}</ion-note>
         </ion-item>
@@ -162,6 +163,37 @@ export class RecurrencyListItemDetailsModal {
     this.state.category.set(data.type === 'edit' ? data.recurrency.category : null)
   }
   
+  async onItemTitleClick() {
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsInputTextModal,
+      componentProps: {
+        modalTitle: 'Edit Title',
+        inputValue: this.state.title()
+      },
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    });
+    modal.present()
+    const outputValue = (await modal.onWillDismiss()).data! as string | null
+    this.state.title.set(outputValue)
+  }
+
+  async onItemLastEventClick() {
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsInputDateComponent,
+      componentProps: {
+        modalTitle: 'Edit Last Event',
+        inputValue: this.state.lastEvent(),
+        timezone: this.data().timezone
+      },
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    })
+    modal.present()
+    const timezoneDate = (await modal.onWillDismiss()).data! as TimezoneDate | null
+    this.state.lastEvent.set(timezoneDate)
+  }
+  
   onBackButtonClick() {
     if(this.someErrors()) {
       this.state.showErrors.set(true)
@@ -180,28 +212,7 @@ export class RecurrencyListItemDetailsModal {
     this.modalCtrl.dismiss(null)
   }
 
-  async onItemTitleClick() {
-    const outputTitle = await this.getTitleByModal({
-      modalTitle: 'Edit Title',
-      inputValue: this.state.title() ?? ''
-    })
-    
-    this.state.title.set(outputTitle)
-  }
 
-  private async getTitleByModal({modalTitle, inputValue}: {modalTitle: string, inputValue: string | null}): Promise<string> {
-    const modal = await this.modalCtrl.create({
-      component: RecurrencyListItemDetailsInputTextModal,
-      componentProps: {
-        modalTitle,
-        inputValue
-      },
-      enterAnimation: slideInLeft,
-      leaveAnimation: slideInRight
-    });
-    modal.present();
-    const outputValue = (await modal.onWillDismiss<string>()).data!
-    return outputValue
-  }
+  // PRIVATE
 
 }
