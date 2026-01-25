@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(firebaseConfig)), 
     provideAuth(() => getAuth()), 
     provideFirestore(() => getFirestore()), 
-    provideDatabase(() => getDatabase()), provideFirebaseApp(() => initializeApp({ projectId: "ite-recurrencies", appId: "1:202558768735:web:fd080d6a7c97259c687dea", storageBucket: "ite-recurrencies.firebasestorage.app", apiKey: "AIzaSyCH5hQQ-umEKcyfISQJ-JaM8Bi22Q3VYlk", authDomain: "ite-recurrencies.firebaseapp.com", messagingSenderId: "202558768735", projectNumber: "202558768735", version: "2" })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase())
+    provideDatabase(() => getDatabase()), provideFirebaseApp(() => initializeApp({ projectId: "ite-recurrencies", appId: "1:202558768735:web:fd080d6a7c97259c687dea", storageBucket: "ite-recurrencies.firebasestorage.app", apiKey: "AIzaSyCH5hQQ-umEKcyfISQJ-JaM8Bi22Q3VYlk", authDomain: "ite-recurrencies.firebaseapp.com", messagingSenderId: "202558768735", projectNumber: "202558768735", version: "2" })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase()), provideFirebaseApp(() => initializeApp({ projectId: "ite-recurrencies", appId: "1:202558768735:web:fd080d6a7c97259c687dea", storageBucket: "ite-recurrencies.firebasestorage.app", apiKey: "AIzaSyCH5hQQ-umEKcyfISQJ-JaM8Bi22Q3VYlk", authDomain: "ite-recurrencies.firebaseapp.com", messagingSenderId: "202558768735", projectNumber: "202558768735", version: "2" })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase())
   ]
 };
 
