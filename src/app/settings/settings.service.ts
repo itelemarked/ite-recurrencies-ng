@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { isSettings, Settings } from "./settings.type";
-import { TIMEZONE } from "src/js/timezone-date/types/Timezone";
-import { DATE_FORMAT } from "src/js/timezone-date/types/DateFormat";
+
 import { toSignal } from "@angular/core/rxjs-interop";
+import { TIMEZONE } from "../../js/timezone-date/types/Timezone";
+import { DATE_FORMAT } from "../../js/timezone-date/types/DateFormat";
 
 @Injectable({providedIn: 'root'})
 export class SettingsService {

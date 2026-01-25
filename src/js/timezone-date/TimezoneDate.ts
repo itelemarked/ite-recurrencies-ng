@@ -7,8 +7,9 @@ import { TimeString } from "./types/TimeString";
 import { Timezone } from "./types/Timezone";
 
 import { DATE_FORMAT, DateFormat } from "./types/DateFormat";
-import { PositiveInteger } from "@app/recurrencies/types/PositiveInteger.type";
+
 import { PeriodUnit } from "./types/PeriodUnit.type";
+import { PositiveInteger } from "../../app/recurrencies/types/PositiveInteger.type";
 
 
 

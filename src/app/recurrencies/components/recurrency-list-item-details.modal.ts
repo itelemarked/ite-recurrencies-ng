@@ -17,11 +17,11 @@ import {
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
 
-import { DateFormat } from 'src/js/timezone-date/types/DateFormat';
-import { Timezone } from 'src/js/timezone-date/types/Timezone';
-import { PeriodUnit } from 'src/js/timezone-date/types/PeriodUnit.type';
-import { TimezoneDate } from 'src/js/timezone-date/TimezoneDate';
-import { slideInLeft, slideInRight } from 'src/js/ionic/animations/modals/slide-in';
+import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
+import { Timezone } from '../../../js/timezone-date/types/Timezone';
+import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit.type';
+import { TimezoneDate } from '../../../js/timezone-date/TimezoneDate';
+import { slideInLeft, slideInRight } from '../../../js/ionic/animations/modals/slide-in';
 
 import { Recurrency } from '../types/Recurrency.type';
 import { PositiveInteger } from '../types/PositiveInteger.type';

@@ -1,6 +1,7 @@
-import { DateFormat, isDateFormat } from "src/js/timezone-date/types/DateFormat"
-import { isTimezone, Timezone } from "src/js/timezone-date/types/Timezone"
-import { isInterface } from "src/js/valid-type"
+import { DateFormat, isDateFormat } from "../../js/timezone-date/types/DateFormat"
+import { isTimezone, Timezone } from "../../js/timezone-date/types/Timezone"
+import { isInterface } from "../../js/valid-type"
+
 
 export type Settings = {
   timezone: Timezone,

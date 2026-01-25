@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -26,7 +26,8 @@ export const appConfig: ApplicationConfig = {
     provideIonicAngular({
       useSetInputAPI: true,
     }),
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
+    // provideZoneChangeDetection({ eventCoalescing: true }),
     // { provide: FIREBASE_OPTIONS, useValue: firebaseConfig }, // Needed for using angularfire compat API
     // provideFirebaseApp(() => initializeApp(firebaseConfig)),
     // provideAuth(() => getAuth()),

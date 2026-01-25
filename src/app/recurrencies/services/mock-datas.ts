@@ -33,7 +33,9 @@
 //   },
 // }
 
-import { isPlainObject } from "src/js/valid-type"
+import { isPlainObject } from "../../../js/valid-type"
+
+
 
 // localStorage.setItem('ite-recurrencies-ng-data', JSON.stringify(MOCK_DATAS))
 

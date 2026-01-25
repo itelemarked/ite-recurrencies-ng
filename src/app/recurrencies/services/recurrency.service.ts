@@ -1,8 +1,10 @@
 import { computed, inject, Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { isRecurrencyData, Recurrency, RecurrencyData } from "../types/Recurrency.type";
-import { isPlainObject } from "src/js/valid-type";
-import { SettingsService } from "@app/settings/settings.service";
+
+import { toSignal } from "@angular/core/rxjs-interop";
+import { SettingsService } from "../../settings/settings.service";
+import { isPlainObject } from "../../../js/valid-type";
 
 
 
@@ -29,7 +31,7 @@ export class RecurrencyService {
 
   recurrencies$ = this.state.recurrencies$.asObservable()
 
-  recurrencies = toSignal (this.recurrencies$, {requireSync: true})
+  recurrencies = toSignal(this.recurrencies$, {requireSync: true})
 
   set(recurrencies: Recurrency[]): Promise<void> {
     this.state.recurrencies$.next(recurrencies)
