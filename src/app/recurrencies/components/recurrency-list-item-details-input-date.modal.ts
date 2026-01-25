@@ -1,6 +1,8 @@
 import { Component, inject, input, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { IonButton, IonButtons, IonContent, IonDatetime, IonHeader, IonIcon, IonItem, IonList, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
+
 import { SHORT_BEFORE_MIDNIGHT } from 'src/js/date';
 import { TimezoneDate } from 'src/js/timezone-date/TimezoneDate';
 import { DATE_FORMAT } from 'src/js/timezone-date/types/DateFormat';
@@ -11,7 +13,7 @@ import { Timezone } from 'src/js/timezone-date/types/Timezone';
   selector: 'app-recurrency-list-item-details-input-date',
   standalone: true,
   imports: [
-    FormsModule, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonTitle, IonContent, IonDatetime, 
+    FormsModule, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, IonTitle, IonContent, IonDatetime, IonList
   ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
@@ -29,7 +31,7 @@ import { Timezone } from 'src/js/timezone-date/types/Timezone';
     </ion-header>
     <ion-content [forceOverscroll]="false">
       
-      <div class="flex justify-center">
+      <!-- <div class="flex justify-center">
         <ion-datetime
           presentation="date"
           [firstDayOfWeek]="1"
@@ -37,7 +39,16 @@ import { Timezone } from 'src/js/timezone-date/types/Timezone';
           (ionChange)="onValueChange($event)"
         />
       </div>
-      <p>currentDateString: {{ state.currentDateString() }}</p>
+      <p>currentDateString: {{ state.currentDateString() }}</p> -->
+
+      <ion-list [inset]="true">
+        <ion-datetime
+          presentation="date"
+          [firstDayOfWeek]="1"
+          [value]="state.currentDateString()"
+          (ionChange)="onValueChange($event)"
+        />
+      </ion-list>
 
     </ion-content>
   `,

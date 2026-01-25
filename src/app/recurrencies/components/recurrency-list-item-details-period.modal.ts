@@ -1,31 +1,41 @@
-
 import { Component } from "@angular/core";
-import { IonContent, IonHeader, IonInput, IonItem, IonList, IonRadio, IonRadioGroup, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 import { FormsModule } from "@angular/forms";
 
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonList, IonRadio, IonRadioGroup, IonTitle, IonToolbar } from "@ionic/angular/standalone";
+
 @Component({
-  selector: 'app-testing-page',
+  selector: 'app-recurrency-list-item-details-period',
   standalone: true,
   imports: [
-    FormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    IonInput,
-    IonRadioGroup,
-    IonRadio
-],
+      FormsModule,
+      IonHeader,
+      IonToolbar,
+      IonButtons,
+      IonButton,
+      IonIcon,
+      IonTitle,
+      IonContent,
+      IonList,
+      IonItem,
+      IonInput,
+      IonRadioGroup,
+      IonRadio
+  ],
   template: `
-    <ion-header collapse="fade" [translucent]="true">
+    <<ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
-        <ion-title>
-          Testing
-        </ion-title>
+        <ion-buttons slot="start">
+          <ion-button (click)="onBackButtonClick()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-title>Edit Period</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="onCancelClick()">Cancel</ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
+
     <ion-content [forceOverscroll]="false">
 
       <label class="list-header">Period Number</label>
@@ -65,8 +75,18 @@ import { FormsModule } from "@angular/forms";
   `,
   styles: [``]
 })
-export class TestingPage {
-  
+export class RecurrencyListItemDetailPeriodComponent {
+  // DEPENDENCIES
+
+  // STATE
+
+  // SELECTORS
+
+  // ACTIONS
+  onBackButtonClick = () => {}
+
+  onCancelClick = () => {}
+
+  // PRIVATE
+
 }
-
-
