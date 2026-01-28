@@ -1,8 +1,12 @@
-import { ApplicationConfig, provideZoneChangeDetection, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideSignalFormsConfig } from '@angular/forms/signals';
+import { NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
+
+import { provideIonicAngular } from '@ionic/angular/standalone';
 
 import { routes } from './app.routes';
-import { provideIonicAngular } from '@ionic/angular/standalone';
+
 
 // import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 // import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -27,6 +31,9 @@ export const appConfig: ApplicationConfig = {
       useSetInputAPI: true,
     }),
     provideZonelessChangeDetection(),
+    provideSignalFormsConfig({
+      classes: NG_STATUS_CLASSES
+    })
     // provideZoneChangeDetection({ eventCoalescing: true }),
     // { provide: FIREBASE_OPTIONS, useValue: firebaseConfig }, // Needed for using angularfire compat API
     // provideFirebaseApp(() => initializeApp(firebaseConfig)),

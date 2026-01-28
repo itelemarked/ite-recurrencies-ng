@@ -27,6 +27,8 @@ import { Recurrency } from '../types/Recurrency.type';
 import { PositiveInteger } from '../types/PositiveInteger.type';
 import { RecurrencyListItemDetailsInputTextModal } from './recurrency-list-item-details-input-text.modal';
 import { RecurrencyListItemDetailsInputDateComponent } from './recurrency-list-item-details-input-date.modal';
+import { RecurrencyListItemDetailsPeriodComponent } from './recurrency-list-item-details-period.modal';
+import { RecurrencyListItemDetailsInputCategoryComponent } from './recurrency-list-item-details-input-category.modal';
 
 
 @Component({
@@ -72,15 +74,15 @@ import { RecurrencyListItemDetailsInputDateComponent } from './recurrency-list-i
           <ion-label [color]="lastEventColor()">Last Event</ion-label>
           <ion-note [color]="lastEventColor()">{{ lastEvent() }}</ion-note>
         </ion-item>
-        <ion-item [button]="true">
+        <ion-item [button]="true" (click)="onItemPeriodClick()">
           <ion-label [color]="periodColor()">Period</ion-label>
           <ion-note [color]="periodColor()">{{ period() }}</ion-note>
         </ion-item>
-        <ion-item [button]="true">
+        <!-- <ion-item [button]="true">
           <ion-label [color]="expiryColor()">Expiry</ion-label>
           <ion-note [color]="expiryColor()">{{ expiry() }}</ion-note>
-        </ion-item>
-        <ion-item [button]="true">
+        </ion-item> -->
+        <ion-item [button]="true" (click)="onItemCategoryClick()">
           <ion-label [color]="categoryColor()">Category</ion-label>
           <ion-note [color]="categoryColor()">{{ category() }}</ion-note>
         </ion-item>
@@ -126,16 +128,16 @@ export class RecurrencyListItemDetailsModal {
   title = computed(() => this.state.title() === null ? '-----' : this.state.title())
   lastEvent = computed(() => this.state.lastEvent() === null ? '-----' : this.state.lastEvent()!.format(this.data().dateFormat))
   period = computed(() => this.state.periodNb() === null || this.state.periodUnit() === null ? '-----' : `${this.state.periodNb()} ${this.state.periodUnit()}`)
-  expiry = computed(() => this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null 
-    ? '-----'
-    : this.state.lastEvent()!.add(this.state.periodNb()!, this.state.periodUnit()!).format(this.data().dateFormat)
-  )
+  // expiry = computed(() => this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null 
+  //   ? '-----'
+  //   : this.state.lastEvent()!.add(this.state.periodNb()!, this.state.periodUnit()!).format(this.data().dateFormat)
+  // )
   category = computed(() => this.state.category() === null ? '-----' : this.state.category())
 
   titleColor = computed(() => this.state.title() === null && this.state.showErrors() === true ? 'danger' : undefined)
   lastEventColor = computed(() => this.state.lastEvent() === null && this.state.showErrors() === true ? 'danger' : undefined)
   periodColor = computed(() => (this.state.periodNb() === null || this.state.periodUnit() === null) && this.state.showErrors() === true ? 'danger' : undefined)
-  expiryColor = computed(() => (this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null) && this.state.showErrors() ? 'danger' : undefined)
+  // expiryColor = computed(() => (this.state.lastEvent() === null || this.state.periodNb() === null || this.state.periodUnit() === null) && this.state.showErrors() ? 'danger' : undefined)
   categoryColor = computed(() => this.state.category() === null && this.state.showErrors() === true ? 'danger' : undefined)
 
   someErrors = computed(() => (
@@ -192,6 +194,41 @@ export class RecurrencyListItemDetailsModal {
     modal.present()
     const timezoneDate = (await modal.onWillDismiss()).data! as TimezoneDate | null
     this.state.lastEvent.set(timezoneDate)
+  }
+
+  async onItemPeriodClick() {
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsPeriodComponent,
+      componentProps: {
+        periodNb: this.state.periodNb(),
+        periodUnit: this.state.periodUnit()
+      },
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    })
+    modal.present()
+    const {periodNb, periodUnit} = (await modal.onWillDismiss()).data! as { periodNb: PositiveInteger | null, periodUnit: PeriodUnit | null }
+    // this.state.lastEvent.set(timezoneDate)
+    this.state.periodNb.set(periodNb)
+    this.state.periodUnit.set(periodUnit)
+  }
+
+  // TODO
+  async onItemCategoryClick() {
+    // const modal = await this.modalCtrl.create({
+    //   component: RecurrencyListItemDetailsInputCategoryComponent,
+    //   componentProps: {
+    //     categoryList: ['Aircrafts', 'Survival'],
+    //     category: null
+    //   },
+    //   enterAnimation: slideInLeft,
+    //   leaveAnimation: slideInRight
+    // })
+    // modal.present()
+    // const {periodNb, periodUnit} = (await modal.onWillDismiss()).data! as { periodNb: PositiveInteger | null, periodUnit: PeriodUnit | null }
+    // // this.state.lastEvent.set(timezoneDate)
+    // this.state.periodNb.set(periodNb)
+    // this.state.periodUnit.set(periodUnit)
   }
   
   onBackButtonClick() {

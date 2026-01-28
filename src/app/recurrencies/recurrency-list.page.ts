@@ -1,5 +1,4 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { addIcons } from 'ionicons';
 import { ellipsisHorizontalOutline } from 'ionicons/icons';
@@ -43,7 +42,6 @@ type RecurrencyData = {
 @Component({
   standalone: true,
   imports: [
-    CommonModule,
     IonHeader,
     IonToolbar,
     IonTitle,
