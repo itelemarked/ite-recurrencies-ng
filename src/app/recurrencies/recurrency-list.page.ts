@@ -72,7 +72,7 @@ type RecurrencyData = {
       @if (recurrencies().length === 0) {
         <div class="flex w-100 h-100 items-center">
           <div>No recurrencies yet... create one?</div>
-          <ion-button [expand]="'block'" size="small">Add Item</ion-button>
+          <ion-button [expand]="'block'" size="small" (click)="onAddItemClicked()">Add Item</ion-button>
         </div>
       }
 

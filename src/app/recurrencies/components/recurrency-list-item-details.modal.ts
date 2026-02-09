@@ -175,6 +175,7 @@ export class RecurrencyListItemDetailsModal {
       enterAnimation: slideInLeft,
       leaveAnimation: slideInRight
     });
+
     modal.present()
     const outputValue = (await modal.onWillDismiss()).data! as string | null
     this.state.title.set(outputValue)
@@ -215,20 +216,22 @@ export class RecurrencyListItemDetailsModal {
 
   // TODO
   async onItemCategoryClick() {
-    // const modal = await this.modalCtrl.create({
-    //   component: RecurrencyListItemDetailsInputCategoryComponent,
-    //   componentProps: {
-    //     categoryList: ['Aircrafts', 'Survival'],
-    //     category: null
-    //   },
-    //   enterAnimation: slideInLeft,
-    //   leaveAnimation: slideInRight
-    // })
-    // modal.present()
-    // const {periodNb, periodUnit} = (await modal.onWillDismiss()).data! as { periodNb: PositiveInteger | null, periodUnit: PeriodUnit | null }
-    // // this.state.lastEvent.set(timezoneDate)
-    // this.state.periodNb.set(periodNb)
-    // this.state.periodUnit.set(periodUnit)
+    const modal = await this.modalCtrl.create({
+      component: RecurrencyListItemDetailsInputCategoryComponent,
+      componentProps: {
+        inputData: {
+          categories: ['Aircrafts', 'Survival'],
+          value: this.state.category()
+        }
+      },
+      enterAnimation: slideInLeft,
+      leaveAnimation: slideInRight
+    })
+    modal.present()
+    const outputData = (await modal.onWillDismiss()).data
+    if(outputData !== null) {
+      this.state.category.set(outputData)
+    }
   }
   
   onBackButtonClick() {
