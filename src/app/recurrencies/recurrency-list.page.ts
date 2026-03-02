@@ -22,8 +22,6 @@ import { Recurrency } from './types/Recurrency.type';
 import { RecurrencyListItemDetailsModal } from './components/recurrency-list-item-details.modal';
 import { RecurrencyListComponent } from './components/recurrency-list.component';
 
-
-
 // TEMPORARY!!!!!!!
 import { PositiveInteger } from './types/PositiveInteger.type';
 import { PeriodUnit } from '../../js/timezone-date/types/PeriodUnit.type';
@@ -31,13 +29,12 @@ import { DateString } from '../../js/timezone-date/types/DateString.type';
 import { slideInLeft, slideInRight } from '../../js/ionic/animations/modals/slide-in';
 import { RecurrencyService } from './services/recurrency.service';
 type RecurrencyData = {
-  title: string,
-  lastEvent: DateString,
-  periodNb: PositiveInteger,
-  periodUnit: PeriodUnit,
-  category: string
-}
-
+  title: string;
+  lastEvent: DateString;
+  periodNb: PositiveInteger;
+  periodUnit: PeriodUnit;
+  category: string;
+};
 
 @Component({
   standalone: true,
@@ -50,7 +47,7 @@ type RecurrencyData = {
     IonButton,
     IonIcon,
     IonActionSheet,
-    RecurrencyListComponent
+    RecurrencyListComponent,
   ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
@@ -58,21 +55,19 @@ type RecurrencyData = {
         <ion-title> RecurrencyList </ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="onMenuButtonClick()">
-            <ion-icon
-              slot="icon-only"
-              name="ellipsis-horizontal-outline"
-            ></ion-icon>
+            <ion-icon slot="icon-only" name="ellipsis-horizontal-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
     <ion-content [forceOverscroll]="false">
-
       @if (recurrencies().length === 0) {
         <div class="flex w-100 h-100 items-center">
           <div>No recurrencies yet... create one?</div>
-          <ion-button [expand]="'block'" size="small" (click)="onAddItemClicked()">Add Item</ion-button>
+          <ion-button [expand]="'block'" size="small" (click)="onAddItemClicked()"
+            >Add Item</ion-button
+          >
         </div>
       }
 
@@ -95,7 +90,6 @@ type RecurrencyData = {
           (willDismiss)="onActionSheetDismiss()"
         ></ion-action-sheet>
       </div>
-
     </ion-content>
   `,
   styles: [``],
@@ -103,12 +97,12 @@ type RecurrencyData = {
 export class RecurrencyListPage {
   // DEPENDENCIES
   private recurrencyService = inject(RecurrencyService);
-  private modalCtrl = inject(ModalController)
+  private modalCtrl = inject(ModalController);
   // TODO: replace by settingsservice
   private settingsService = {
     timezone: TIMEZONE.ZURICH,
-    dateFormat: DATE_FORMAT.CH
-  }
+    dateFormat: DATE_FORMAT.CH,
+  };
 
   // STATE
   private state: any = {
@@ -131,16 +125,16 @@ export class RecurrencyListPage {
         text: 'Cancel',
         role: 'cancel',
       },
-    ]
-  }
+    ],
+  };
 
   // SELECTORS
-  recurrencies = computed(() => this.recurrencyService.recurrencies())
-  recurrenciesSortBy = computed(() => this.state.recurrenciesSortBy())
-  actionSheetIsOpen = computed(() => this.state.actionSheetIsOpen())
-  actionSheetButton = computed(() => this.state.actionSheetButtons)
-  timezone = computed(() => this.settingsService.timezone)
-  dateFormat = computed(() => this.settingsService.dateFormat)
+  recurrencies = computed(() => this.recurrencyService.recurrencies());
+  recurrenciesSortBy = computed(() => this.state.recurrenciesSortBy());
+  actionSheetIsOpen = computed(() => this.state.actionSheetIsOpen());
+  actionSheetButton = computed(() => this.state.actionSheetButtons);
+  timezone = computed(() => this.settingsService.timezone);
+  dateFormat = computed(() => this.settingsService.dateFormat);
 
   // ACTIONS
   onMenuButtonClick() {
@@ -153,18 +147,18 @@ export class RecurrencyListPage {
       type: 'edit',
       recurrency,
       timezone: this.timezone(),
-      dateFormat: this.dateFormat()
-    })
+      dateFormat: this.dateFormat(),
+    });
   }
 
   // TODO
   onDeleteClick(recurrency: Recurrency) {
-    console.log('onDeleteClick()')
+    console.log('onDeleteClick()');
   }
-  
+
   // TODO
   onTodayClick(recurrency: Recurrency) {
-    console.log('onTodayClick()')
+    console.log('onTodayClick()');
   }
 
   async onAddItemClicked() {
@@ -172,21 +166,25 @@ export class RecurrencyListPage {
     //   modalTitle: 'Create',
     // })
     // return data
-    const outputData = await this.getRecurrencyDataByModal({type: 'create', timezone: this.timezone(), dateFormat: this.dateFormat()})
-    if(outputData !== null) {
-      console.log('add recurrency')
+    const outputData = await this.getRecurrencyDataByModal({
+      type: 'create',
+      timezone: this.timezone(),
+      dateFormat: this.dateFormat(),
+    });
+    if (outputData !== null) {
+      console.log('add recurrency');
       // this.recurrencyService.add(outputData)
     } else {
-      console.log('add canceled...')
+      console.log('add canceled...');
     }
   }
 
   onFilterBy(filter: 'title' | 'expiry') {
-    return () => this.state.recurrenciesSortBy.set(filter)
+    return () => this.state.recurrenciesSortBy.set(filter);
   }
 
   onActionSheetDismiss() {
-    this.state.actionSheetIsOpen.set(false)
+    this.state.actionSheetIsOpen.set(false);
   }
 
   constructor() {
@@ -207,35 +205,33 @@ export class RecurrencyListPage {
     addIcons({ ellipsisHorizontalOutline });
   }
 
-  private async getRecurrencyDataByModal(data: { 
-      type: 'create'
-      timezone: Timezone,
-      dateFormat: DateFormat
-    } | {
-      type: 'edit',
-      recurrency: Recurrency,
-      timezone: Timezone,
-      dateFormat: DateFormat
-    }
+  private async getRecurrencyDataByModal(
+    data:
+      | {
+          type: 'create';
+          timezone: Timezone;
+          dateFormat: DateFormat;
+        }
+      | {
+          type: 'edit';
+          recurrency: Recurrency;
+          timezone: Timezone;
+          dateFormat: DateFormat;
+        },
   ): Promise<RecurrencyData | null> {
     const modal = await this.modalCtrl.create({
       component: RecurrencyListItemDetailsModal,
       componentProps: {
-        data
+        data,
       },
       enterAnimation: slideInLeft,
-      leaveAnimation: slideInRight
+      leaveAnimation: slideInRight,
     });
     modal.present();
-    const { outputData } = await modal.onWillDismiss() as { outputData: RecurrencyData | null }
-    return outputData
+    const { outputData } = (await modal.onWillDismiss()) as { outputData: RecurrencyData | null };
+    return outputData;
   }
 }
-
-
-
-
-
 
 // @Component({
 //   standalone: true,
@@ -351,7 +347,7 @@ export class RecurrencyListPage {
 //   onDeleteTap(recurrency: Recurrency) {
 //     console.log('onDeleteTap()')
 //   }
-  
+
 //   // TODO
 //   onTodayTap(recurrency: Recurrency) {
 //     console.log('onTodayTap()')
@@ -380,4 +376,3 @@ export class RecurrencyListPage {
 //     console.log(data)
 //   }
 // }
-
