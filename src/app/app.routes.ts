@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { RecurrencyListPage } from './recurrencies/recurrency-list.page';
 import { TestingPage } from './testing/testing.page';
+import { RecurrencyListPage } from './recurrencies2/pages/recurrency-list-page/recurrency-list-page';
 
 
 const ORIGIN = '/recurrencies'
