@@ -1,12 +1,6 @@
-import { Component, computed, input, linkedSignal, output } from "@angular/core";
+import { Component, computed, input, linkedSignal, model, output } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 import { Todo } from "../../todo-model";
-
-type TodoFormOutput = {
-  uid?: string,
-  title?: string,
-  completed: boolean
-}
 
 @Component({
   selector: 'app-todo-edit-form',
@@ -44,37 +38,42 @@ export class TodoEditForm {
   // DEPENDENCIES
 
   // STATE
-  todoInput = input.required<Todo | null>({alias: 'todo'})
   showErrorsInput = input.required<boolean>({alias: 'showErrors'})
-  todoChangeOutput = output<TodoFormOutput>({alias: 'todoChange'})
+  todoInput = model.required<Todo | null>({alias: 'todo'})
+  // todoChangeOutput = output<Todo | null>({alias: 'todoChange'})
 
   private state = {
-    // todo: linkedSignal<TodoFormOutput>(() => {
-    //   const todoInput = this.todoInput()
-    //   return todoInput === null ? {uid: undefined, title: undefined, completed: false} : todoInput
-    // }),
-    todo: linkedSignal<TodoFormOutput>(() => this.todoInput() ?? {uid: undefined, title: undefined, completed: false}),
+    // todo: linkedSignal<Todo | null>(() => this.todoInput()),
+    uid: linkedSignal<string | undefined>(() => this.todoInput()?.uid),
+    title: linkedSignal<string>(() => this.todoInput()?.title ?? ''),
+    completed: linkedSignal<boolean>(() => this.todoInput()?.completed ?? false)
   } 
 
   // SELECTORS
-  protected title = computed(() => this.state.todo().title ?? '')
-  protected isValidTitle = computed(() => {
-    const titleValue = this.state.todo().title
-    return titleValue !== undefined && titleValue.trim() !== ''
-  })
-  protected completed = computed(() => this.state.todo().completed)
-  
+  protected title = computed(() => this.state.title())
+  protected isValidTitle = computed(() => this.state.title().trim() !== '')
+  protected completed = computed(() => this.state.completed())
   protected showErrors = computed(() => this.showErrorsInput())
+  private todo = computed<Todo | null>(() => {
+    if(this.isValidTitle()) {
+      return {
+        uid: this.state.uid(),
+        title: this.state.title(),
+        completed: this.state.completed()
+      }
+    }
+    return null
+  })
 
   // ACTIONS
-  protected onTitleChange = (value: string) => {
-    value.trim() === '' ? this.state.todo.update(t => ({...t, title: undefined})) : this.state.todo.update(t => ({...t, title: value}))
-    this.todoChangeOutput.emit(this.state.todo())
+  protected onTitleChange = (val: string) => {
+    this.state.title.set(val)
+    this.todoInput.set(this.todo())
   }
 
-  protected onCompletedChange = (completed: boolean) => {
-    this.state.todo.update(t => ({...t, completed}))
-    this.todoChangeOutput.emit(this.state.todo())
+  protected onCompletedChange = (val: boolean) => {
+    this.state.completed.set(val)
+    this.todoInput.set(this.todo())
   }
 
   // PRIVATE

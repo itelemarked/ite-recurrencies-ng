@@ -22,12 +22,24 @@ import { TodoEditForm } from "./todo-edit-modal/todo-edit-form/todo-edit-form";
     <ion-button (click)="onEditOrCreateTodo(null)">Add Todo</ion-button> -->
 
     <app-todo-edit-form
-      [todo]="firstTodo()"
+      [(todo)]="firstTodo"
       [showErrors]="showErrors()"
-      (todoChange)="onTodoChange($event)"
     />
 
     <ion-button size="small" (click)="showErrors.set(true)">show errors</ion-button>
+
+    @if(firstTodo() === null) {
+      <div>
+        firstTodo: null
+      </div>
+    }
+    @else {
+      <div>
+        uid: {{ firstTodo()!.uid}} <br>
+        title: {{ firstTodo()!.title }} <br>
+        completed: {{ firstTodo()!.completed}}
+      </div>
+    }
   `,
   styles: [``]
 })
@@ -70,7 +82,7 @@ export class TodoPage {
   //   completed: true
   // })
 
-  firstTodo = signal(null)
+  firstTodo = signal<Todo | null>(null)
 
   onTodoChange(todo: any) {
     console.log(todo)

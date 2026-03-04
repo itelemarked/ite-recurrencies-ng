@@ -9,9 +9,7 @@ import { RecurrencyService } from "../../services/recurrency-service";
 import { Recurrency } from "../../types/Recurrency";
 import { RecurrencyDetailsModal } from "./recurrency-details-modal/recurreny-details-modal";
 import { SettingsService } from "../../../settings/settings.service";
-import { DateString } from "../../../../js/timezone-date/types/DateString.type";
-import { PositiveInteger } from "../../types/PositiveInteger";
-import { PeriodUnit } from "../../../../js/timezone-date/types/PeriodUnit.type";
+
 
 
 type RecurrencyDetailsModalOptions = { isOpen: false, recurrency: null } | { isOpen: true, recurrency: Recurrency | null }
