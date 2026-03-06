@@ -1,6 +1,6 @@
 
-import { DateString } from "../../../js/timezone-date/types/DateString.type"
-import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit.type"
+import { DateString } from "../../../js/timezone-date/types/DateString"
+import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit"
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate"
 import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const"
 import { Timezone } from "../../../js/timezone-date/types/Timezone"

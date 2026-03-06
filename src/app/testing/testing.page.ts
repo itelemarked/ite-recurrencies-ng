@@ -3,11 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { TodoPage } from './todo/todo-page';
-import { ModelInputPage } from './model-input/model-input-page';
 
 @Component({
   selector: 'app-testing-page',
-  imports: [FormsModule, IonicModule, TodoPage, ModelInputPage],
+  imports: [FormsModule, IonicModule, TodoPage],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>

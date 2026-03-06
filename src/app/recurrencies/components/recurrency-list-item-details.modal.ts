@@ -19,7 +19,7 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
 
 import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
-import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit.type';
+import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit';
 import { TimezoneDate } from '../../../js/timezone-date/TimezoneDate';
 import { slideInLeft, slideInRight } from '../../../js/ionic/animations/modals/slide-in';
 

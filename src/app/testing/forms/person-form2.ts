@@ -1,10 +1,9 @@
-import { Component, computed, signal, viewChild } from '@angular/core';
-import { form, FormField, pattern, required, validate } from '@angular/forms/signals';
-import { IonicModule, IonInput } from '@ionic/angular';
+import { Component, computed, signal } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-person-form2',
-  imports: [IonicModule, FormField],
+  imports: [IonicModule],
   template: `
     <ion-list [inset]="true">
       <ion-item [class.invalid]="nameCtl.errors().length > 0">

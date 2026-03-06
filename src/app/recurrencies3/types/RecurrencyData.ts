@@ -1,22 +1,20 @@
-import { isTimezoneDate, TimezoneDate } from "../../../js/timezone-date/TimezoneDate"
+import { DateString, isDateString } from "../../../js/timezone-date/types/DateString"
 import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit"
 import { isPositiveInteger, PositiveInteger } from "../../../js/timezone-date/types/PositiveInteger"
 import { isInterface, isString } from "../../../js/valid-type"
 
-export type Recurrency = {
-  uid: string,
+export type RecurrencyData = {
   title: string,
-  lastEvent: TimezoneDate,
+  lastEventString: DateString,
   periodNb: PositiveInteger,
   periodUnit: PeriodUnit,
   category: string
 }
 
-export function isRecurrency(val: any): val is Recurrency {
+export function isRecurrencyData(val: any): val is RecurrencyData {
   return isInterface({
-    uid: [isString],
     title: [isString],
-    lastEvent: [isTimezoneDate],
+    lastEventString: [isDateString],
     periodNb: [isPositiveInteger],
     periodUnit: [isPeriodUnit],
     category: [isString]

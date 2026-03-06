@@ -13,14 +13,15 @@ export function get(o: Record<string, any>, path?: string): any | null {
   }, o)
 }
 
-// export function set(o: Record<string, any>, path: string, value: any): Record<string, any> {
-//   const copyObject = deepCopy(o)
-// }
+export function filter<TValue>(
+  o: Record<string, TValue>, 
+  filterFn: ([key, value]: [string, TValue]) => boolean
+): Record<string, TValue> {
+  return Object.entries(o).reduce( (acc, [key, value]) => {
+    if(filterFn([key, value])) {
+      return {...acc, [key]: value}
+    }
+    return acc
+  }, {})
+}
 
-// export function update(o: Record<string, any>, path: string, value: any): Record<string, any> {
-//   const copyObject = deepCopy(o)
-// }
-
-// export function remove(o: Record<string, any>, path: string): Record<string, any> {
-//   const copyObject = deepCopy(o)
-// }

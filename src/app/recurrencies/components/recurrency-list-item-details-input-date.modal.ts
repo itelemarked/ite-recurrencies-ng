@@ -6,7 +6,7 @@ import { IonButton, IonButtons, IonContent, IonDatetime, IonHeader, IonIcon, Ion
 
 import { TimezoneDate } from '../../../js/timezone-date/TimezoneDate';
 import { DATE_FORMAT } from '../../../js/timezone-date/types/DateFormat';
-import { DateString } from '../../../js/timezone-date/types/DateString.type';
+import { DateString } from '../../../js/timezone-date/types/DateString';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
 import { SHORT_BEFORE_MIDNIGHT } from '../../../js/timezone-date/const/const';
 

@@ -24,8 +24,8 @@ import { RecurrencyListComponent } from './components/recurrency-list.component'
 
 // TEMPORARY!!!!!!!
 import { PositiveInteger } from './types/PositiveInteger.type';
-import { PeriodUnit } from '../../js/timezone-date/types/PeriodUnit.type';
-import { DateString } from '../../js/timezone-date/types/DateString.type';
+import { PeriodUnit } from '../../js/timezone-date/types/PeriodUnit';
+import { DateString } from '../../js/timezone-date/types/DateString';
 import { slideInLeft, slideInRight } from '../../js/ionic/animations/modals/slide-in';
 import { RecurrencyService } from './services/recurrency.service';
 type RecurrencyData = {

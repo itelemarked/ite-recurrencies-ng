@@ -2,13 +2,13 @@ import dayjs, { ManipulateType } from "dayjs";
 import utc  from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
-import { DateString } from "./types/DateString.type";
+import { DateString } from "./types/DateString";
 import { TimeString } from "./types/TimeString";
 import { Timezone } from "./types/Timezone";
 
 import { DATE_FORMAT, DateFormat } from "./types/DateFormat";
 
-import { PeriodUnit } from "./types/PeriodUnit.type";
+import { PeriodUnit } from "./types/PeriodUnit";
 import { PositiveInteger } from "../../app/recurrencies/types/PositiveInteger.type";
 
 

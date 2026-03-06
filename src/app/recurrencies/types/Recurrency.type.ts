@@ -1,6 +1,6 @@
 import { isBoolean, isInterface, isNumber, isString } from "../../../js/valid-type"
-import { DateString, isDateString } from "../../../js/timezone-date/types/DateString.type"
-import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit.type"
+import { DateString, isDateString } from "../../../js/timezone-date/types/DateString"
+import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit"
 import { isPositiveInteger, PositiveInteger } from "./PositiveInteger.type"
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate"
 import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const"

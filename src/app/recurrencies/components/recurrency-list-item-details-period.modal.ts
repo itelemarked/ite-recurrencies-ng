@@ -5,7 +5,7 @@ import { form, FormField, pattern, required, validate } from "@angular/forms/sig
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonList, IonRadio, IonRadioGroup, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 
 import { PositiveInteger } from "../types/PositiveInteger.type";
-import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit.type";
+import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit";
 
 @Component({
   selector: 'app-recurrency-list-item-details-period',

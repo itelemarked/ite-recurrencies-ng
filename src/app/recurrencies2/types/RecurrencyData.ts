@@ -1,5 +1,5 @@
-import { DateString, isDateString } from "../../../js/timezone-date/types/DateString.type"
-import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit.type"
+import { DateString, isDateString } from "../../../js/timezone-date/types/DateString"
+import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit"
 import { isInterface, isString } from "../../../js/valid-type"
 
 import { isPositiveInteger, PositiveInteger } from "./PositiveInteger"

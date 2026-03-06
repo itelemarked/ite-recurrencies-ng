@@ -1,13 +1,11 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Todo } from '../todo-model';
-import { TodoEditForm } from './todo-edit-form/todo-edit-form';
 
 @Component({
   selector: 'app-todo-edit-modal',
   imports: [
-    IonicModule,
-    TodoEditForm
+    IonicModule
   ],
   template: `
     <ion-header collapse="fade" [translucent]="true">

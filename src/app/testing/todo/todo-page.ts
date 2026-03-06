@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { IonicModule, ModalController } from '@ionic/angular';
-import { TodoList } from "./todo-list/todo-list";
 import { TodoService } from "./todo-service";
 import { Todo } from "./todo-model";
 import { TodoEditModal } from "./todo-edit-modal/todo-edit-modal";
@@ -10,7 +9,6 @@ import { TodoEditForm } from "./todo-edit-modal/todo-edit-form/todo-edit-form";
   selector: 'app-todo-page',
   imports: [
     IonicModule,
-    TodoList,
 
     TodoEditForm
   ],

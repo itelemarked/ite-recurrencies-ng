@@ -17,7 +17,7 @@ import {
 import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
 
-import { PERIOD_UNIT } from '../../../js/timezone-date/types/PeriodUnit.type';
+import { PERIOD_UNIT } from '../../../js/timezone-date/types/PeriodUnit';
 
 @Component({
   selector: 'app-recurrency-list',

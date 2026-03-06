@@ -4,18 +4,16 @@ import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { ellipsisHorizontalOutline } from 'ionicons/icons';
 
-import { RecurrencyList } from "./components/recurrency-list";
-
-import { DateString } from "../../js/timezone-date/types/DateString.type";
-import { PeriodUnit } from "../../js/timezone-date/types/PeriodUnit.type";
+import { DateString } from "../../js/timezone-date/types/DateString";
+import { PeriodUnit } from "../../js/timezone-date/types/PeriodUnit";
 import { PositiveInteger } from "../recurrencies/types/PositiveInteger.type";
 import { SettingsService } from "./services/settings-service";
+import { RecurrencyService } from "./services/recurrency-service";
 
 @Component({
   selector: 'app-recurrencies-page',
   imports: [
     IonicModule,
-    RecurrencyList
 ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
@@ -31,11 +29,12 @@ import { SettingsService } from "./services/settings-service";
 
     <ion-content [forceOverscroll]="false">
 
-      <app-recurrency-list
+      <!-- <app-recurrency-list
         [recurrencies]="recurrencies()"
         [timezone]="timezone()"
         [dateFormat]="dateFormat()"
-      />
+        (edit)="onEdit($event)"
+      /> -->
 
     </ion-content>
   `,
@@ -49,6 +48,7 @@ export class RecurrenciesPage {
 
   // DEPENDENCIES
   private settingsService = inject(SettingsService)
+  private recurrencyService = inject(RecurrencyService)
 
   // STATE
 
@@ -59,6 +59,10 @@ export class RecurrenciesPage {
   // ACTIONS
   constructor() {
     addIcons({ ellipsisHorizontalOutline });
+  }
+
+  onEdit(uid: string) {
+    console.log('tapped')
   }
 
   onOpenActionSheet = () => {
