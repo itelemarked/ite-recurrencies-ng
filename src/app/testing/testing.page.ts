@@ -6,7 +6,7 @@ import { TodoPage } from './todo/todo-page';
 import { TimeString } from '../../js/timezone-date/types/TimeString';
 import { DateString } from '../../js/timezone-date/types/DateString';
 import { Timezone } from '../../js/timezone-date/types/Timezone';
-import { TimezoneDate2 } from '../../js/timezone-date/TimezoneDate2';
+import { TimezoneDate } from '../../js/timezone-date/TimezoneDate';
 import { DateFormat } from '../../js/timezone-date/types/DateFormat';
 
 @Component({

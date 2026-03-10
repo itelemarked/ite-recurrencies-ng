@@ -17,7 +17,7 @@ import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const";
 // TO DELETE
 const dummyRec: Recurrency = {
   title: 'Dummy',
-  lastEvent: TimezoneDate.now('Europe/Zurich'),
+  lastEvent: TimezoneDate.createByDate(new Date(), 'Europe/Zurich', 'ISO'),
   periodNb: 66 as PositiveInteger,
   periodUnit: 'days' as PeriodUnit,
   category: 'Aircraft'
@@ -25,12 +25,12 @@ const dummyRec: Recurrency = {
 
 // UTILS
 const fromData = (data: RecurrencyData, timezone: Timezone, dateFormat: DateFormat): Recurrency => {
-  const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone)
+  const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone, dateFormat)
   return {...data, lastEvent}
 }
 
 const toData = (recurrency: Recurrency): RecurrencyData => {
-  const lastEventString = recurrency.lastEvent.getDateString()
+  const lastEventString = recurrency.lastEvent.dateString()
   return {...recurrency, lastEventString}
 }
 
@@ -92,6 +92,7 @@ export class RecurrencyService implements RecurrencyServiceInterface {
   }
 
 }
+
 
 
 

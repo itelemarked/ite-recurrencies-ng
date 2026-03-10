@@ -1,4 +1,4 @@
-import {TimezoneDate2} from './TimezoneDate2'
+import {TimezoneDate} from './TimezoneDate'
 import { DATE_FORMAT, DateFormat } from './types/DateFormat'
 import { DateString } from './types/DateString'
 import { PositiveInteger } from './types/PositiveInteger'
@@ -6,7 +6,7 @@ import { TimeString } from './types/TimeString'
 import { Timezone } from './types/Timezone'
 import { TimezoneDateInterface } from './types/TimezoneDateInterface'
 
-describe('TimezoneDate2()', () => {
+describe('TimezoneDate()', () => {
   let date: Date
   let dateString: DateString
   let timeString: TimeString
@@ -21,8 +21,8 @@ describe('TimezoneDate2()', () => {
     timeString = '16:00' as TimeString
     timezone = 'Indian/Mauritius'
     dateFormat = 'ISO'
-    tzByDate = TimezoneDate2.createByDate(date, timezone, dateFormat)
-    tz = TimezoneDate2.create(dateString, timeString, timezone, dateFormat)
+    tzByDate = TimezoneDate.createByDate(date, timezone, dateFormat)
+    tz = TimezoneDate.create(dateString, timeString, timezone, dateFormat)
   })
 
   it('create(): creates a TimezoneDate with correct state', () => {
@@ -43,7 +43,7 @@ describe('TimezoneDate2()', () => {
     expect(tz.timeString()).toBe('16:00:00.000')
 
     const invalidDateArgument = '2026-02-41T08:00Z'
-    expect(() => TimezoneDate2.createByDate(
+    expect(() => TimezoneDate.createByDate(
       new Date(invalidDateArgument),
       timezone,
       dateFormat
@@ -54,7 +54,7 @@ describe('TimezoneDate2()', () => {
 
   it('diff(): should returns the number of days', () => {
     const date1 = new Date('2026-03-10T00:00:00.000Z') // 2.5 days before tz
-    const tz1 = TimezoneDate2.createByDate(date1, timezone, dateFormat)
+    const tz1 = TimezoneDate.createByDate(date1, timezone, dateFormat)
     
     expect(tz.diff('days', {timezoneDate: tz1})).toEqual(2)
     expect(tz.diff('days', {timezoneDate: tz1, floored: false})).toEqual(2.5)
@@ -68,7 +68,7 @@ describe('TimezoneDate2()', () => {
     date1.setDate(date1.getDate() + 2)
     date1.setHours(date1.getHours() + 12)
 
-    const tz1 = TimezoneDate2.createByDate(date1, timezone, dateFormat)
+    const tz1 = TimezoneDate.createByDate(date1, timezone, dateFormat)
     
     expect(tz1.diff('days')).toEqual(2)
     expect(tz1.diff('days', {floored: false})).toEqual(2.5)

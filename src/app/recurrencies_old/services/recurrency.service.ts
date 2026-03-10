@@ -4,7 +4,7 @@ import { isRecurrencyData, Recurrency, RecurrencyData } from "../types/Recurrenc
 
 import { toSignal } from "@angular/core/rxjs-interop";
 import { isPlainObject } from "../../../js/valid-type";
-import { SettingsService } from "../../recurrencies3/services/settings-service";
+import { SettingsService } from "../../recurrencies/services/settings-service";
 
 
 

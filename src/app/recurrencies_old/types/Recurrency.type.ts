@@ -2,10 +2,11 @@ import { isBoolean, isInterface, isNumber, isString } from "../../../js/valid-ty
 import { DateString, isDateString } from "../../../js/timezone-date/types/DateString"
 import { isPeriodUnit, PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit"
 import { isPositiveInteger, PositiveInteger } from "./PositiveInteger.type"
-import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate"
+
 import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const"
 import { Timezone } from "../../../js/timezone-date/types/Timezone"
 import { DATE_FORMAT } from "../../../js/timezone-date/types/DateFormat"
+import { TimezoneDate9 } from "../js/TimezoneDate9"
 
 
 export type RecurrencyData = {
@@ -32,7 +33,7 @@ export class Recurrency {
 
   uid: string
   title: string
-  lastEvent: TimezoneDate
+  lastEvent: TimezoneDate9
   periodNb: PositiveInteger
   periodUnit: PeriodUnit
   category: string
@@ -40,13 +41,13 @@ export class Recurrency {
   constructor(uid: string, data: RecurrencyData, timezone: Timezone) {
     this.uid = uid
     this.title = data.title
-    this.lastEvent = TimezoneDate.create(data.lastEvent, SHORT_BEFORE_MIDNIGHT, timezone)
+    this.lastEvent = TimezoneDate9.create(data.lastEvent, SHORT_BEFORE_MIDNIGHT, timezone)
     this.periodNb = data.periodNb
     this.periodUnit = data.periodUnit
     this.category = data.category
   }
 
-  expiry(): TimezoneDate {
+  expiry(): TimezoneDate9 {
     return this.lastEvent.add(this.periodNb, this.periodUnit)
   }
 
@@ -76,7 +77,7 @@ export function isRecurrency(val: any): val is Recurrency {
 // export type Recurrency = {
 //   uid: string,
 //   title: string,
-//   lastEvent: TimezoneDate,
+//   lastEvent: TimezoneDate9,
 //   periodNb: PositiveInteger,
 //   periodUnit: PeriodUnit,
 //   category: string

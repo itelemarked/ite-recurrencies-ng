@@ -20,7 +20,7 @@ import { chevronBackOutline, closeCircleOutline } from 'ionicons/icons';
 import { DateFormat } from '../../../js/timezone-date/types/DateFormat';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
 import { PeriodUnit } from '../../../js/timezone-date/types/PeriodUnit';
-import { TimezoneDate } from '../../../js/timezone-date/TimezoneDate';
+
 import { slideInLeft, slideInRight } from '../../../js/ionic/animations/modals/slide-in';
 
 import { Recurrency } from '../types/Recurrency.type';
@@ -29,6 +29,7 @@ import { RecurrencyListItemDetailsInputTextModal } from './recurrency-list-item-
 import { RecurrencyListItemDetailsInputDateComponent } from './recurrency-list-item-details-input-date.modal';
 import { RecurrencyListItemDetailsPeriodComponent } from './recurrency-list-item-details-period.modal';
 import { RecurrencyListItemDetailsInputCategoryComponent } from './recurrency-list-item-details-input-category.modal';
+import { TimezoneDate9 } from '../js/TimezoneDate9';
 
 
 @Component({
@@ -115,7 +116,7 @@ export class RecurrencyListItemDetailsModal {
 
   state = {
     title: signal<string | null>(null),
-    lastEvent: signal<TimezoneDate | null>(null),
+    lastEvent: signal<TimezoneDate9 | null>(null),
     periodNb: signal<PositiveInteger | null>(null),
     periodUnit: signal<PeriodUnit | null>(null),
     category: signal<string | null>(null),
@@ -193,7 +194,7 @@ export class RecurrencyListItemDetailsModal {
       leaveAnimation: slideInRight
     })
     modal.present()
-    const timezoneDate = (await modal.onWillDismiss()).data! as TimezoneDate | null
+    const timezoneDate = (await modal.onWillDismiss()).data! as TimezoneDate9 | null
     this.state.lastEvent.set(timezoneDate)
   }
 

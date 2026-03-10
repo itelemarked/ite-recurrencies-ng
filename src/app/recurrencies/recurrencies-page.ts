@@ -6,9 +6,10 @@ import { ellipsisHorizontalOutline } from 'ionicons/icons';
 
 import { DateString } from "../../js/timezone-date/types/DateString";
 import { PeriodUnit } from "../../js/timezone-date/types/PeriodUnit";
-import { PositiveInteger } from "../recurrencies/types/PositiveInteger.type";
+
 import { SettingsService } from "./services/settings-service";
 import { RecurrencyService } from "./services/recurrency-service";
+import { PositiveInteger } from "../../js/timezone-date/types/PositiveInteger";
 
 @Component({
   selector: 'app-recurrencies-page',

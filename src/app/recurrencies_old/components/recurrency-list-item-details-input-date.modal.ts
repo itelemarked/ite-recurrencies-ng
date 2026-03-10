@@ -3,12 +3,12 @@ import { FormsModule } from '@angular/forms';
 
 import { IonButton, IonButtons, IonContent, IonDatetime, IonHeader, IonIcon, IonItem, IonList, IonTitle, IonToolbar, ModalController } from '@ionic/angular/standalone';
 
-
-import { TimezoneDate } from '../../../js/timezone-date/TimezoneDate';
 import { DATE_FORMAT } from '../../../js/timezone-date/types/DateFormat';
 import { DateString } from '../../../js/timezone-date/types/DateString';
 import { Timezone } from '../../../js/timezone-date/types/Timezone';
 import { SHORT_BEFORE_MIDNIGHT } from '../../../js/timezone-date/const/const';
+import { TimezoneDate9 } from '../js/TimezoneDate9';
+
 
 @Component({
   selector: 'app-recurrency-list-item-details-input-date',
@@ -61,7 +61,7 @@ export class RecurrencyListItemDetailsInputDateComponent {
 
   // STATE
   modalTitle = input.required<string>()
-  inputValue = input.required<TimezoneDate | null>()
+  inputValue = input.required<TimezoneDate9 | null>()
   timezone = input.required<Timezone>()
   state!: {
     currentDateString: WritableSignal<DateString>
@@ -72,14 +72,14 @@ export class RecurrencyListItemDetailsInputDateComponent {
     this.state = {
       currentDateString: signal(
         this.inputValue() === null
-        ? TimezoneDate.now(this.timezone()).format(DATE_FORMAT.DATE_STRING) as DateString
+        ? TimezoneDate9.now(this.timezone()).format(DATE_FORMAT.DATE_STRING) as DateString
         : this.inputValue()!.format(DATE_FORMAT.DATE_STRING) as DateString
       )
     }
   }
 
   onBackButtonClick = () => {
-    const timezoneDate = TimezoneDate.create(this.state.currentDateString(), SHORT_BEFORE_MIDNIGHT, this.timezone())
+    const timezoneDate = TimezoneDate9.create(this.state.currentDateString(), SHORT_BEFORE_MIDNIGHT, this.timezone())
     this.modalCtrl.dismiss(timezoneDate)
   }
 
