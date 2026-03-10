@@ -13,6 +13,6 @@ export type Settings = {
 export function isSettings(val: any): val is Settings {
   return isInterface<Settings>({
     timezone: [isTimezone],
-    dateFomrat: [isDateFormat]
+    dateFormat: [isDateFormat]
   })(val)
 }
