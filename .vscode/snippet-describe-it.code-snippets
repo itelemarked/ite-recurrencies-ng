@@ -1,0 +1,23 @@
+{
+  "snippetDescribe": {
+    "prefix": "snippet-describe",
+    "body": [
+      "describe('$1', () => {",
+      "",
+      "  it('$2', () => {",
+      "    $3",  
+      "  })", 
+      "",
+      "})",
+    ]
+  },
+
+  "snippetIt": {
+    "prefix": "snippet-it",
+    "body": [
+      "  it('$1', () => {",
+      "    $2",  
+      "  })",
+    ]
+  }
+}
