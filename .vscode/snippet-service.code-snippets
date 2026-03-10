@@ -1,0 +1,15 @@
+{
+  "snippetService": {
+    "prefix": "snippet-service",
+    "body": [
+      "import { Injectable } from '@angular/core';",
+      "",
+      "@Injectable({ providedIn: 'root' })",
+      "export class $1 {",
+      "",
+      "  constructor() {}",
+      "",
+      "}"
+    ]
+  }
+}
