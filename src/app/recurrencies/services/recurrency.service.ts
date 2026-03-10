@@ -3,8 +3,8 @@ import { BehaviorSubject } from "rxjs";
 import { isRecurrencyData, Recurrency, RecurrencyData } from "../types/Recurrency.type";
 
 import { toSignal } from "@angular/core/rxjs-interop";
-import { SettingsService } from "../../settings/settings.service";
 import { isPlainObject } from "../../../js/valid-type";
+import { SettingsService } from "../../recurrencies3/services/settings-service";
 
 
 

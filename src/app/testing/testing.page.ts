@@ -3,10 +3,15 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { TodoPage } from './todo/todo-page';
+import { TimeString } from '../../js/timezone-date/types/TimeString';
+import { DateString } from '../../js/timezone-date/types/DateString';
+import { Timezone } from '../../js/timezone-date/types/Timezone';
+import { TimezoneDate2 } from '../../js/timezone-date/TimezoneDate2';
+import { DateFormat } from '../../js/timezone-date/types/DateFormat';
 
 @Component({
   selector: 'app-testing-page',
-  imports: [FormsModule, IonicModule, TodoPage],
+  imports: [FormsModule, IonicModule],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -16,12 +21,17 @@ import { TodoPage } from './todo/todo-page';
 
     <ion-content [forceOverscroll]="false">
       
-      <app-todo-page/>
+      <!-- <app-todo-page/> -->
        <!-- <app-model-input-page/> -->
 
     </ion-content>
   `,
   styles: [``],
 })
-export class TestingPage {}
+export class TestingPage {
+
+  constructor() {}
+
+}
+
 

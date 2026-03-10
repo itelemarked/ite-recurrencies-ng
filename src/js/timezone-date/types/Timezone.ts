@@ -1,7 +1,8 @@
 export const TIMEZONE = {
   PLATFORM_DEFINED: 'platform-defined',
   MAURITIUS: 'Indian/Mauritius',
-  ZURICH: 'Europe/Zurich'
+  ZURICH: 'Europe/Zurich',
+  UTC: 'UTC'
 } as const
 
 export type Timezone = typeof TIMEZONE[keyof typeof TIMEZONE]

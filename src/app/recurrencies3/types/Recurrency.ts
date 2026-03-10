@@ -4,7 +4,6 @@ import { isPositiveInteger, PositiveInteger } from "../../../js/timezone-date/ty
 import { isInterface, isString } from "../../../js/valid-type"
 
 export type Recurrency = {
-  uid: string,
   title: string,
   lastEvent: TimezoneDate,
   periodNb: PositiveInteger,
@@ -14,7 +13,6 @@ export type Recurrency = {
 
 export function isRecurrency(val: any): val is Recurrency {
   return isInterface({
-    uid: [isString],
     title: [isString],
     lastEvent: [isTimezoneDate],
     periodNb: [isPositiveInteger],

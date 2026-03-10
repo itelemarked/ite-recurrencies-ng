@@ -101,7 +101,7 @@ export class RecurrencyListPage {
   // TODO: replace by settingsservice
   private settingsService = {
     timezone: TIMEZONE.ZURICH,
-    dateFormat: DATE_FORMAT.CH,
+    dateFormat: DATE_FORMAT.CH_DATE,
   };
 
   // STATE

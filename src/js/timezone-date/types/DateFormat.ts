@@ -1,7 +1,8 @@
 export const DATE_FORMAT = {
   PLATFORM_DEFINED: 'PLATFORM_DEFINED',
-  CH: 'CH',
-  US: 'US',
+  CH_DATE: 'CH_DATE',
+  CH_DATE_TIME: 'CH_DATE_TIME',
+  US_DATE: 'US_DATE',
   ISO: 'ISO',
   DATE_STRING: 'DATE_STRING'
  } as const

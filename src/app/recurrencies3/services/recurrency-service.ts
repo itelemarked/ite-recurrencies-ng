@@ -9,11 +9,13 @@ import { PositiveInteger } from "../../../js/timezone-date/types/PositiveInteger
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate";
 import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit";
 import { Timezone } from "../../../js/timezone-date/types/Timezone";
+import { RecurrencyServiceInterface } from "../types/RecurrencyServiceInterface";
+import { DateFormat } from "../../../js/timezone-date/types/DateFormat";
+import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const";
 
 
 // TO DELETE
 const dummyRec: Recurrency = {
-  uid: 'ajdklaeiidnfre',
   title: 'Dummy',
   lastEvent: TimezoneDate.now('Europe/Zurich'),
   periodNb: 66 as PositiveInteger,
@@ -21,91 +23,73 @@ const dummyRec: Recurrency = {
   category: 'Aircraft'
 }
 
+// UTILS
+const fromData = (data: RecurrencyData, timezone: Timezone, dateFormat: DateFormat): Recurrency => {
+  const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone)
+  return {...data, lastEvent}
+}
+
+const toData = (recurrency: Recurrency): RecurrencyData => {
+  const lastEventString = recurrency.lastEvent.getDateString()
+  return {...recurrency, lastEventString}
+}
+
+const generateUid = () => {
+  return Math.floor(Math.random() * 100000000).toString()
+}
+
 @Injectable({providedIn: 'root'})
-export class RecurrencyService {
+export class RecurrencyService implements RecurrencyServiceInterface {
+// export class RecurrencyService {
   // DEPENDENCIES
   private settingsService = inject(SettingsService)
 
   private localStorageKey = 'ite-recurrencies-ng-recurrencies'
 
-  recurrencies = computed(() => {
+  getAll = () => computed(() => {
     const settings = this.settingsService.settings()
-
+    return [{...dummyRec, uid: 'heuwiehsm'}]
   })
 
-  add = (data: RecurrencyData):Promise<Recurrency> => {
+  addDoc = (data: RecurrencyData) => {
     // TODO
-    return Promise.resolve(dummyRec)
+    return Promise.resolve('djfdsksl')
   }
 
-  remove = (uid: string): Promise<Recurrency> => {
+  setDoc = (recurrency: Identifiable<Recurrency>) => {
     // TODO
-    return Promise.resolve(dummyRec)
+    return Promise.resolve()
   }
 
-  update = (data: Identifiable<RecurrencyData>): Promise<Recurrency> => {
+  updateDoc = (uid: string, opts: Partial<Recurrency>) => {
     // TODO
-    return Promise.resolve(dummyRec)
+    return Promise.resolve()
+  }
+
+  deleteDoc = (uid: string) => {
+    // TODO
+    return Promise.resolve()
   }
 
   // PRIVATE
   getStoredRecurrencies(timezone: Timezone) {
-    const stored = localStorage.getItem(this.localStorageKey)
-    if(stored === null) {
-      // return null
-      console.log(null)
-    } else {
-      const parsed = JSON.parse(stored)
-      const a = {
-        // uid: '72845866', 
-        title: 'Sere Sea', 
-        lastEventString: '2026-01-03', 
-        periodNb: 1, 
-        periodUnit: 'years', 
-        category: 'Aircraft'
-      }
-      console.log(isRecurrencyData(a))
-    }
-    
-
-    // if(parsed.every((p: any) => isRecurrencyData(p) && hasUid(p))) {
-    //   return parsed.map((p: any) => {
-    //     const {uid, title, lastEventString, periodNb, periodUnit, category} = p
-    //     return {
-    //       uid,
-    //       title,
-    //       lastEvent: TimezoneDate.create(lastEventString, SHORT_BEFORE_MIDNIGHT, timezone),
-    //       periodNb,
-    //       periodUnit,
-    //       category
-    //     }
-    //   })
+    // const stored = localStorage.getItem(this.localStorageKey)
+    // if(stored === null) {
+    //   // return null
+    //   console.log(null)
     // } else {
-    //   return null
+    //   const parsed = JSON.parse(stored)
+    //   const a = {
+    //     // uid: '72845866', 
+    //     title: 'Sere Sea', 
+    //     lastEventString: '2026-01-03', 
+    //     periodNb: 1, 
+    //     periodUnit: 'years', 
+    //     category: 'Aircraft'
+    //   }
+    //   console.log(isRecurrencyData(a))
     // }
-
-
-    // const storedRecurrenciesString = localStorage.getItem(this.localStorageKey)
-    // if(storedRecurrenciesString === null) {
-    //   return null
-    // }
-
-    // const storedRecurrencies = JSON.parse(storedRecurrenciesString) 
-    // function areStoredRecurrencyDatas(val: any): val is RecurrencyData[] {
-    //   return val !== null
-    //   && isPlainObject(val)
-    //   && Object.values(storedRecurrencies).every((data) => isRecurrencyData(data))
-    // }
-    
-    // if(!areStoredRecurrencyDatas(storedRecurrencies)) {
-    //   return null
-    // }
-    // return Object.entries(storedRecurrencies)
-    //   .map(
-    //     ([key, data]) => new Recurrency(key, data, this.timezone())
-    //   )
   }
-
 
 }
 

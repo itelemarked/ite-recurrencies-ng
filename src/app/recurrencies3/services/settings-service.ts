@@ -12,7 +12,7 @@ export class SettingsService implements SettingsServiceInterface {
 
   private _settings$ = new BehaviorSubject<Settings>({
     timezone: TIMEZONE.ZURICH,
-    dateFormat: DATE_FORMAT.CH
+    dateFormat: DATE_FORMAT.CH_DATE
   })
 
   settings$ = this._settings$.asObservable()

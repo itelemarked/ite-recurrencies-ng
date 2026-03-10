@@ -96,8 +96,9 @@ export class TimezoneDate {
   format(dateFormat: DateFormat): string {
     const convert: Record<DateFormat, string> = {
       PLATFORM_DEFINED: dayjs(this._date).tz(this._timezone).toDate().toLocaleDateString(),
-      CH: dayjs(this._date).tz(this._timezone).format('DD.MM.YYYY'),
-      US: dayjs(this._date).tz(this._timezone).format('MM/DD/YY'),
+      CH_DATE: dayjs(this._date).tz(this._timezone).format('DD.MM.YYYY'),
+      CH_DATE_TIME: dayjs(this._date).tz(this._timezone).format('DD.MM.YYYY HH:mm:ss.SSS'),
+      US_DATE: dayjs(this._date).tz(this._timezone).format('MM/DD/YY'),
       ISO: dayjs(this._date).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'), // same as Date.toISOString(): in UTC (with 'Z' on the end) and millieconds precision format.
       DATE_STRING: dayjs(this._date).tz(this._timezone).format('YYYY-MM-DD'),
     }
@@ -211,12 +212,12 @@ export function TESTS() {
 
   test('format() - test date format "ch"', () => {
     const result = '01.02.2026'
-    return expect(tz1.format(DATE_FORMAT.CH)).toBe(result)
+    return expect(tz1.format(DATE_FORMAT.CH_DATE)).toBe(result)
   })
   
   test('format() - test date format "us"', () => {
     const result = '02/01/26'
-    return expect(tz1.format(DATE_FORMAT.US)).toBe(result)
+    return expect(tz1.format(DATE_FORMAT.US_DATE)).toBe(result)
   })
   
   test('format() - test date format "Platform defined"', () => {
