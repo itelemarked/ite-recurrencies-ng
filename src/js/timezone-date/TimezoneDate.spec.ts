@@ -52,6 +52,18 @@ describe('TimezoneDate()', () => {
     // NB: create() will never produce a Invalid Date, since DateString and TimeString are asserted to be the right formats!
   })
 
+  it('dateString(), can have optional timezone parameter', () => {
+    const tz1 = TimezoneDate.createByDate(new Date('2026-03-12T22:00Z'), 'UTC', 'ISO')
+    expect(tz1.dateString({timezone: 'Indian/Mauritius'})).toBe('2026-03-13')
+    expect(tz1.dateString({timezone: 'Europe/Zurich'})).toBe('2026-03-12')
+  })
+
+  it('timeString(), can have optional timezone parameter', () => {
+    const tz1 = TimezoneDate.createByDate(new Date('2026-03-12T22:00Z'), 'UTC', 'ISO')
+    expect(tz1.timeString({timezone: 'Indian/Mauritius'})).toBe('02:00:00.000')
+    expect(tz1.timeString({timezone: 'Europe/Zurich'})).toBe('23:00:00.000')
+  })
+
   it('diff(): should returns the number of days', () => {
     const date1 = new Date('2026-03-10T00:00:00.000Z') // 2.5 days before tz
     const tz1 = TimezoneDate.createByDate(date1, timezone, dateFormat)

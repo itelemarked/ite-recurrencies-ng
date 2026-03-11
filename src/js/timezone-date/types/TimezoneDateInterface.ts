@@ -6,8 +6,8 @@ import { TimeString } from "./TimeString";
 import { Timezone } from "./Timezone";
 
 export interface TimezoneDateInterface {
-  dateString: () => DateString,
-  timeString: () => TimeString,
+  dateString: (opts?: {timezone: Timezone}) => DateString,
+  timeString: (opts?: {timezone: Timezone}) => TimeString,
   timezone: () => Timezone,
   dateFormat: () => DateFormat,
   date: () => Date,

@@ -136,9 +136,17 @@ export class TimezoneDate implements TimezoneDateInterface {
     }
   }
 
-  dateString = () => D.getDateString(this.state.date, this.state.timezone)
+  dateString = (
+    {timezone = this.state.timezone}
+    : {timezone?: Timezone}
+    = {} 
+  ) => D.getDateString(this.state.date, timezone)
 
-  timeString = () => D.getTimeString(this.state.date, this.state.timezone)
+  timeString = (
+    {timezone = this.state.timezone}
+    : {timezone?: Timezone}
+    = {} 
+  ) => D.getTimeString(this.state.date, timezone)
   
   timezone = () => this.state.timezone
 
