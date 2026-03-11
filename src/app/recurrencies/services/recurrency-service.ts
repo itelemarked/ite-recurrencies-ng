@@ -1,64 +1,99 @@
-import { computed, inject, Injectable } from "@angular/core";
-import { SettingsService } from "./settings-service";
-import { Recurrency } from "../types/Recurrency";
-import { isRecurrencyData, RecurrencyData } from "../types/RecurrencyData";
-import { Identifiable } from "../types/Identifiable";
+import { inject, Injectable } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { BehaviorSubject } from "rxjs";
 
-
-import { PositiveInteger } from "../../../js/timezone-date/types/PositiveInteger";
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate";
-import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit";
 import { Timezone } from "../../../js/timezone-date/types/Timezone";
-import { RecurrencyServiceInterface } from "../types/RecurrencyServiceInterface";
 import { DateFormat } from "../../../js/timezone-date/types/DateFormat";
 import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const";
 
+import { SettingsService } from "./settings-service";
+import { Identifiable, isIdentifiable } from "../types/Identifiable";
+import { isRecurrencyData, RecurrencyData } from "../types/RecurrencyData";
+import { Recurrency } from "../types/Recurrency";
+import { RecurrencyServiceInterface } from "../types/RecurrencyServiceInterface";
+import { RECURRENCY_ERROR, RecurrencyError } from "../types/RecurrencyError";
+import { isArray } from "../../../js/valid-type";
 
-// TO DELETE
-const dummyRec: Recurrency = {
-  title: 'Dummy',
-  lastEvent: TimezoneDate.createByDate(new Date(), 'Europe/Zurich', 'ISO'),
-  periodNb: 66 as PositiveInteger,
-  periodUnit: 'days' as PeriodUnit,
-  category: 'Aircraft'
+
+
+// TYPES ****************************************
+type RecurrencyResponseSuccess = {
+  type: 'success',
+  data: Identifiable<RecurrencyData>[]
 }
 
-// UTILS
-const fromData = (data: RecurrencyData, timezone: Timezone, dateFormat: DateFormat): Recurrency => {
-  const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone, dateFormat)
-  return {...data, lastEvent}
+type RecurrencyResponseError = {
+  type: 'error',
+  error: RecurrencyError
 }
 
-const toData = (recurrency: Recurrency): RecurrencyData => {
-  const lastEventString = recurrency.lastEvent.dateString()
-  return {...recurrency, lastEventString}
-}
+type RecurrencyResponse = RecurrencyResponseSuccess | RecurrencyResponseError
 
-const generateUid = () => {
-  return Math.floor(Math.random() * 100000000).toString()
-}
 
+
+
+// SERVICE **************************************
 @Injectable({providedIn: 'root'})
 export class RecurrencyService implements RecurrencyServiceInterface {
-// export class RecurrencyService {
-  // DEPENDENCIES
+
+  // CONSTS -------------------------------------------
+  private STORE_KEY = 'ite-recurrencies-ng-recurrencies'
+
+  // DEPENDENCIES -------------------------------------------
   private settingsService = inject(SettingsService)
 
-  private localStorageKey = 'ite-recurrencies-ng-recurrencies'
+  // STATE -------------------------------------------
+  private state = {
+    recurrencies$: new BehaviorSubject<Identifiable<Recurrency>[]>([]),
+    loading$: new BehaviorSubject<boolean>(true),
+    errors$: new BehaviorSubject<RecurrencyError[]>([])
+  }
 
-  getAll = () => computed(() => {
-    const settings = this.settingsService.settings()
-    return [{...dummyRec, uid: 'heuwiehsm'}]
-  })
+  // SELECTORS -------------------------------------------
+  recurrencies$ = this.state.recurrencies$.asObservable()
+  recurrencies = toSignal(this.state.recurrencies$, {requireSync: true})
+  loading$ = this.state.loading$.asObservable()
+  loading = toSignal(this.state.loading$, {requireSync: true})
+  errors$ = this.state.errors$.asObservable()
+  errors = toSignal(this.state.errors$, {requireSync: true})
+  
+
+  // ACTIONS -------------------------------------------
+  constructor() {
+    const fetch = this._fetchData
+    const parse = this._parse
+    const fromData = this._fromData
+    const {timezone, dateFormat} = this.settingsService.settings()
+    const state = this.state
+
+    fetch().then(res => {
+      const parseResponse = parse(res)
+      state.loading$.next(false)
+      if(parseResponse.type === 'error') {
+        state.errors$.next([...state.errors$.value, parseResponse.error])
+      }
+      else {
+        const recurrencies = parseResponse.data.map(d => fromData(d, timezone, dateFormat))
+        state.recurrencies$.next(recurrencies)
+      }
+    })
+  }
+
+  // TODO: setDocs or setDoc??? only one, ar all????
+  setDocs = async (recurrencies: Identifiable<Recurrency>[]) => {
+    const toData = this._toData
+    const store = this._storeData
+
+    this.state.recurrencies$.next(recurrencies)
+    const recurrenciesData = recurrencies.map(r => toData(r))
+    await store(recurrenciesData)
+    return
+  }
 
   addDoc = (data: RecurrencyData) => {
     // TODO
     return Promise.resolve('djfdsksl')
-  }
-
-  setDoc = (recurrency: Identifiable<Recurrency>) => {
-    // TODO
-    return Promise.resolve()
   }
 
   updateDoc = (uid: string, opts: Partial<Recurrency>) => {
@@ -71,25 +106,121 @@ export class RecurrencyService implements RecurrencyServiceInterface {
     return Promise.resolve()
   }
 
-  // PRIVATE
-  getStoredRecurrencies(timezone: Timezone) {
-    // const stored = localStorage.getItem(this.localStorageKey)
-    // if(stored === null) {
-    //   // return null
-    //   console.log(null)
-    // } else {
-    //   const parsed = JSON.parse(stored)
-    //   const a = {
-    //     // uid: '72845866', 
-    //     title: 'Sere Sea', 
-    //     lastEventString: '2026-01-03', 
-    //     periodNb: 1, 
-    //     periodUnit: 'years', 
-    //     category: 'Aircraft'
-    //   }
-    //   console.log(isRecurrencyData(a))
-    // }
+  // UTILS -------------------------------------------
+  _fetchData = async (): Promise<string | null> => {
+    const delay = this._delay
+    await delay(800)
+
+    const key = this.STORE_KEY
+    return localStorage.getItem(key)
   }
+
+  _parse = (data: string | null): RecurrencyResponse => {
+    if(data === null) return {
+      type: 'success',
+      data: []
+    }
+
+    const parsedData = JSON.parse(data)
+    const isIdentifiableRecurrencyDataArray = (val: any): val is Identifiable<RecurrencyData>[] => 
+      isArray(val) && val.every(d => isRecurrencyData(d) && isIdentifiable(d))
+    
+    if(!isIdentifiableRecurrencyDataArray(parsedData)) return {
+      type: 'error',
+      error: RECURRENCY_ERROR.fetch_data_wrong_type
+    }
+
+    return {
+      type: 'success',
+      data: parsedData
+    }
+  }
+
+  _fromData = (data: Identifiable<RecurrencyData>, timezone: Timezone, dateFormat: DateFormat): Identifiable<Recurrency> => {
+    const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone, dateFormat)
+    const result: Identifiable<Recurrency> = {...data, lastEvent}
+    return result
+  }
+
+  _storeData = async (data: Identifiable<RecurrencyData>[]) => {
+    const delay = this._delay
+    const key = this.STORE_KEY
+
+    await delay(300)
+    localStorage.setItem(key, JSON.stringify(data))
+  }
+
+  _toData = (recurrency: Identifiable<Recurrency>): Identifiable<RecurrencyData> => {
+    /** the lastEventString is parsed to UTC */
+    const lastEventString = recurrency.lastEvent.dateString({timezone: 'UTC'})
+    return {...recurrency, lastEventString}
+  }
+
+
+
+
+
+  // _fetchData = async (): Promise<RecurrencyResponse> => {
+  //   const fromData = this._fromData
+
+  //   // DEV only
+  //   const delay = this._delay
+  //   await delay(300)
+
+  //   const dataString = localStorage.getItem(this.STORE_KEY)
+  //   if(dataString === null) {
+  //     return {
+  //       type: 'success',
+  //       data: []
+  //     }
+  //   }
+
+  //   const data = JSON.parse(dataString)
+  //   const isIdentifiableRecurrencyDataArray = (val: any): val is Identifiable<RecurrencyData>[] => 
+  //     isArray(data) && data.every(d => isRecurrencyData(d) && isIdentifiable(d))
+
+
+  //   if(!isIdentifiableRecurrencyDataArray(data)) {
+  //     return {
+  //       type: 'error',
+  //       error: RECURRENCY_ERROR.fetch_data_wrong_type
+  //     }
+  //   }
+
+  //   const {timezone, dateFormat} = this.settingsService.settings()
+  //   const result = data.map(d => fromData(d, timezone, dateFormat))
+  //   return {
+  //     type: 'success',
+  //     data: result
+  //   }
+  // }
+
+  // _storeData = (recurrency: Recurrency | Identifiable<Recurrency>): Promise<RecurrencyResponse> => {
+  //   const toData = this._toData
+
+  //   const data = toData(recurrency)
+  // }
+
+  // _fromData = (data: Identifiable<RecurrencyData>, timezone: Timezone, dateFormat: DateFormat) => {
+  //   const lastEvent = TimezoneDate.create(data.lastEventString, SHORT_BEFORE_MIDNIGHT, timezone, dateFormat)
+  //   const result: Identifiable<Recurrency> = {...data, lastEvent}
+  //   return result
+  // }
+
+  // _toData = (recurrency: Recurrency | Identifiable<Recurrency>): Identifiable<RecurrencyData> => {
+  //   const generatedUid = this._generatedUid
+
+  //   const lastEventString = recurrency.lastEvent.dateString()
+  //   const uid = 'uid' in recurrency ? recurrency.uid : generatedUid()
+  //   return {...recurrency, lastEventString, uid}
+  // }
+
+  // _generatedUid = () => {
+  //   return Math.floor(Math.random() * 100000000).toString()
+  // }
+
+  // DEV only
+  _delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(() => resolve(), ms))
 
 }
 

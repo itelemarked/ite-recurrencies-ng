@@ -11,7 +11,7 @@ export class SettingsService implements SettingsServiceInterface {
 
   DEFAULT_SETTINGS = {
     timezone: TIMEZONE.ZURICH,
-    dateFormat: DATE_FORMAT.CH_DATE
+    dateFormat: DATE_FORMAT.ISO
   }
 
   STORE_KEY = 'ite-recurrencies-ng-settings'
