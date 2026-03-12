@@ -4,6 +4,10 @@ import { IonicModule } from '@ionic/angular';
 
 import { SettingsService } from '../recurrencies/services/settings-service';
 import { TestingRecurrencyService } from "./testing-recurrency-service/testing-recurrency-service";
+import { RecurrencyService } from '../recurrencies/services/recurrency-service';
+import { PositiveInteger } from '../../js/timezone-date/types/PositiveInteger';
+import { PeriodUnit } from '../../js/timezone-date/types/PeriodUnit';
+import { DateString } from '../../js/timezone-date/types/DateString';
 
 @Component({
   selector: 'app-testing-page',
@@ -26,6 +30,7 @@ import { TestingRecurrencyService } from "./testing-recurrency-service/testing-r
 export class TestingPage {
 
   private settingsService = inject(SettingsService)
+  private recurrencyService = inject(RecurrencyService)
 
   constructor() {
 

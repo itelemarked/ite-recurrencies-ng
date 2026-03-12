@@ -91,19 +91,35 @@ export class RecurrencyService implements RecurrencyServiceInterface {
     return
   }
 
-  addDoc = (data: RecurrencyData) => {
-    // TODO
-    return Promise.resolve('djfdsksl')
+  addDoc = async (data: RecurrencyData): Promise<string> => {
+    const {timezone, dateFormat} = this.settingsService.settings()
+    const uid = this._generatedUid()
+    const identifiableData = {...data, uid}
+    const recurrency = this._fromData(identifiableData, timezone, dateFormat)
+    const recurrencies = [...this.state.recurrencies$.value, recurrency]
+    this.state.recurrencies$.next(recurrencies)
+    this._storeData(recurrencies.map(r => this._toData(r)))
+    return uid
   }
 
-  updateDoc = (uid: string, opts: Partial<Recurrency>) => {
-    // TODO
-    return Promise.resolve()
+  deleteDoc = async (uid: string): Promise<void> => {
+    const recurrencies = this.state.recurrencies$.value.filter(r => r.uid !== uid)
+    this.state.recurrencies$.next(recurrencies)
+    this._storeData(recurrencies.map(r => this._toData(r)))
+    return 
   }
 
-  deleteDoc = (uid: string) => {
-    // TODO
-    return Promise.resolve()
+  // TODO: opts should be Partial<Recurrency>? Or Partial<RecurrencyData>????
+  updateDoc = async (uid: string, opts: Partial<Recurrency>) => {
+    const recurrencyToUpdate = this.state.recurrencies$.value.find((r => r.uid === uid))
+    if(recurrencyToUpdate === undefined) return
+    const updatedRecurrency = {...recurrencyToUpdate, ...opts}
+    const filteredRecurrencies = this.state.recurrencies$.value.filter(r => r.uid !== uid)
+
+    const recurrencies = [...filteredRecurrencies, updatedRecurrency]
+    this.state.recurrencies$.next(recurrencies)
+    this._storeData(recurrencies.map(r => this._toData(r)))
+    return 
   }
 
   // UTILS -------------------------------------------
@@ -154,6 +170,10 @@ export class RecurrencyService implements RecurrencyServiceInterface {
     /** the lastEventString is parsed to UTC */
     const lastEventString = recurrency.lastEvent.dateString({timezone: 'UTC'})
     return {...recurrency, lastEventString}
+  }
+
+  _generatedUid = () => {
+    return Math.floor(Math.random() * 100000000).toString()
   }
 
 
