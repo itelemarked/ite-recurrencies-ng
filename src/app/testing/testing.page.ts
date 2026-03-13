@@ -1,17 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { SettingsService } from '../recurrencies/services/settings-service';
-import { TestingRecurrencyService } from "./testing-recurrency-service/testing-recurrency-service";
-import { RecurrencyService } from '../recurrencies/services/recurrency-service';
-import { PositiveInteger } from '../../js/timezone-date/types/PositiveInteger';
-import { PeriodUnit } from '../../js/timezone-date/types/PeriodUnit';
-import { DateString } from '../../js/timezone-date/types/DateString';
+import { TestingUserFirebaseService } from "./testing-user-firebase-service/testing-user-firebase-service";
 
 @Component({
   selector: 'app-testing-page',
-  imports: [FormsModule, IonicModule, TestingRecurrencyService],
+  imports: [
+    FormsModule, 
+    IonicModule, 
+    // TestingRecurrencyService, 
+    TestingUserFirebaseService
+
+  ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -21,7 +22,8 @@ import { DateString } from '../../js/timezone-date/types/DateString';
 
     <ion-content [forceOverscroll]="false">
       
-      <app-testing-recurrency-service/>
+      <!-- <app-testing-recurrency-service/> -->
+      <app-testing-user-firebase-service/>
 
     </ion-content>
   `,
@@ -29,12 +31,7 @@ import { DateString } from '../../js/timezone-date/types/DateString';
 })
 export class TestingPage {
 
-  private settingsService = inject(SettingsService)
-  private recurrencyService = inject(RecurrencyService)
 
-  constructor() {
-
-  }
 
 }
 
