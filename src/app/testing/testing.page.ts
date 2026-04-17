@@ -1,18 +1,12 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { TestingAuthService } from "./testing-auth-service/testing-auth-service";
+import { AuthService2 } from '../core/services/auth-service2';
 
-import { TestingUserFirebaseService } from "./testing-user-firebase-service/testing-user-firebase-service";
 
 @Component({
   selector: 'app-testing-page',
-  imports: [
-    FormsModule, 
-    IonicModule, 
-    // TestingRecurrencyService, 
-    TestingUserFirebaseService
-
-  ],
+  imports: [IonicModule, TestingAuthService],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -20,10 +14,9 @@ import { TestingUserFirebaseService } from "./testing-user-firebase-service/test
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [forceOverscroll]="false">
-      
-      <!-- <app-testing-recurrency-service/> -->
-      <app-testing-user-firebase-service/>
+    <ion-content [forceOverscroll]="false" class="ion-padding-horizontal">
+
+      <app-testing-auth-service/>
 
     </ion-content>
   `,
@@ -31,8 +24,10 @@ import { TestingUserFirebaseService } from "./testing-user-firebase-service/test
 })
 export class TestingPage {
 
+  private auth2 = inject(AuthService2)
 
+  constructor() {
+    this.auth2.isLoading$.subscribe(val => console.log(val))
+  }
 
 }
-
-

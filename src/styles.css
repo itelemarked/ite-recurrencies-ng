@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "./css/global/display.css";
+/* @import "./css/global/display.css";
 @import "./css/global/flex.css";
 @import "./css/global/font.css";
 @import "./css/global/margin.css";
@@ -8,9 +8,10 @@
 @import "./css/global/position.css";
 @import "./css/global/text.css";
 @import "./css/global/z-index.css";
-@import "./css/global/border.css";
+@import "./css/global/border.css"; */
 
 @import "./css/ionic/ionic.css";
 @import "./css/ionic/variables.css";
-@import "./css/ionic/list.css";
+/* @import "./css/ionic/list.css"; */
+@import "tailwindcss";
 

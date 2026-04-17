@@ -1,3 +1,31 @@
+
+import { Component } from "@angular/core";
+import { IonicModule } from '@ionic/angular';
+
+@Component({
+  selector: 'app-recurrency-list',
+  imports: [
+    IonicModule
+  ],
+  template: `
+    RecurrencyList works!
+  `,
+  styles: [``]
+})
+export class RecurrencyList {
+  // DEPENDENCIES
+
+  // STATE
+
+  // SELECTORS
+
+  // ACTIONS
+
+  // PRIVATE
+
+}
+
+
 // import { Component, computed, input, output, viewChild } from '@angular/core';
 // import { IonicModule, IonItemSliding } from '@ionic/angular';
 // import { addIcons } from 'ionicons';

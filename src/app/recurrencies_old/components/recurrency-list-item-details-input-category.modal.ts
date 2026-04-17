@@ -3,9 +3,9 @@ import { IonicModule } from '@ionic/angular';
 import {
   ModalController,
 } from '@ionic/angular/standalone';
-import { ListComponent } from '../../testing/app-list.component';
 import { addIcons } from 'ionicons';
 import { createOutline, checkmarkSharp } from 'ionicons/icons';
+import { ListComponent } from './app-list.component';
 
 
 

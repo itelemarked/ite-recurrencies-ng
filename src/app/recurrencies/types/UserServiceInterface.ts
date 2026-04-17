@@ -8,7 +8,7 @@ export interface UserServiceInterface {
   error: Signal<string | null>
 
   /**
-   * Asynchronously signs in using an email and password. Fails with an error if the email address and password do not match.  
+   * Asynchronously signs in using an email and password. 
    * This promise returns the service state, and never throw errors (the error is passed to the service state instead.)  
    * 
    * ---
