@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TestingAuthService } from "./testing-auth-service/testing-auth-service";
-import { AuthService2 } from '../core/services/auth-service2';
 
 
 @Component({
@@ -24,10 +23,7 @@ import { AuthService2 } from '../core/services/auth-service2';
 })
 export class TestingPage {
 
-  private auth2 = inject(AuthService2)
-
-  constructor() {
-    this.auth2.isLoading$.subscribe(val => console.log(val))
-  }
+  constructor() {}
 
 }
+

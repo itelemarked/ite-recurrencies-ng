@@ -1,10 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { UserServiceInterface } from '../types/UserServiceInterface';
-import { User } from '../types/User';
 
 import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { FirebaseService } from '../../core/firebase-service';
-import { UserServiceState } from '../types/UserServiceState';
+import { FirebaseService } from '../../_core/firebase-service';
+import { UserServiceInterface } from '../../_types/UserServiceInterface';
+import { UserServiceState } from '../../_types/UserServiceState';
 
 
 

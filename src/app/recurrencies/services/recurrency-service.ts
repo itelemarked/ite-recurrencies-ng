@@ -7,13 +7,14 @@ import { Timezone } from "../../../js/timezone-date/types/Timezone";
 import { DateFormat } from "../../../js/timezone-date/types/DateFormat";
 import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const";
 
-import { SettingsService } from "./settings-service";
-import { Identifiable, isIdentifiable } from "../types/Identifiable";
-import { isRecurrencyData, RecurrencyData } from "../types/RecurrencyData";
-import { Recurrency } from "../types/Recurrency";
-import { RecurrencyServiceInterface } from "../types/RecurrencyServiceInterface";
-import { RECURRENCY_ERROR, RecurrencyError } from "../types/RecurrencyError";
+import { SettingsService } from "../../settings/services/settings-service";
+
 import { isArray } from "../../../js/valid-type";
+import { isRecurrencyData, RecurrencyData } from "../../_types/RecurrencyData";
+import { RECURRENCY_ERROR, RecurrencyError } from "../../_types/RecurrencyError";
+import { RecurrencyServiceInterface } from "../../_types/RecurrencyServiceInterface";
+import { Recurrency } from "../../_types/Recurrency";
+import { Identifiable, isIdentifiable } from "../../_types/Identifiable";
 
 
 

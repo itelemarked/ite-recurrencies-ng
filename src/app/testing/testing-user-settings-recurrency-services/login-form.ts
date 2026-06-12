@@ -1,6 +1,6 @@
 import { Component, computed, output, signal } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { AppList } from '../../shared/components/app-list';
+import { AppList } from '../../_shared/components/app-list';
 import { email, form, minLength, required, FormField } from '@angular/forms/signals';
 
 interface LoginFormInterface {

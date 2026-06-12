@@ -7,7 +7,7 @@ import { ellipsisHorizontalOutline } from 'ionicons/icons';
 import { DateString } from "../../js/timezone-date/types/DateString";
 import { PeriodUnit } from "../../js/timezone-date/types/PeriodUnit";
 
-import { SettingsService } from "./services/settings-service";
+import { SettingsService } from "../settings/services/settings-service";
 import { RecurrencyService } from "./services/recurrency-service";
 import { PositiveInteger } from "../../js/timezone-date/types/PositiveInteger";
 

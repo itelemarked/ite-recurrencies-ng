@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { onAuthStateChanged } from 'firebase/auth';
-import { FirebaseService } from '../../core/firebase-service';
+import { FirebaseService } from '../../_core/firebase-service';
 import { UserFirebaseService } from '../../recurrencies/services/user-firebase-service';
 
 @Component({

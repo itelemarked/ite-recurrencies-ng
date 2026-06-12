@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 import { RecurrencyService } from "../../recurrencies/services/recurrency-service";
-import { SettingsService } from "../../recurrencies/services/settings-service";
+import { SettingsService } from "../../settings/services/settings-service";
 import { DateString } from "../../../js/timezone-date/types/DateString";
 import { PeriodUnit } from "../../../js/timezone-date/types/PeriodUnit";
 import { PositiveInteger } from "../../../js/timezone-date/types/PositiveInteger";
-import { Recurrency } from "../../recurrencies/types/Recurrency";
-import { Identifiable } from "../../recurrencies/types/Identifiable";
+import { Recurrency } from "../../_types/Recurrency";
+import { Identifiable } from "../../_types/Identifiable";
 
 @Component({
   selector: 'app-testing-recurrency-service',

@@ -1,14 +1,12 @@
 import { Component, computed, inject } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
-import { AuthService } from "../../core/services/auth-service";
-import { AuthService2 } from "../../core/services/auth-service2";
+import { AuthService } from "../../auth/services/auth-service";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: 'app-testing-auth-service',
   imports: [
-    IonicModule,
-    AsyncPipe
+    IonicModule
   ],
   template: `
     <div class="p-1">
@@ -50,7 +48,7 @@ import { AsyncPipe } from "@angular/common";
   styles: [``]
 })
 export class TestingAuthService {
-  authService = inject(AuthService2)
+  authService = inject(AuthService)
 
   // user = computed(() => this.authService.user()) 
   // userIsLoading = computed(() => this.authService.isLoading()) 
