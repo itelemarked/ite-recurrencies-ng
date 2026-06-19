@@ -93,6 +93,7 @@ const D = (function() {
     getDateString,
     getTimeString,
     getDate,
+    getPlatformTimezone,
     format,
     diff,
     add,
@@ -126,6 +127,7 @@ export class TimezoneDate implements TimezoneDateInterface {
     return new TimezoneDate(date, timezone, dateFormat)
   }
   
+  static getPlatformTimezone = () => D.getPlatformTimezone()
 
   constructor(date: Date, timezone: Timezone, dateFormat: DateFormat) {
     if(date.toString() === 'Invalid Date') throw new Error(`Invalid date in constructor argument`)

@@ -32,7 +32,7 @@
       "    IonContent",
 			"  ],",
 			"  template: `",
-			"    <ion-header>",
+			"    <ion-header collapse=\"fade\" [translucent]=\"true\">",
 			"      <ion-toolbar>",
 			"        <ion-title>",
 			"          $2",

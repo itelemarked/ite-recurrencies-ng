@@ -1,11 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { TestingAuthService } from "./testing-auth-service/testing-auth-service";
+import { form, required } from '@angular/forms/signals';
+import { DateTimezoneOptions } from '../settings/components/date-timezone-options';
+import { Timezone } from '../../js/timezone-date/types/Timezone';
+
+
 
 
 @Component({
   selector: 'app-testing-page',
-  imports: [IonicModule, TestingAuthService],
+  imports: [IonicModule, DateTimezoneOptions],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -15,15 +19,26 @@ import { TestingAuthService } from "./testing-auth-service/testing-auth-service"
 
     <ion-content [forceOverscroll]="false" class="ion-padding-horizontal">
 
-      <app-testing-auth-service/>
+      <app-date-timezone-options
+        [(value)]="optValue"
+      />
+
+      <p>value: {{ optValue() }}</p>
 
     </ion-content>
   `,
   styles: [``],
 })
 export class TestingPage {
+  optValue = signal<Timezone | undefined>('Europe/Zurich')
 
-  constructor() {}
+  model = signal<{opts: string}>({
+    opts: ''
+  })
+
+  form = form(this.model, (schema) => {
+    required(schema.opts, { message: 'An options must be chosen...'})
+  })
 
 }
 

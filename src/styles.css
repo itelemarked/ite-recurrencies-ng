@@ -10,8 +10,7 @@
 @import "./css/global/z-index.css";
 @import "./css/global/border.css"; */
 
-@import "./css/ionic/ionic.css";
+@import "./css/ionic/custom.css";
 @import "./css/ionic/variables.css";
-/* @import "./css/ionic/list.css"; */
 @import "tailwindcss";
 

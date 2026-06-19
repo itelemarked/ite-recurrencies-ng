@@ -1,16 +1,36 @@
-import { Component } from "@angular/core";
+import { Component, input, output } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 
+import { User } from "../../_types/User";
+
+import { AppList } from "../../_shared/app-list";
+
+
 @Component({
-  selector: 'app-user-settings-list',
+  standalone: true,
+  selector: 'app-user-settings',
   imports: [
-    IonicModule
+    IonicModule,
+    AppList
   ],
   template: `
-    UserSettingsList works!
+    <app-list
+      label="User"
+    >
+      @if(user() !== undefined && user() !== null) {
+        <ion-item>
+          <ion-label>{{ user()!.email }}</ion-label>
+          <ion-button slot="end" color="danger" fill="outline" (click)="logout.emit()">logout</ion-button>
+        </ion-item>
+      } @else {
+        <ion-item button (click)="authenticate.emit()">Login</ion-item>
+      }
+    </app-list>
   `,
   styles: [``]
 })
-export class UserSettingsList {
-
+export class UserSettings {
+  user = input.required<User | null | undefined>()
+  authenticate = output<void>()
+  logout = output<void>()
 }

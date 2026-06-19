@@ -1,18 +1,24 @@
-import { Component } from "@angular/core";
-import { IonContent, IonHeader, IonItem, IonList, IonTitle, IonToolbar } from "@ionic/angular/standalone";
-import { AppList } from "../_shared/components/app-list";
+import { Component, computed, inject } from "@angular/core";
+import { Router } from "@angular/router";
+import { IonicModule } from "@ionic/angular";
+
+import { DateFormat } from "../../js/timezone-date/types/DateFormat";
+import { Timezone } from "../../js/timezone-date/types/Timezone";
+import { blurActiveElement } from "../../js/ionic/fixes";
+
+import { SharedModule } from "../_shared/_shared-module";
+import { AuthService } from "../auth/services/auth-service";
+import { DateSettings } from "./components/date-settings";
+import { UserSettings } from "./components/user-settings-list";
 
 @Component({
   selector: 'app-settings-page',
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonItem,
-    AppList
+    IonicModule,
+    SharedModule,
+    DateSettings,
+    UserSettings
 ],
   template: `
     <ion-header collapse="fade" [translucent]="true">
@@ -23,29 +29,35 @@ import { AppList } from "../_shared/components/app-list";
       </ion-toolbar>
     </ion-header>
     <ion-content [forceOverscroll]="false" class="ion-padding">
-      SettingsPage works!
 
-      <app-list>
-        <div appListHeader>Header</div>
-        <ion-list appListItems [inset]="true">
-          <ion-item>aaa</ion-item>
-        </ion-list>
-        <div appListFooter>some footer here</div>
-      </app-list>
+      <app-user-settings
+        [user]="authService.user()"
+        (logout)="onLogout()"
+        (authenticate)="onAuthenticate()"
+      />
+
+      <app-date-settings
+        [dateFormat]="dateFormat()"
+        [timezone]="timezone()"
+      />
       
     </ion-content>
   `,
   styles: [``]
 })
 export class SettingsPage {
-  // DEPENDENCIES
+  protected authService = inject(AuthService)
+  protected router = inject(Router)
 
-  // STATE
+  dateFormat = computed<DateFormat>(() => 'PLATFORM_DEFINED')
+  timezone = computed<Timezone>(() => 'Europe/Zurich')
 
-  // SELECTORS
+  onLogout() {
+    this.authService.logout()
+  }
 
-  // ACTIONS
-
-  // PRIVATE
-
+  onAuthenticate() {
+    blurActiveElement()
+    this.router.navigateByUrl('/authenticate')
+  }
 }
