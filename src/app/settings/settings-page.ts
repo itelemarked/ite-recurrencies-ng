@@ -9,7 +9,7 @@ import { blurActiveElement } from "../../js/ionic/fixes";
 import { SharedModule } from "../_shared/_shared-module";
 import { AuthService } from "../auth/services/auth-service";
 import { DateSettings } from "./components/date-settings";
-import { UserSettings } from "./components/user-settings-list";
+import { UserSettings } from "./components/user-settings";
 
 @Component({
   selector: 'app-settings-page',

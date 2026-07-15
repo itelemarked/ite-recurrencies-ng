@@ -2,7 +2,6 @@ import { Component, computed, model } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 
 import { SharedModule } from "../../_shared/_shared-module";
-import { AppInputSelect } from "../../_shared/app-input-select";
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate";
 import { DateString } from "../../../js/timezone-date/types/DateString";
 import { TimeString } from "../../../js/timezone-date/types/TimeString";
@@ -13,14 +12,13 @@ import { DateFormat } from "../../../js/timezone-date/types/DateFormat";
   imports: [
     IonicModule,
     SharedModule,
-    AppInputSelect
   ],
   template: `
-    <app-input-select
+    <!-- <app-input-select
       label="Date Format"
       [options]="dateFormatOptions()"
       [(value)]="value"
-    ></app-input-select>
+    ></app-input-select> -->
   `,
   styles: [``]
 })

@@ -1,13 +1,52 @@
 import { Component, output, signal } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 import { email, FieldState, form } from "@angular/forms/signals";
+import { AppList } from "../../_shared/app-list";
 
 @Component({
   selector: 'app-login-form',
   imports: [
     IonicModule,
+    AppList
 ],
   template: `
+    <app-list>
+      <ion-header>Email</ion-header>
+      <ion-item>
+        <ion-input 
+          type="text"
+          placeholder="Enter an email"
+        />
+      </ion-item>
+    </app-list>
+
+    <app-list>
+      <ion-header>Password</ion-header>
+      <ion-item>
+        <ion-input type="password" placeholder="Enter a password">
+          <ion-input-password-toggle slot="end"/>
+        </ion-input>
+      </ion-item>
+    </app-list>
+
+    <ion-button 
+      expand="block" 
+      style="margin-top: 48px;"
+    >
+      Login
+    </ion-button>
+
+    <div class="flex items-center">
+      <span>No account yet?</span> 
+      <ion-button 
+        color="primary" 
+        fill="clear" 
+        (click)="toggleToSignup.emit()"
+      >
+        signup
+      </ion-button>
+    </div>
+
     <!-- <app-list 
       [class.focused]="isEmailCtlFocused()"
       [class.invalid]="form.email().invalid() && form.email().touched()"
@@ -54,7 +93,7 @@ import { email, FieldState, form } from "@angular/forms/signals";
       Login
     </ion-button>
 
-    <!-- TODO: style the comments below to be centered and aligned... -->
+
     <div class="flex items-center">
       <span>No account yet?</span> 
       <ion-button 
@@ -67,6 +106,7 @@ import { email, FieldState, form } from "@angular/forms/signals";
     </div> -->
   `,
   styles: [`
+  /*
     app-list {
       --items-outline-width: 1px;
       --items-outline-color: var(--ion-color-medium);
@@ -86,6 +126,7 @@ import { email, FieldState, form } from "@angular/forms/signals";
       --items-outline-width: 2px;
       --items-outline-color: var(--ion-color-danger);
     }
+    */
   `]
 })
 export class LoginForm {

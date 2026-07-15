@@ -3,7 +3,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { SharedModule } from "../../_shared/_shared-module";
 import { TimezoneDate } from "../../../js/timezone-date/TimezoneDate";
-import { AppInputSelect } from "../../_shared/app-input-select";
 import { Timezone } from "../../../js/timezone-date/types/Timezone";
 
 @Component({
@@ -11,14 +10,13 @@ import { Timezone } from "../../../js/timezone-date/types/Timezone";
   imports: [
     IonicModule,
     SharedModule,
-    AppInputSelect
   ],
   template: `
-    <app-input-select
+    <!-- <app-input-select
       label="Timezone"
       [options]="timezoneOptions()"
       [(value)]="value"
-    />
+    /> -->
   `,
   styles: [``]
 })

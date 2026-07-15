@@ -15,9 +15,8 @@ import { TimeString } from "../../../js/timezone-date/types/TimeString";
     SharedModule
   ],
   template: `
-    <app-list
-      label="Date"
-    >
+    <app-list>
+      <ion-header>Date</ion-header>
       <ion-item button>
         <ion-label>Format</ion-label>
         <ion-note>{{ dateFormatString() }}</ion-note>

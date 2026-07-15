@@ -14,9 +14,8 @@ import { AppList } from "../../_shared/app-list";
     AppList
   ],
   template: `
-    <app-list
-      label="User"
-    >
+    <app-list>
+      <ion-header>User</ion-header>
       @if(user() !== undefined && user() !== null) {
         <ion-item>
           <ion-label>{{ user()!.email }}</ion-label>

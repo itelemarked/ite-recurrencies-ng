@@ -1,27 +1,57 @@
-import { Component, input } from "@angular/core";
+import { Component } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
-
 
 /**
  * AppList is a simple wrapper, to render a common styled list throughout the whole app.
- * Only 'ion-item' children will be rendered via 'ng-content'
+ * Use it INSTEAD OF ion-list!
+ * 
+ * It uses ionic component under the hood and restyle these where needed.
+ * Accepted children are (and only these, others won't be displayed!):
+ *    - ion-header (usually only one!)
+ *    - ion-items, or ion-radio-group, or ion-item-sliding (the items to be displayed, as many as needed. 
+ *      They could be mixed together, althought it is not recommended since it can lead to unexpected styling, e.g when mixing ion-items with ion-radio-group.....)
+ *    - ion-footer (as many as needed, e.g for one for helper-text and one for errors)
  * 
  * INPUTS:
- *  label: string | undefined
- *  errorMessages: string[] | undefined - Every errorMessage is rendered as a list (<ul> and <li> elements)
- *  helperText: string[] | undefined  - Every array items is rendered as paragraph (There is no other means of formatting the text...)
+ *  none
  * 
  * OUTPUTS:
  *  none
  * 
  * CSS PROPERTIES:
- *  --header-color
- *  --items-outline-style
- *  --items-outline-width
- *  --items-outline-color
- *  --footer-color
+ *  --header-color: var(--ion-color-medium);
+ *  --items-outline-style: solid;
+ *  --items-outline-width: 1px;
+ *  --items-outline-color: transparent;
+ *  --footer-color: var(--ion-color-medium);
+ * 
+ * @example
+ * <app-list1>
+ * 
+ *   <ion-header>Title</ion-header>
+ * 
+ *   <ion-item button>aaa</ion-item>
+ * 
+ *   <ion-item>
+ *     <ion-label>
+ *       <h2>h2</h2>
+ *       <p>p</p>
+ *     </ion-label>
+ *     <ion-note>note</ion-note>
+ *   </ion-item>
+ * 
+ *   <ion-item>
+ *     <ion-input type="text"/>
+ *   </ion-item>
+ * 
+ *   <ion-footer>this is some footer text 1</ion-footer>
+ * 
+ *   <ion-footer>
+ *     <ion-text color="danger">this is some footer text 2</ion-text>
+ *   </ion-footer>
+ * 
+ * </app-list1>
  */
-
 
 @Component({
   selector: 'app-list',
@@ -30,26 +60,15 @@ import { IonicModule } from '@ionic/angular';
   ],
   template: `
     <div class="header-container">
-      {{ label() }}
+      <ng-content select="ion-header"/>
     </div>
 
     <ion-list class="items-container" [inset]="true">
-      <ng-content select="ion-item"/>
+      <ng-content select="ion-item, ion-radio-group, ion-item-sliding"/>
     </ion-list>
       
     <div class="footer-container">
-      <div class="errors-container">
-        <ul>
-          @for(errorMessage of errorMessages(); track errorMessage.toString()) {
-            <li>{{ errorMessage }}</li>
-          }
-        </ul>
-      </div>
-      <div class="helper-container">
-        @for(text of helperText(); track text.toString()) {
-          <p>{{text}}</p>
-        }
-      </div>
+      <ng-content select="ion-footer"/>
     </div>
   `,
   styles: [`
@@ -58,7 +77,6 @@ import { IonicModule } from '@ionic/angular';
       --items-outline-style: solid;
       --items-outline-width: 1px;
       --items-outline-color: transparent;
-      --errors-color: var(--ion-color-danger);
       --footer-color: var(--ion-color-medium);
     }
 
@@ -85,19 +103,8 @@ import { IonicModule } from '@ionic/angular';
       margin: 5px 16px;
       font-weight: 300;
       font-size: 0.8em;
-    }
-    
-    .errors-container {
-      color: var(--errors-color);
-    }
-    
-    .helper-container {
       color: var(--footer-color);
     }
   `]
 })
-export class AppList {
-  label = input<string>()
-  errorMessages = input<string[]>()
-  helperText = input<string[]>()
-}
+export class AppList {}
