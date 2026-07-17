@@ -1,8 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, filter, map, Observable, startWith, Subject, take, tap } from 'rxjs';
-import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, AuthError, ErrorFn, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, filter, map, Observable, startWith, take } from 'rxjs';
+import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { FirebaseService } from '../../_core/firebase-service';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthStore } from '../../_types/AuthStore';
 import { User } from '../../_types/User';
 

@@ -1,3 +1,5 @@
+import { AuthErrorCodes } from "firebase/auth"
+
 /**
  * Maps to dayjs period units
  */
@@ -17,3 +19,5 @@ export type PeriodUnit = typeof PERIOD_UNIT[keyof typeof PERIOD_UNIT]
 export function isPeriodUnit(val: any): val is PeriodUnit {
   return Object.values(PERIOD_UNIT).includes(val)
 }
+
+AuthErrorCodes
