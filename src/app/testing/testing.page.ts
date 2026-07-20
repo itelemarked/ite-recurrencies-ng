@@ -4,12 +4,13 @@ import { LoginForm } from '../auth/components/login-form';
 import { AuthError } from '../_types/AuthErrors';
 import { AuthService2 } from '../auth/services/auth-service2';
 import { isPlainObject } from '../../js/types/valid-type';
+import { TestingAuthService } from './testing-auth-service/testing-auth-service';
 
 
 
 @Component({
   selector: 'app-testing-page',
-  imports: [IonicModule, LoginForm],
+  imports: [IonicModule, LoginForm, TestingAuthService],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -19,9 +20,10 @@ import { isPlainObject } from '../../js/types/valid-type';
 
     <ion-content [forceOverscroll]="false" class="ion-padding-horizontal">
 
-      <app-login-form
+      <!-- <app-login-form
         
-      />
+      /> -->
+      <app-testing-auth-service/>
 
     </ion-content>
   `,
@@ -39,9 +41,9 @@ export class TestingPage {
   // ])
 
   constructor() {
-    this.authService.login('aa', 'a')
-      .then(() => console.log('login success'))
-      .catch((err) => console.log(err))
+    // this.authService.login('aa', 'a')
+    //   .then(() => console.log('login success'))
+    //   .catch((err) => console.log(err))
   }
 }
 
