@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { LoginForm } from '../auth/components/login-form';
 import { AuthError } from '../_types/AuthErrors';
-
+import { AuthService2 } from '../auth/services/auth-service2';
+import { isPlainObject } from '../../js/types/valid-type';
 
 
 
@@ -19,7 +20,7 @@ import { AuthError } from '../_types/AuthErrors';
     <ion-content [forceOverscroll]="false" class="ion-padding-horizontal">
 
       <app-login-form
-        [authErrors]="backendAuthErrors()"
+        
       />
 
     </ion-content>
@@ -28,16 +29,20 @@ import { AuthError } from '../_types/AuthErrors';
 })
 export class TestingPage { 
 
-  // private auth = inject(FirebaseService).auth
-  protected backendAuthErrors = signal<AuthError[]>([
-    {
-      code: 'email-already-exists',
-      message: 'An account with this email already exists.'
-    }
-  ])
+  private authService = inject(AuthService2)
+
+  // protected backendAuthErrors = signal<AuthError[]>([
+  //   {
+  //     code: 'email-already-exists',
+  //     message: 'An account with this email already exists.'
+  //   }
+  // ])
 
   constructor() {
-    
+    this.authService.login('aa', 'a')
+      .then(() => console.log('login success'))
+      .catch((err) => console.log(err))
   }
 }
+
 

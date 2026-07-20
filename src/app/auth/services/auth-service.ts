@@ -3,7 +3,7 @@ import { BehaviorSubject, filter, map, Observable, startWith, take } from 'rxjs'
 import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { FirebaseService } from '../../_core/firebase-service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AuthStore } from '../../_types/AuthStore';
+import { AuthStore } from '../../_types/AuthServiceInterface';
 import { User } from '../../_types/User';
 
 

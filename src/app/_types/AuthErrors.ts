@@ -1,34 +1,23 @@
-import { AuthError as FirebaseAuthError} from "firebase/auth";
+import { isString } from "../../js/types/valid-type"
 
+export const AUTH_ERRORS = {
+  'invalid-email': 'An account corresponding to this email has not been found',
+  'invalid-password': 'The password is incorrect',
+  'email-already-exists': 'There is already a registered user with this email'
+} as const
 
-export function toAuthError(err: FirebaseAuthError) {
-  switch(err.code) {
+export type AuthErrorCode = keyof typeof AUTH_ERRORS
+export type AuthErrorMessage = typeof AUTH_ERRORS[keyof typeof AUTH_ERRORS]
 
-    case 'auth/email-already-exists': 
-      return {
-        code: 'email-already-exists',
-        message: 'An account with this email already exists.'
-      } as const
+export const isAuthErrorCode = (val: unknown): val is AuthErrorCode => isString(val) && val in AUTH_ERRORS
 
-    case 'auth/user-not-found': 
-      return {
-        code: 'user-not-found',
-        message: 'There are no account corresponding to this email.'
-      } as const
+export class AuthError extends Error {
+  code: AuthErrorCode
 
-    case 'auth/invalid-password': 
-      return {
-        code: 'invalid-password',
-        message: 'The entered password is invalid.'
-      } as const
-
-    default: 
-      return {
-        code: 'unknown-error',
-        message: `Unknown error (${err.code})`
-      } as const
+  constructor(code: AuthErrorCode) {
+    const message: AuthErrorMessage = AUTH_ERRORS[code]
+    super(message)
+    this.code = code
+    this.name = 'AuthError'
   }
 }
-
-
-export type AuthError = ReturnType<typeof toAuthError>
