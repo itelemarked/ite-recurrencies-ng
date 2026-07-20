@@ -1,4 +1,4 @@
-import { isPlainObject } from "../../js/valid-type"
+import { isPlainObject } from "../../js/types/valid-type"
 
 export type Identifiable<T extends Record<string, any>> = T & { uid: string }
 

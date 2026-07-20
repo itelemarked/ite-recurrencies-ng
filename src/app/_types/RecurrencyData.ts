@@ -1,7 +1,7 @@
 import { DateString, isDateString } from "../../js/timezone-date/types/DateString"
 import { isPeriodUnit, PeriodUnit } from "../../js/timezone-date/types/PeriodUnit"
 import { isPositiveInteger, PositiveInteger } from "../../js/timezone-date/types/PositiveInteger"
-import { isInterface, isString } from "../../js/valid-type"
+import { isInterface, isString } from "../../js/types/valid-type"
 
 export type RecurrencyData = {
   title: string,

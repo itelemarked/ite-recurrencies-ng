@@ -9,7 +9,7 @@ import { SHORT_BEFORE_MIDNIGHT } from "../../../js/timezone-date/const/const";
 
 import { SettingsService } from "../../settings/services/settings-service";
 
-import { isArray } from "../../../js/valid-type";
+import { isArray } from "../../../js/types/valid-type";
 import { isRecurrencyData, RecurrencyData } from "../../_types/RecurrencyData";
 import { RECURRENCY_ERROR, RecurrencyError } from "../../_types/RecurrencyError";
 import { RecurrencyServiceInterface } from "../../_types/RecurrencyServiceInterface";

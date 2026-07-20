@@ -1,4 +1,4 @@
-import { isPlainObject } from "../valid-type"
+import { isPlainObject } from "../types/valid-type"
 
 export function deepCopy<T>(o: T): T {
   return JSON.parse(JSON.stringify(o))
