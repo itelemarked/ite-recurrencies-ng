@@ -6,7 +6,7 @@ import { TestingPage } from './testing/testing.page';
 import { AuthPage } from './auth/auth-page';
 
 
-const ORIGIN = '/settings'
+const ORIGIN = '/testing'
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: ORIGIN},

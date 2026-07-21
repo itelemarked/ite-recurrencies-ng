@@ -1,16 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { LoginForm } from '../auth/components/login-form';
-import { AuthError } from '../_types/AuthErrors';
-import { AuthService2 } from '../auth/services/auth-service2';
-import { isPlainObject } from '../../js/types/valid-type';
 import { TestingAuthService } from './testing-auth-service/testing-auth-service';
+import { AuthService } from '../auth/services/auth-service3';
 
 
 
 @Component({
   selector: 'app-testing-page',
-  imports: [IonicModule, LoginForm, TestingAuthService],
+  imports: [IonicModule, TestingAuthService],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -31,7 +28,7 @@ import { TestingAuthService } from './testing-auth-service/testing-auth-service'
 })
 export class TestingPage { 
 
-  private authService = inject(AuthService2)
+  private authService = inject(AuthService)
 
   // protected backendAuthErrors = signal<AuthError[]>([
   //   {
@@ -46,5 +43,7 @@ export class TestingPage {
     //   .catch((err) => console.log(err))
   }
 }
+
+
 
 

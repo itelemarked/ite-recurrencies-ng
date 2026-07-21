@@ -1,33 +1,51 @@
-import { inject, Injectable, Signal } from '@angular/core';
-import { BehaviorSubject, filter, from, map, Observable, startWith, Subject, switchMap, take } from 'rxjs';
-import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { FirebaseService } from '../../_core/firebase-service';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, catchError, from, ignoreElements, map, Observable, of, Subject, switchMap } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AuthStore } from '../../_types/AuthServiceInterface';
+
+import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, createUserWithEmailAndPassword, signOut, AuthErrorCodes as FbAuthErrorCodes, AuthError as FbAuthError} from 'firebase/auth';
+
+import { FirebaseService } from '../../_core/firebase-service';
 import { User } from '../../_types/User';
+import { AuthError, AuthErrorCodeKnown } from '../../_types/AuthErrors3';
+import { AuthServiceInterface } from '../../_types/AuthServiceInterface3';
+import { assertError } from '../../../js/errors/assertError';
 
 
-// TODO:
-// Fix freeze when it errored... (probably need to catch the error)
-// Error object to be enhanced (AuthError iso Error)??
+/** FIREBASE DEPENDENCY */
 
-export interface AuthServiceInterface3 {
-  user$: Observable<User | null | undefined>
-  user: Signal<User | null | undefined>
-  isLoading$: Observable<boolean>
-  isLoading: Signal<boolean>
-  error$: Observable<Error | null>
-  error: Signal<Error | null>
+/**
+ * Redefining Firebase'AuthError' type, 
+ * explicitely setting the 'code' type as 'string literal' from the firebase-code-list (through the constant Firebase'AuthErrorCodes') instead of simply 'string'
+ */
+type FirebaseAuthErrorCode = typeof FbAuthErrorCodes[keyof typeof FbAuthErrorCodes]
+type FirebaseAuthError = Omit<FbAuthError, 'code'> & { readonly code: FirebaseAuthErrorCode }
+const isFirebaseAuthError = (err: unknown): err is FirebaseAuthError => err instanceof Error && err.name === 'FirebaseError' && 'customData' in err
 
-  login: (email: string, password: string) => void
-  signup: (email: string, password: string) => void
-  logout: () => void
+/**
+ * Convert some of FirebaseAuthErrorCodes in AuthCodes
+ */
+const FIREBASE_AUTH_ERROR_CODES: Partial<Record<FirebaseAuthErrorCode, AuthErrorCodeKnown>> = {
+  'auth/user-not-found': 'invalid-email',
+  'auth/wrong-password': 'invalid-password',
+  'auth/email-already-in-use': 'email-already-exists',
+}
+
+const getErrorFrom = (error: unknown): AuthError => {
+  const err = assertError(error)
+  if(isFirebaseAuthError(err)) {
+    const authErrorCode = FIREBASE_AUTH_ERROR_CODES[err.code]
+    if(authErrorCode !== undefined) {
+      return new AuthError(authErrorCode)
+    }
+  }
+  return new AuthError('unknown-auth-error', err.message)
 }
 
 
 
+
 @Injectable({ providedIn: 'root' })
-export class AuthService3 implements AuthServiceInterface3 {
+export class AuthService implements AuthServiceInterface {
   // export class AuthService {
   private auth = inject(FirebaseService).auth
 
@@ -35,7 +53,7 @@ export class AuthService3 implements AuthServiceInterface3 {
   private state = {
     user$: new BehaviorSubject<User | null | undefined>(undefined),
     isLoading$: new BehaviorSubject<boolean>(true),
-    error$: new BehaviorSubject<Error | null>(null)
+    error$: new BehaviorSubject<AuthError | null>(null)
   }
 
   // ACTIONS
@@ -49,29 +67,37 @@ export class AuthService3 implements AuthServiceInterface3 {
   }).pipe(
     map(fbUser => fbUser === null ? null : { email: fbUser.email!, uid: fbUser.uid } as User)
   )
+
+
   private loginRequest$ = new Subject<{email: string, password: string}>()
-  private loginResponse$ = this.loginRequest$.pipe(
-    switchMap(({email, password}: {email: string, password: string}) => from(signInWithEmailAndPassword(this.auth, email, password))),
+
+  private loginFailure$ = this.loginRequest$.pipe(
+    switchMap(
+      ({email, password}: {email: string, password: string}) => from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+        ignoreElements(),
+        catchError(err => of(err))
+      )
+    )
   )
+
+
   private signupRequest$ = new Subject<{email: string, password: string}>()
-  private signupResponse$ = this.signupRequest$.pipe(
-    switchMap(({email, password}: {email: string, password: string}) => from(createUserWithEmailAndPassword(this.auth, email, password)))
+
+  private signupFailure$ = this.signupRequest$.pipe(
+    switchMap(
+      ({email, password}: {email: string, password: string}) => from(createUserWithEmailAndPassword(this.auth, email, password)).pipe(
+        ignoreElements(),
+        catchError(err => of(err))
+      )
+    )
   )
+
+
   private logoutRequest$ = new Subject<void>()
+
   private logoutResponse$ = this.logoutRequest$.pipe(
     switchMap(() => from(signOut(this.auth)))
   )
-  
-
-  // SELECTORS
-  user$ = this.state['user$'].asObservable()
-  user = toSignal(this.user$, {requireSync: true})
-
-  isLoading$ = this.state.isLoading$.asObservable()
-  isLoading = toSignal(this.state.isLoading$, {requireSync: true})
-
-  error$ = this.state.error$.asObservable()
-  error = toSignal(this.state.error$, {requireSync: true})
 
 
   constructor() {
@@ -81,11 +107,7 @@ export class AuthService3 implements AuthServiceInterface3 {
         this.state.user$.next(user)
         this.state.isLoading$.next(false),
         this.state.error$.next(null)
-      },
-      error: (err: Error) => {
-        this.state.isLoading$.next(false),
-        this.state.error$.next(err)
-      },
+      }
     })
 
     this.loginRequest$.pipe(takeUntilDestroyed()).subscribe({
@@ -95,11 +117,9 @@ export class AuthService3 implements AuthServiceInterface3 {
       }
     })
 
-    this.loginResponse$.pipe(takeUntilDestroyed()).subscribe({
-      error: (err: Error) => {
-        this.state.isLoading$.next(false)
-        this.state.error$.next(err)
-      }
+    this.loginFailure$.pipe(takeUntilDestroyed()).subscribe((errorValue) => {
+      this.state.isLoading$.next(false)
+      this.state.error$.next(getErrorFrom(errorValue))
     })
 
     this.signupRequest$.pipe(takeUntilDestroyed()).subscribe({
@@ -109,11 +129,9 @@ export class AuthService3 implements AuthServiceInterface3 {
       }
     })
 
-    this.signupResponse$.pipe(takeUntilDestroyed()).subscribe({
-      error: (err: Error) => {
-        this.state.isLoading$.next(false)
-        this.state.error$.next(err)
-      }
+    this.signupFailure$.pipe(takeUntilDestroyed()).subscribe((errorValue) => {
+      this.state.isLoading$.next(false)
+      this.state.error$.next(getErrorFrom(errorValue))
     })
 
     this.logoutRequest$.pipe(takeUntilDestroyed()).subscribe({
@@ -123,27 +141,38 @@ export class AuthService3 implements AuthServiceInterface3 {
       }
     })
 
-    this.logoutResponse$.pipe(takeUntilDestroyed()).subscribe({
-      error: (err: Error) => {
-        this.state.isLoading$.next(false)
-        this.state.error$.next(err)
-      }
-    })
+    this.logoutResponse$.pipe(takeUntilDestroyed()).subscribe()
   }
+
+
+  // SELECTORS
+  readonly user$ = this.state.user$.asObservable()
+  readonly user = toSignal(this.user$, {requireSync: true})
+
+  readonly isLoading$ = this.state.isLoading$.asObservable()
+  readonly isLoading = toSignal(this.state.isLoading$, {requireSync: true})
+
+  readonly error$ = this.state.error$.asObservable()
+  readonly error = toSignal(this.state.error$, {requireSync: true})
 
 
   login(email: string, password: string) {
-    this.loginRequest$.next({email, password})
+    if(this.state.user$.value?.email !== email) {
+      this.loginRequest$.next({email, password})
+    }
   }
 
   signup(email: string, password: string) {
-    this.signupRequest$.next({email, password})
+    if(this.state.user$.value?.email !== email) {
+      this.signupRequest$.next({email, password})
+    }
   }
 
   logout() {
-    this.logoutRequest$.next()
+    const currentUser = this.state.user$.value
+    if(currentUser !== null && currentUser !== undefined) {
+      this.logoutRequest$.next()
+    }
   }
-
-  
 
 }

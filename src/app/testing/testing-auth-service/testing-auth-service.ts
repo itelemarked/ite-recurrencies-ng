@@ -1,8 +1,6 @@
-import { Component, computed, inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
-import { AuthService } from "../../auth/services/auth-service";
-import { AsyncPipe } from "@angular/common";
-import { AuthService3 } from "../../auth/services/auth-service3";
+import { AuthService } from "../../auth/services/auth-service3";
 
 @Component({
   selector: 'app-testing-auth-service',
@@ -20,7 +18,19 @@ import { AuthService3 } from "../../auth/services/auth-service3";
       <ion-button
         size="small"
         (click)="authService.login('aaa@aa.com', '111111')"
-      >wrong login</ion-button>
+      >wrong email</ion-button>
+    </div>
+    <div class="p-1">
+      <ion-button
+        size="small"
+        (click)="authService.login('aaa@aaa.com', '1')"
+      >wrong password (for aaa@aaa.com)</ion-button>
+    </div>
+    <div class="p-1">
+      <ion-button
+        size="small"
+        (click)="authService.signup('aaa@aaa.com', '123456')"
+      >wrong signup (already existing aaa@aaa.com)</ion-button>
     </div>
     <div class="p-1">
       <ion-button
@@ -43,17 +53,13 @@ import { AuthService3 } from "../../auth/services/auth-service3";
     <div class="p-1">
       user: {{ !!user()? user()!.email : 'no user logged-in' }} <br>
       isLoading: {{ userIsLoading() }} <br>
-      error: {{ !!userError() ? userError() : 'no errors' }}
+      error: {{ !!userError() ? userError()!.message : 'no errors' }}
     </div>
   `,
   styles: [``]
 })
 export class TestingAuthService {
-  authService = inject(AuthService3)
-
-  // user = computed(() => this.authService.user()) 
-  // userIsLoading = computed(() => this.authService.isLoading()) 
-  // userError = computed(() => this.authService.error()) 
+  authService = inject(AuthService)
   
   user$ = this.authService.user$
   userIsLoading$ = this.authService.isLoading$
