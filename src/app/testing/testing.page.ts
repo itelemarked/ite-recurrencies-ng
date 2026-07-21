@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TestingAuthService } from './testing-auth-service/testing-auth-service';
-import { AuthService } from '../auth/services/auth-service3';
+import { AuthService } from '../auth/services/auth-service';
 
 
 

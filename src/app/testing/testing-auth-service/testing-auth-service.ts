@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
-import { AuthService } from "../../auth/services/auth-service3";
+import { AuthService } from "../../auth/services/auth-service";
 
 @Component({
   selector: 'app-testing-auth-service',

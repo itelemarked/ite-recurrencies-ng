@@ -1,16 +1,17 @@
-import { Signal } from "@angular/core";
-import { Observable } from "rxjs";
-import { User } from "./User";
+import { Signal } from "@angular/core"
+import { Observable } from "rxjs"
+import { User } from "./User"
+import { AuthError } from "./AuthErrors"
 
-export interface AuthStore {
-  user$: Observable<User | null | undefined>
-  user: Signal<User | null | undefined>
-  isLoading$: Observable<boolean>
-  isLoading: Signal<boolean>
-  error$: Observable<string | null>
-  error: Signal<string | null>
+export interface AuthServiceInterface {
+  readonly user$: Observable<User | null | undefined>
+  readonly user: Signal<User | null | undefined>
+  readonly isLoading$: Observable<boolean>
+  readonly isLoading: Signal<boolean>
+  readonly error$: Observable<AuthError | null>
+  readonly error: Signal<AuthError | null>
 
-  login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
+  login: (email: string, password: string) => void
+  signup: (email: string, password: string) => void
+  logout: () => void
 }
