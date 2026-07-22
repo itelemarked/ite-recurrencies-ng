@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { TestingAuthService } from './testing-auth-service/testing-auth-service';
 import { AuthService } from '../auth/services/auth-service';
+import { TestingSettingsService2 } from './testing-settings-service/testing-settings-service2';
 
 
 
 @Component({
   selector: 'app-testing-page',
-  imports: [IonicModule, TestingAuthService],
+  imports: [IonicModule, TestingSettingsService2],
   template: `
     <ion-header collapse="fade" [translucent]="true">
       <ion-toolbar>
@@ -20,7 +20,7 @@ import { AuthService } from '../auth/services/auth-service';
       <!-- <app-login-form
         
       /> -->
-      <app-testing-auth-service/>
+      <app-testing-settings-service2/>
 
     </ion-content>
   `,

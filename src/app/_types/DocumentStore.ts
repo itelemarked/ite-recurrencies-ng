@@ -1,7 +1,8 @@
 import { Observable } from "rxjs"
 import { Identifiable } from "./Identifiable"
+import { Signal } from "@angular/core"
 
-export interface DocumentStore<T extends Record<string, any>> {
+export interface DocumentStoreInterface<T extends Record<string, any>> {
 	/**
 	*  - Create a listener to the document changes, emits the current document value or undefined if it doesn’t exist.
 	*  - Never errors (it returns always a value, no matter if the document exist or not).

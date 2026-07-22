@@ -1,7 +1,7 @@
 import { Signal } from "@angular/core"
 import { Observable } from "rxjs"
 import { User } from "./User"
-import { AuthError } from "./AuthErrors"
+import { AuthError } from "./AuthError"
 
 export interface AuthServiceInterface {
   readonly user$: Observable<User | null | undefined>

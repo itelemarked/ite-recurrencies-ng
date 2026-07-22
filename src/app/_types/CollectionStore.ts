@@ -2,7 +2,7 @@ import { Observable } from "rxjs"
 import { Identifiable } from "./Identifiable"
 
 
-export interface CollectionInterface<T extends Record<string, any>> {
+export interface CollectionStoreInterface<T extends Record<string, any>> {
 	/**
 	*  - Create a listener to the changes of the document corresponding to the provided uid of the collection. 
 	*    Emits the current document value or undefined if it doesn’t exist.

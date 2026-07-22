@@ -2,7 +2,7 @@ import { Component, input, output, signal } from "@angular/core";
 import { IonicModule } from '@ionic/angular';
 import { email, form, FormField, minLength, required } from "@angular/forms/signals";
 import { AppList } from "../../_shared/app-list";
-import { AuthError } from "../../_types/AuthErrors";
+import { AuthError } from "../../_types/AuthError";
 
 import { addIcons } from 'ionicons';
 import { alertCircleOutline } from 'ionicons/icons';

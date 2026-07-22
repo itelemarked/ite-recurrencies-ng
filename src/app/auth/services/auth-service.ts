@@ -6,7 +6,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, User as FbUser, createU
 
 import { FirebaseService } from '../../_core/firebase-service';
 import { User } from '../../_types/User';
-import { AuthError, AuthErrorCodeKnown } from '../../_types/AuthErrors';
+import { AuthError, AuthErrorCodeKnown } from '../../_types/AuthError';
 import { AuthServiceInterface } from '../../_types/AuthServiceInterface';
 import { assertError } from '../../../js/errors/assertError';
 

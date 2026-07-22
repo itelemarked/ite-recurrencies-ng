@@ -24,6 +24,10 @@ export const isFunction = (val: any): val is ((...args: any) => any) => typeof v
  */
 export const isOptional = (val: any) => false
 
+
+type Condition = ((arg: any) => boolean)
+type KeyConditions = Record<string, Condition[]>
+
 /**
  * @example
  * 
@@ -95,10 +99,6 @@ export const isOptional = (val: any) => false
  *  isGraph(graph2)
  * 
  */
-
-type Condition = ((arg: any) => boolean)
-type KeyConditions = Record<string, Condition[]>
-
 export const isInterface = <T extends Record<string, any>>(keyConditions: KeyConditions) => (val: any): val is T => {
   // CHECKS 'val' IS A 'PlainObject'
   if(!isPlainObject(val)) return false
