@@ -2,10 +2,12 @@ import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { BehaviorSubject, distinctUntilChanged, filter } from "rxjs";
 
-import { FirebaseError, FirebaseService, deleteDoc, doc, onSnapshot, setDoc, updateDoc } from "../../_core/firebase-service";
+import { deleteDoc, doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 
-import { assertError } from "../../../js/errors/assertError";
+import { FirebaseService } from "../../_core/firebase-service";
 import { AuthService } from "../../auth/services/auth-service";
+import { assertError } from "../../../js/errors/assertError";
 
 import { DocumentStoreInterface } from "../../_types/DocumentStoreInterface2";
 import { isSettings, Settings } from "../../_types/Settings";

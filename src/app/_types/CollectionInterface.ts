@@ -1,21 +1,31 @@
 import { Observable } from "rxjs"
 import { Identifiable } from "./Identifiable"
+import { Signal } from "@angular/core"
+import { StoreError } from "./StoreError"
 
 
 export interface CollectionStoreInterface<T extends Record<string, any>> {
-	/**
-	*  - Create a listener to the changes of the document corresponding to the provided uid of the collection. 
-	*    Emits the current document value or undefined if it doesn’t exist.
-	*  - Never errors (it returns always a value, no matter if the document exist or not).
-	*/
-	get$: (uid : string) => Observable<Identifiable<T> | null>
+	
+	readonly isLoading$: Observable<boolean>
+	readonly isLoading: Signal<boolean>
+	
+	readonly error$: Observable<StoreError | null>
+	readonly error: Signal<StoreError | null>
 
 	/**
 	*  - Create a listener to the changes of the whole collection. 
 	*    Emits the current collection value (as an array) or an empty array if it doesn’t exist.
 	*  - Never errors (it returns always a value as array, no matter if the collection exist or not).
 	*/
-	getAll$: () => Observable<Identifiable<T>[]>
+	readonly collection$: Observable<Identifiable<T>[] | null | undefined>
+	readonly collection: Signal<Identifiable<T>[] | null | undefined>
+
+	/**
+	*  - Create a listener to the changes of the document corresponding to the provided uid of the collection. 
+	*    Emits the current document value or undefined if it doesn’t exist.
+	*  - Never errors (it returns always a value, no matter if the document exist or not).
+	*/
+	// get$: (uid : string) => Observable<Identifiable<T> | null>
 
 	/**
 	*  - Updates an existing document corresponding to the provided uid of the collection.
@@ -24,7 +34,7 @@ export interface CollectionStoreInterface<T extends Record<string, any>> {
 	*  - Resolve and reject functions are usually not necessary since the changes will be reflected to the “get$()” and getAll$() methods, but may be
 	*    useful for debugging or when actions are required upon successful savings.
 	*/
-	update: (uid : string, opts: Partial<T>) => Promise<void>
+	update: (uid : string, opts: Partial<T>) => void
 
 	/**
 	*  - adds a document to the collection. A unique “uid” is generated automatically.
@@ -33,7 +43,7 @@ export interface CollectionStoreInterface<T extends Record<string, any>> {
 	*  - Resolve function are usually not necessary since the changes will be reflected to the “get$()” and getAll$() methods, but may be
 	*    useful for debugging or when actions are required upon successful savings.
 	*/
-	add: (item : T) => Promise<void>
+	add: (item : T) => void
 
 	/**
 	*  - removes a document corresponding to the provided uid from the collection.
@@ -42,7 +52,7 @@ export interface CollectionStoreInterface<T extends Record<string, any>> {
 	*  - Resolve function are usually not necessary since the changes will be reflected to the “get$()” and getAll$() methods, but may be
 	*    useful for debugging or when actions are required upon successful savings.
 	*/
-	remove: (uid : string) => Promise<void>
+	remove: (uid : string) => void
 
 	/**
 	*  - Clears the collection from the database.
@@ -51,5 +61,5 @@ export interface CollectionStoreInterface<T extends Record<string, any>> {
 	*  - Resolve and reject functions are usually not necessary since the changes will be reflected to the “get$()” and getAll$() methods,, but may be
 	*    useful for debugging or when actions are required upon successful savings.
 	*/
-	clear: () => Promise<void>
+	clear: () => void
 }
