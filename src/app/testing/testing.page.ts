@@ -3,6 +3,8 @@ import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth/services/auth-service';
 import { TestingSettingsService2 } from './testing-settings-service/testing-settings-service2';
 import { TestingAllServices } from './testing-all-services/testing-all-services';
+import { isMatch } from 'lodash';
+
 
 
 
@@ -42,6 +44,14 @@ export class TestingPage {
     // this.authService.login('aa', 'a')
     //   .then(() => console.log('login success'))
     //   .catch((err) => console.log(err))
+    console.log(isMatch(
+      {
+        x: 0, 
+        y: 2, 
+        z: 3
+      }, {
+        x: 0
+      }))
   }
 }
 
