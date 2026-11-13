@@ -1,5 +1,4 @@
-import { Identifiable } from "@core/data-types";
-
+import { Identifiable } from '@core/data-types';
 
 export const PERIOD_UNITS = ['day', 'month', 'year'] as const;
 export type PeriodUnit = (typeof PERIOD_UNITS)[number];
@@ -29,3 +28,4 @@ export function isValidRecurrency(data: unknown): data is Recurrency {
     typeof candidate['category'] === 'string'
   );
 }
+

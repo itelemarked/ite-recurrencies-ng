@@ -1,10 +1,12 @@
 import { computed, Injectable } from '@angular/core';
 import { AuthInterface } from './auth-types';
 import { createFirebaseAuth } from './firebase-adapter/firebase-auth';
+import { createMockAuth } from './mock-adapter/mock-auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore implements AuthInterface {
-  private readonly adapter = createFirebaseAuth();
+  private readonly adapter = createMockAuth();
+  // private readonly adapter = createFirebaseAuth();
 
   readonly user = this.adapter.user;
   readonly isLoading = this.adapter.isLoading;

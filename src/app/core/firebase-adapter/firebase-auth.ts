@@ -9,6 +9,8 @@ import { AuthError, AuthInterface, AuthOperation, AuthUser } from '../auth-types
 import { createAuthError } from './firebase-auth-error';
 import { FIREBASE_AUTH } from './firebase-config';
 
+
+
 export function createFirebaseAuth(): AuthInterface {
   const firebaseAuth = inject(FIREBASE_AUTH);
   const destroyRef = inject(DestroyRef);
