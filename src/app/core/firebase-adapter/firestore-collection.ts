@@ -34,7 +34,8 @@ interface CollectionContext<T> {
   path: Signal<string | null>;
   path$: Observable<string | null>;
   isLoading: WritableSignal<boolean>;
-  error: WritableSignal<StoreError | null>;
+  readError: WritableSignal<StoreError | null>;
+  writeError: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
 }
 
@@ -57,7 +58,8 @@ function handleError<T>(
   currentPath: string,
 ): void {
   console.error(`[FirestoreCollection:${currentPath}] Failed "${op}":`, err);
-  ctx.error.set(createStoreError(err, op, currentPath));
+  const storeError = createStoreError(err, op, currentPath);
+  (op === 'read' ? ctx.readError : ctx.writeError).set(storeError);
 }
 
 function validateItems<T>(
@@ -75,9 +77,9 @@ function validateItems<T>(
 
   if (invalidIds.length > 0) {
     console.error(`[FirestoreCollection:${currentPath}] Invalid documents skipped:`, invalidIds);
-    ctx.error.set(createInvalidDocumentError(invalidIds, currentPath));
+    ctx.readError.set(createInvalidDocumentError(invalidIds, currentPath));
   } else {
-    ctx.error.set(null);
+    ctx.readError.set(null);
   }
 
   return validItems;
@@ -94,7 +96,7 @@ function createItemsStream<T extends object>(
       }
 
       ctx.isLoading.set(true);
-      ctx.error.set(null);
+      ctx.readError.set(null);
 
       return fromOnSnapshot<T>(collection(ctx.firestore, currentPath)).pipe(
         map((rawItems) => validateItems(ctx, rawItems, currentPath)),
@@ -120,7 +122,7 @@ function runWriteOperation<T>(
     return;
   }
 
-  ctx.error.set(null);
+  ctx.writeError.set(null);
   action(currentPath).catch((err) => handleError(ctx, err, op, currentPath));
 }
 
@@ -137,7 +139,8 @@ export function createFirestoreCollection<T extends object>(
     path,
     path$: toObservable(path),
     isLoading: signal(false),
-    error: signal<StoreError | null>(null),
+    readError: signal<StoreError | null>(null),
+    writeError: signal<StoreError | null>(null),
     validator,
   };
 
@@ -146,7 +149,7 @@ export function createFirestoreCollection<T extends object>(
   return {
     items,
     isLoading: ctx.isLoading.asReadonly(),
-    error: ctx.error.asReadonly(),
+    error: computed(() => ctx.writeError() ?? ctx.readError()),
 
     addItem: (item) =>
       runWriteOperation(ctx, 'create', (p) =>

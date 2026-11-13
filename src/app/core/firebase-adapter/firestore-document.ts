@@ -27,7 +27,8 @@ interface DocumentContext<T> {
   path: Signal<string | null>;
   path$: Observable<string | null>;
   isLoading: WritableSignal<boolean>;
-  error: WritableSignal<StoreError | null>;
+  readError: WritableSignal<StoreError | null>;
+  writeError: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
 }
 
@@ -53,7 +54,8 @@ function handleError<T>(
   currentPath: string,
 ): void {
   console.error(`[FirestoreDocument:${currentPath}] Failed "${op}":`, err);
-  ctx.error.set(createStoreError(err, op, currentPath));
+  const storeError = createStoreError(err, op, currentPath);
+  (op === 'read' ? ctx.readError : ctx.writeError).set(storeError);
 }
 
 function validateItem<T>(
@@ -62,7 +64,7 @@ function validateItem<T>(
   currentPath: string,
 ): T | null {
   if (!rawSnap) {
-    ctx.error.set(null);
+    ctx.readError.set(null);
     return null;
   }
 
@@ -70,7 +72,7 @@ function validateItem<T>(
   if (!validator) return rawSnap.data;
 
   if (validator(rawSnap.data)) {
-    ctx.error.set(null);
+    ctx.readError.set(null);
     return rawSnap.data;
   }
 
@@ -78,7 +80,7 @@ function validateItem<T>(
     `[FirestoreDocument:${currentPath}] Invalid document skipped (id: ${rawSnap.id}):`,
     rawSnap.data,
   );
-  ctx.error.set(createInvalidDocumentError([rawSnap.id], currentPath));
+  ctx.readError.set(createInvalidDocumentError([rawSnap.id], currentPath));
   return null;
 }
 
@@ -93,7 +95,7 @@ function createItemStream<T extends object>(
       }
 
       ctx.isLoading.set(true);
-      ctx.error.set(null);
+      ctx.readError.set(null);
 
       return fromOnSnapshot<T>(doc(ctx.firestore, currentPath)).pipe(
         map((rawSnap) => validateItem(ctx, rawSnap, currentPath)),
@@ -119,7 +121,7 @@ function runWriteOperation<T>(
     return;
   }
 
-  ctx.error.set(null);
+  ctx.writeError.set(null);
   const docRef = doc(ctx.firestore, currentPath);
   action(docRef).catch((err) => handleError(ctx, err, op, currentPath));
 }
@@ -137,7 +139,8 @@ export function createFirestoreDocument<T extends object>(
     path,
     path$: toObservable(path),
     isLoading: signal(false),
-    error: signal<StoreError | null>(null),
+    readError: signal<StoreError | null>(null),
+    writeError: signal<StoreError | null>(null),
     validator,
   };
 
@@ -146,7 +149,7 @@ export function createFirestoreDocument<T extends object>(
   return {
     item,
     isLoading: ctx.isLoading.asReadonly(),
-    error: ctx.error.asReadonly(),
+    error: computed(() => ctx.writeError() ?? ctx.readError()),
 
     setDoc: (data) =>
       runWriteOperation(ctx, 'create', (ref) =>

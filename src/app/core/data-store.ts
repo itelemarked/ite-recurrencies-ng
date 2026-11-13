@@ -1,31 +1,9 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { ADAPTERS } from './adapters';
 import { AuthStore } from './auth-store';
 import { StoreCollection, StoreDocument } from './data-types';
-import {
-  createFirestoreCollection,
-  FirestoreCollectionKey,
-} from './firebase-adapter/firestore-collection';
-import {
-  createFirestoreDocument,
-  FirestoreDocumentKey,
-} from './firebase-adapter/firestore-document';
-import { createMockStoreCollection } from './mock-adapter/mock-store-collection';
-import { createMockStoreDocument } from './mock-adapter/mock-store-document';
-
-
-const ADAPTERS = {
-  firebase: {
-    collection: createFirestoreCollection,
-    document: createFirestoreDocument,
-  },
-  mock: {
-    collection: createMockStoreCollection,
-    document: createMockStoreDocument,
-  },
-};
-
-const ACTIVE_ADAPTER = ADAPTERS['mock']
-
+import type { FirestoreCollectionKey } from './firebase-adapter/firestore-collection';
+import type { FirestoreDocumentKey } from './firebase-adapter/firestore-document';
 
 @Injectable({ providedIn: 'root' })
 export class DataStore {
@@ -35,7 +13,7 @@ export class DataStore {
     name: FirestoreCollectionKey,
     validator?: (data: unknown) => data is T,
   ): StoreCollection<T> {
-    const collection = ACTIVE_ADAPTER.collection<T>(name, validator);
+    const collection = ADAPTERS.collection<T>(name, validator);
 
     return {
       ...collection,
@@ -47,7 +25,7 @@ export class DataStore {
     name: FirestoreDocumentKey,
     validator?: (data: unknown) => data is T,
   ): StoreDocument<T> {
-    const document = ACTIVE_ADAPTER.document<T>(name, validator);
+    const document = ADAPTERS.document<T>(name, validator);
 
     return {
       ...document,

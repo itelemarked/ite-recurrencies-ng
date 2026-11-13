@@ -1,9 +1,9 @@
 import { computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthStore } from '../auth-store';
 import { StoreDocument, StoreError, StoreOperation, StoreWriteOperation } from '../data-types';
-import { MOCK_STORE_DATA } from './mock-store-data';
+import { MockDatabase } from './mock-database';
 import {
   createInvalidDocumentError,
   createStoreError,
@@ -20,19 +20,21 @@ interface DocumentContext<T> {
   path: Signal<string | null>;
   path$: Observable<string | null>;
   isLoading: WritableSignal<boolean>;
-  error: WritableSignal<StoreError | null>;
+  readError: WritableSignal<StoreError | null>;
+  writeError: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
-  refresh$: BehaviorSubject<void>;
+  db: MockDatabase;
 }
 
 function resolveDocumentSlot(
+  root: Record<string, unknown>,
   path: string,
 ): { parent: Record<string, unknown>; key: string } | null {
   const segments = path.split('/').filter(Boolean);
   if (segments.length === 0) return null;
 
   const key = segments[segments.length - 1];
-  let current: unknown = MOCK_STORE_DATA;
+  let current: unknown = root;
 
   for (const segment of segments.slice(0, -1)) {
     if (typeof current !== 'object' || current === null || !(segment in current)) {
@@ -53,7 +55,8 @@ function handleError<T>(
   currentPath: string,
 ): void {
   console.error(`[MockStoreDocument:${currentPath}] Failed "${op}":`, err);
-  ctx.error.set(createStoreError(err, op, currentPath));
+  const storeError = createStoreError(err, op, currentPath);
+  (op === 'read' ? ctx.readError : ctx.writeError).set(storeError);
 }
 
 function validateItem<T>(
@@ -62,7 +65,7 @@ function validateItem<T>(
   currentPath: string,
 ): T | null {
   if (rawData === null || rawData === undefined) {
-    ctx.error.set(null);
+    ctx.readError.set(null);
     return null;
   }
 
@@ -70,12 +73,12 @@ function validateItem<T>(
   if (!validator) return rawData as T;
 
   if (validator(rawData)) {
-    ctx.error.set(null);
+    ctx.readError.set(null);
     return rawData;
   }
 
   console.error(`[MockStoreDocument:${currentPath}] Invalid document skipped:`, rawData);
-  ctx.error.set(createInvalidDocumentError([currentPath], currentPath));
+  ctx.readError.set(createInvalidDocumentError([currentPath], currentPath));
   return null;
 }
 
@@ -89,12 +92,13 @@ function createItemStream<T extends object>(
         return of(null);
       }
 
-      return ctx.refresh$.pipe(
+      return ctx.db.changes$.pipe(
+        startWith(undefined),
         map(() => {
           ctx.isLoading.set(true);
-          ctx.error.set(null);
+          ctx.readError.set(null);
 
-          const slot = resolveDocumentSlot(currentPath);
+          const slot = resolveDocumentSlot(ctx.db.store, currentPath);
           if (!slot) {
             ctx.isLoading.set(false);
             return null;
@@ -121,16 +125,16 @@ function runWriteOperation<T>(
     return;
   }
 
-  const slot = resolveDocumentSlot(currentPath);
+  const slot = resolveDocumentSlot(ctx.db.store, currentPath);
   if (!slot) {
     handleError(ctx, new MockStoreException('NOT_FOUND', 'not-found'), op, currentPath);
     return;
   }
 
   try {
-    ctx.error.set(null);
+    ctx.writeError.set(null);
     action(slot);
-    ctx.refresh$.next();
+    ctx.db.notify();
   } catch (err) {
     handleError(ctx, err, op, currentPath);
   }
@@ -141,15 +145,17 @@ export function createMockStoreDocument<T extends object>(
   validator?: (data: unknown) => data is T,
 ): StoreDocument<T> {
   const auth = inject(AuthStore);
+  const db = inject(MockDatabase);
   const path = computed(() => DOCUMENT_PATH_BUILDERS[name](auth.user()?.uid));
 
   const ctx: DocumentContext<T> = {
     path,
     path$: toObservable(path),
     isLoading: signal(false),
-    error: signal<StoreError | null>(null),
+    readError: signal<StoreError | null>(null),
+    writeError: signal<StoreError | null>(null),
     validator,
-    refresh$: new BehaviorSubject<void>(undefined),
+    db,
   };
 
   const item = toSignal(createItemStream(ctx), { initialValue: null });
@@ -157,7 +163,7 @@ export function createMockStoreDocument<T extends object>(
   return {
     item,
     isLoading: ctx.isLoading.asReadonly(),
-    error: ctx.error.asReadonly(),
+    error: computed(() => ctx.writeError() ?? ctx.readError()),
 
     setDoc: (data) =>
       runWriteOperation(ctx, 'create', ({ parent, key }) => {

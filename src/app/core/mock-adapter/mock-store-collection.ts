@@ -1,6 +1,6 @@
 import { computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+import { map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthStore } from '../auth-store';
 import {
   Identifiable,
@@ -9,7 +9,7 @@ import {
   StoreOperation,
   StoreWriteOperation,
 } from '../data-types';
-import { MOCK_STORE_DATA } from './mock-store-data';
+import { MockDatabase } from './mock-database';
 import {
   createInvalidDocumentError,
   createStoreError,
@@ -26,14 +26,18 @@ interface CollectionContext<T> {
   path: Signal<string | null>;
   path$: Observable<string | null>;
   isLoading: WritableSignal<boolean>;
-  error: WritableSignal<StoreError | null>;
+  readError: WritableSignal<StoreError | null>;
+  writeError: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
-  refresh$: BehaviorSubject<void>;
+  db: MockDatabase;
 }
 
-function resolveCollectionRecord(path: string): Record<string, unknown> | null {
+function resolveCollectionRecord(
+  root: Record<string, unknown>,
+  path: string,
+): Record<string, unknown> | null {
   const segments = path.split('/').filter(Boolean);
-  let current: unknown = MOCK_STORE_DATA;
+  let current: unknown = root;
 
   for (const segment of segments) {
     if (typeof current !== 'object' || current === null || !(segment in current)) {
@@ -54,7 +58,8 @@ function handleError<T>(
   currentPath: string,
 ): void {
   console.error(`[MockStoreCollection:${currentPath}] Failed "${op}":`, err);
-  ctx.error.set(createStoreError(err, op, currentPath));
+  const storeError = createStoreError(err, op, currentPath);
+  (op === 'read' ? ctx.readError : ctx.writeError).set(storeError);
 }
 
 function validateItems<T>(
@@ -72,9 +77,9 @@ function validateItems<T>(
 
   if (invalidIds.length > 0) {
     console.error(`[MockStoreCollection:${currentPath}] Invalid documents skipped:`, invalidIds);
-    ctx.error.set(createInvalidDocumentError(invalidIds, currentPath));
+    ctx.readError.set(createInvalidDocumentError(invalidIds, currentPath));
   } else {
-    ctx.error.set(null);
+    ctx.readError.set(null);
   }
 
   return validItems;
@@ -90,12 +95,13 @@ function createItemsStream<T extends object>(
         return of([]);
       }
 
-      return ctx.refresh$.pipe(
+      return ctx.db.changes$.pipe(
+        startWith(undefined),
         map(() => {
           ctx.isLoading.set(true);
-          ctx.error.set(null);
+          ctx.readError.set(null);
 
-          const record = resolveCollectionRecord(currentPath);
+          const record = resolveCollectionRecord(ctx.db.store, currentPath);
           if (!record) {
             ctx.isLoading.set(false);
             return [];
@@ -126,16 +132,16 @@ function runWriteOperation<T>(
     return;
   }
 
-  const record = resolveCollectionRecord(currentPath);
+  const record = resolveCollectionRecord(ctx.db.store, currentPath);
   if (!record) {
     handleError(ctx, new MockStoreException('NOT_FOUND', 'not-found'), op, currentPath);
     return;
   }
 
   try {
-    ctx.error.set(null);
+    ctx.writeError.set(null);
     action(record);
-    ctx.refresh$.next();
+    ctx.db.notify();
   } catch (err) {
     handleError(ctx, err, op, currentPath);
   }
@@ -146,15 +152,17 @@ export function createMockStoreCollection<T extends object>(
   validator?: (data: unknown) => data is T,
 ): StoreCollection<T> {
   const auth = inject(AuthStore);
+  const db = inject(MockDatabase);
   const path = computed(() => COLLECTION_PATH_BUILDERS[name](auth.user()?.uid));
 
   const ctx: CollectionContext<T> = {
     path,
     path$: toObservable(path),
     isLoading: signal(false),
-    error: signal<StoreError | null>(null),
+    readError: signal<StoreError | null>(null),
+    writeError: signal<StoreError | null>(null),
     validator,
-    refresh$: new BehaviorSubject<void>(undefined),
+    db,
   };
 
   const items = toSignal(createItemsStream(ctx), { initialValue: [] });
@@ -162,7 +170,7 @@ export function createMockStoreCollection<T extends object>(
   return {
     items,
     isLoading: ctx.isLoading.asReadonly(),
-    error: ctx.error.asReadonly(),
+    error: computed(() => ctx.writeError() ?? ctx.readError()),
 
     addItem: (item) =>
       runWriteOperation(ctx, 'create', (record) => {

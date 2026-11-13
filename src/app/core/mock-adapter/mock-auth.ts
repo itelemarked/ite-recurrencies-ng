@@ -1,29 +1,23 @@
-import { signal } from '@angular/core';
+import { inject, signal } from '@angular/core';
 import { AuthError, AuthInterface, AuthOperation, AuthUser } from '../auth-types';
-import { MOCK_AUTH_DATA } from './mock-auth-data';
 import { createAuthError, MockAuthException } from './mock-auth-error';
-import { MOCK_STORE_DATA } from './mock-store-data';
+import { MockDatabase } from './mock-database';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-function getAuthUsers(): Record<string, Record<string, unknown>> {
-  const users = MOCK_AUTH_DATA['users'];
-  return typeof users === 'object' && users !== null
-    ? (users as Record<string, Record<string, unknown>>)
-    : {};
-}
-
-function getStoreUsers(): Record<string, Record<string, unknown>> {
-  const users = MOCK_STORE_DATA['users'];
+function getUsers(data: Record<string, unknown>): Record<string, Record<string, unknown>> {
+  const users = data['users'];
   return typeof users === 'object' && users !== null
     ? (users as Record<string, Record<string, unknown>>)
     : {};
 }
 
 export function createMockAuth(): AuthInterface {
+  const db = inject(MockDatabase);
+
   const _user = signal<AuthUser | null | undefined>(undefined);
   const _isLoading = signal(true);
   const _error = signal<AuthError | null>(null);
@@ -61,7 +55,7 @@ export function createMockAuth(): AuthInterface {
           throw new MockAuthException('INVALID_EMAIL', 'auth/invalid-email');
         }
 
-        const entry = Object.entries(getAuthUsers()).find(
+        const entry = Object.entries(getUsers(db.auth)).find(
           ([, u]) => u['email'] === email && u['password'] === password,
         );
 
@@ -84,7 +78,7 @@ export function createMockAuth(): AuthInterface {
           throw new MockAuthException('WEAK_PASSWORD', 'auth/weak-password');
         }
 
-        const authUsers = getAuthUsers();
+        const authUsers = getUsers(db.auth);
         const exists = Object.values(authUsers).some((u) => u['email'] === email);
         if (exists) {
           throw new MockAuthException('EMAIL_ALREADY_IN_USE', 'auth/email-already-in-use');
@@ -92,7 +86,7 @@ export function createMockAuth(): AuthInterface {
 
         const uid = `user-${crypto.randomUUID().slice(0, 8)}`;
         authUsers[uid] = { email, password };
-        getStoreUsers()[uid] = { recurrencies: {} };
+        getUsers(db.store)[uid] = { recurrencies: {} };
 
         _user.set({ uid, email });
       });

@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { isMatch } from 'lodash';
 import { AuthenticateFormComponent } from './authenticate-form/authenticate-form';
 import { RecurrencyListComponent } from './recurrency-list-simple/recurrency-list-simple';
 import { SettingsSimpleComponent } from './settings-simple/settings-simple';
