@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { TestingPage } from './testing/testing.page';
+import { TestingPage } from './features/testing/testing.page';
 
 const ORIGIN = '/testing'
 

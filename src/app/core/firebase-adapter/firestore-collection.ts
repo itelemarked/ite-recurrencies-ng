@@ -1,43 +1,55 @@
 import { computed, inject, Signal, signal, WritableSignal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
-  collection,
-  doc,
   addDoc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot,
+  collection,
   CollectionReference,
+  deleteDoc,
+  doc,
   DocumentData,
   Firestore,
-  WithFieldValue
+  onSnapshot,
+  updateDoc,
+  WithFieldValue,
 } from 'firebase/firestore';
-import { Observable, tap, catchError, EMPTY, switchMap, of, map } from 'rxjs';
-import { Identifiable, StoreCollection, StoreError, StoreOperation, StoreWriteOperation } from '../types/store';
-import { FIRESTORE } from './firebase.config';
+import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  Identifiable,
+  StoreCollection,
+  StoreError,
+  StoreOperation,
+  StoreWriteOperation,
+} from '../data-types';
+import { FIRESTORE } from './firebase-config';
 import { createInvalidDocumentError, createStoreError } from './firestore-error';
 
 interface CollectionContext<T> {
   firestore: Firestore;
   path: Signal<string | null>;
   path$: Observable<string | null>;
-  items: WritableSignal<Identifiable<T>[]>;
-  loading: WritableSignal<boolean>;
+  isLoading: WritableSignal<boolean>;
   error: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
 }
 
-function fromOnSnapshot<T extends DocumentData>(ref: CollectionReference<T>): Observable<Identifiable<T>[]> {
+function fromOnSnapshot<T extends object>(
+  ref: CollectionReference<DocumentData>,
+): Observable<Identifiable<T>[]> {
   return new Observable((sub) =>
     onSnapshot(
       ref,
-      (snap) => sub.next(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-      (err) => sub.error(err)
-    )
+      (snap) => sub.next(snap.docs.map((d) => ({ id: d.id, ...(d.data() as T) }))),
+      (err) => sub.error(err),
+    ),
   );
 }
 
-function handleError<T>(ctx: CollectionContext<T>, err: unknown, op: StoreOperation, currentPath: string): void {
+function handleError<T>(
+  ctx: CollectionContext<T>,
+  err: unknown,
+  op: StoreOperation,
+  currentPath: string,
+): void {
   console.error(`[FirestoreCollection:${currentPath}] Failed "${op}":`, err);
   ctx.error.set(createStoreError(err, op, currentPath));
 }
@@ -45,7 +57,7 @@ function handleError<T>(ctx: CollectionContext<T>, err: unknown, op: StoreOperat
 function validateItems<T>(
   ctx: CollectionContext<T>,
   rawItems: Identifiable<T>[],
-  currentPath: string
+  currentPath: string,
 ): Identifiable<T>[] {
   const validator = ctx.validator;
   if (!validator) return rawItems;
@@ -65,38 +77,36 @@ function validateItems<T>(
   return validItems;
 }
 
-function runReadOperation<T extends DocumentData>(ctx: CollectionContext<T>): Observable<Identifiable<T>[]> {
+function createItemsStream<T extends object>(
+  ctx: CollectionContext<T>,
+): Observable<Identifiable<T>[]> {
   return ctx.path$.pipe(
     switchMap((currentPath) => {
       if (!currentPath) {
-        ctx.items.set([]);
-        ctx.loading.set(false);
+        ctx.isLoading.set(false);
         return of([]);
       }
 
-      ctx.loading.set(true);
+      ctx.isLoading.set(true);
       ctx.error.set(null);
 
-      return fromOnSnapshot(collection(ctx.firestore, currentPath) as CollectionReference<T>).pipe(
+      return fromOnSnapshot<T>(collection(ctx.firestore, currentPath)).pipe(
         map((rawItems) => validateItems(ctx, rawItems, currentPath)),
-        tap((validItems) => {
-          ctx.items.set(validItems);
-          ctx.loading.set(false);
-        }),
+        tap(() => ctx.isLoading.set(false)),
         catchError((err) => {
           handleError(ctx, err, 'read', currentPath);
-          ctx.loading.set(false);
+          ctx.isLoading.set(false);
           return EMPTY;
-        })
+        }),
       );
-    })
+    }),
   );
 }
 
 function runWriteOperation<T>(
   ctx: CollectionContext<T>,
   op: StoreWriteOperation,
-  action: (path: string) => Promise<unknown>
+  action: (path: string) => Promise<unknown>,
 ): void {
   const currentPath = ctx.path();
   if (!currentPath) {
@@ -108,9 +118,9 @@ function runWriteOperation<T>(
   action(currentPath).catch((err) => handleError(ctx, err, op, currentPath));
 }
 
-export function createFirestoreCollection<T extends DocumentData>(
+export function createFirestoreCollection<T extends object>(
   pathFactory: () => string | null,
-  validator?: (data: unknown) => data is T
+  validator?: (data: unknown) => data is T,
 ): StoreCollection<T> {
   const firestore = inject(FIRESTORE);
   const path = computed(pathFactory);
@@ -119,26 +129,29 @@ export function createFirestoreCollection<T extends DocumentData>(
     firestore,
     path,
     path$: toObservable(path),
-    items: signal<Identifiable<T>[]>([]),
-    loading: signal(false),
+    isLoading: signal(false),
     error: signal<StoreError | null>(null),
-    validator
+    validator,
   };
 
+  const items = toSignal(createItemsStream(ctx), { initialValue: [] });
+
   return {
-    items: ctx.items.asReadonly(),
-    loading: ctx.loading.asReadonly(),
+    items,
+    isLoading: ctx.isLoading.asReadonly(),
     error: ctx.error.asReadonly(),
 
-    getList: () => runReadOperation(ctx),
-
     addItem: (item) =>
-      runWriteOperation(ctx, 'create', (p) => addDoc(collection(firestore, p) as CollectionReference<T>, item as WithFieldValue<T>)),
+      runWriteOperation(ctx, 'create', (p) =>
+        addDoc(collection(firestore, p), item as DocumentData),
+      ),
 
     updateItem: (id, changes) =>
-      runWriteOperation(ctx, 'update', (p) => updateDoc(doc(firestore, p, id), changes as DocumentData)),
+      runWriteOperation(ctx, 'update', (p) =>
+        updateDoc(doc(firestore, p, id), changes as DocumentData),
+      ),
 
     deleteItem: (id) =>
-      runWriteOperation(ctx, 'delete', (p) => deleteDoc(doc(firestore, p, id)))
+      runWriteOperation(ctx, 'delete', (p) => deleteDoc(doc(firestore, p, id))),
   };
 }

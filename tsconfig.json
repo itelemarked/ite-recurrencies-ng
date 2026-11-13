@@ -15,8 +15,7 @@
     "target": "es2023",
     "module": "preserve",
     "paths": {
-      "@core/types/*": ["./src/app/core/types/*"],
-      "@core/firebase/*": ["./src/app/core/firebase/*"]
+      "@core/*": ["./src/app/core/*"]
     }
   },
   "angularCompilerOptions": {

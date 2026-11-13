@@ -1,45 +1,50 @@
 import { computed, inject, Signal, signal, WritableSignal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
+  deleteDoc,
   doc,
+  DocumentData,
+  DocumentReference,
+  Firestore,
   onSnapshot,
   setDoc,
   updateDoc,
-  deleteDoc,
-  DocumentReference,
-  DocumentData,
-  Firestore,
-  WithFieldValue
 } from 'firebase/firestore';
-import { Observable, tap, catchError, EMPTY, switchMap, of, map } from 'rxjs';
-import { StoreDocument, StoreError, StoreOperation, StoreWriteOperation } from '../types/store';
-import { FIRESTORE } from './firebase.config';
+import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
+import { StoreDocument, StoreError, StoreOperation, StoreWriteOperation } from '../data-types';
+import { FIRESTORE } from './firebase-config';
 import { createInvalidDocumentError, createStoreError } from './firestore-error';
 
 interface DocumentContext<T> {
   firestore: Firestore;
   path: Signal<string | null>;
   path$: Observable<string | null>;
-  item: WritableSignal<T | null>;
-  loading: WritableSignal<boolean>;
+  isLoading: WritableSignal<boolean>;
   error: WritableSignal<StoreError | null>;
   validator?: (data: unknown) => data is T;
 }
 
-function fromOnSnapshot<T extends DocumentData>(ref: DocumentReference<T>): Observable<{ id: string; data: T } | null> {
+function fromOnSnapshot<T extends object>(
+  ref: DocumentReference<DocumentData>,
+): Observable<{ id: string; data: T } | null> {
   return new Observable((sub) =>
     onSnapshot(
       ref,
       (snap) => {
         const data = snap.data();
-        sub.next(data ? { id: snap.id, data } : null);
+        sub.next(data ? { id: snap.id, data: data as T } : null);
       },
-      (err) => sub.error(err)
-    )
+      (err) => sub.error(err),
+    ),
   );
 }
 
-function handleError<T>(ctx: DocumentContext<T>, err: unknown, op: StoreOperation, currentPath: string): void {
+function handleError<T>(
+  ctx: DocumentContext<T>,
+  err: unknown,
+  op: StoreOperation,
+  currentPath: string,
+): void {
   console.error(`[FirestoreDocument:${currentPath}] Failed "${op}":`, err);
   ctx.error.set(createStoreError(err, op, currentPath));
 }
@@ -47,7 +52,7 @@ function handleError<T>(ctx: DocumentContext<T>, err: unknown, op: StoreOperatio
 function validateItem<T>(
   ctx: DocumentContext<T>,
   rawSnap: { id: string; data: T } | null,
-  currentPath: string
+  currentPath: string,
 ): T | null {
   if (!rawSnap) {
     ctx.error.set(null);
@@ -62,43 +67,44 @@ function validateItem<T>(
     return rawSnap.data;
   }
 
-  console.error(`[FirestoreDocument:${currentPath}] Invalid document skipped (id: ${rawSnap.id}):`, rawSnap.data);
+  console.error(
+    `[FirestoreDocument:${currentPath}] Invalid document skipped (id: ${rawSnap.id}):`,
+    rawSnap.data,
+  );
   ctx.error.set(createInvalidDocumentError([rawSnap.id], currentPath));
   return null;
 }
 
-function runReadOperation<T extends DocumentData>(ctx: DocumentContext<T>): Observable<T | null> {
+function createItemStream<T extends object>(
+  ctx: DocumentContext<T>,
+): Observable<T | null> {
   return ctx.path$.pipe(
     switchMap((currentPath) => {
       if (!currentPath) {
-        ctx.item.set(null);
-        ctx.loading.set(false);
+        ctx.isLoading.set(false);
         return of(null);
       }
 
-      ctx.loading.set(true);
+      ctx.isLoading.set(true);
       ctx.error.set(null);
 
-      return fromOnSnapshot(doc(ctx.firestore, currentPath) as DocumentReference<T>).pipe(
+      return fromOnSnapshot<T>(doc(ctx.firestore, currentPath)).pipe(
         map((rawSnap) => validateItem(ctx, rawSnap, currentPath)),
-        tap((validItem) => {
-          ctx.item.set(validItem);
-          ctx.loading.set(false);
-        }),
+        tap(() => ctx.isLoading.set(false)),
         catchError((err) => {
           handleError(ctx, err, 'read', currentPath);
-          ctx.loading.set(false);
+          ctx.isLoading.set(false);
           return EMPTY;
-        })
+        }),
       );
-    })
+    }),
   );
 }
 
 function runWriteOperation<T>(
   ctx: DocumentContext<T>,
   op: StoreWriteOperation,
-  action: (ref: DocumentReference<T>) => Promise<unknown>
+  action: (ref: DocumentReference<DocumentData>) => Promise<unknown>,
 ): void {
   const currentPath = ctx.path();
   if (!currentPath) {
@@ -107,13 +113,13 @@ function runWriteOperation<T>(
   }
 
   ctx.error.set(null);
-  const docRef = doc(ctx.firestore, currentPath) as DocumentReference<T>;
+  const docRef = doc(ctx.firestore, currentPath);
   action(docRef).catch((err) => handleError(ctx, err, op, currentPath));
 }
 
-export function createFirestoreDocument<T extends DocumentData>(
+export function createFirestoreDocument<T extends object>(
   pathFactory: () => string | null,
-  validator?: (data: unknown) => data is T
+  validator?: (data: unknown) => data is T,
 ): StoreDocument<T> {
   const firestore = inject(FIRESTORE);
   const path = computed(pathFactory);
@@ -122,20 +128,24 @@ export function createFirestoreDocument<T extends DocumentData>(
     firestore,
     path,
     path$: toObservable(path),
-    item: signal<T | null>(null),
-    loading: signal(false),
+    isLoading: signal(false),
     error: signal<StoreError | null>(null),
-    validator
+    validator,
   };
 
+  const item = toSignal(createItemStream(ctx), { initialValue: null });
+
   return {
-    item: ctx.item.asReadonly(),
-    loading: ctx.loading.asReadonly(),
+    item,
+    isLoading: ctx.isLoading.asReadonly(),
     error: ctx.error.asReadonly(),
 
-    getDoc: () => runReadOperation(ctx),
-    setDoc: (data) => runWriteOperation(ctx, 'create', (ref) => setDoc(ref, data as WithFieldValue<T>, { merge: true })),
-    updateDoc: (changes) => runWriteOperation(ctx, 'update', (ref) => updateDoc(ref, changes as DocumentData)),
-    deleteDoc: () => runWriteOperation(ctx, 'delete', (ref) => deleteDoc(ref))
+    setDoc: (data) =>
+      runWriteOperation(ctx, 'create', (ref) =>
+        setDoc(ref, data as DocumentData, { merge: true }),
+      ),
+    updateDoc: (changes) =>
+      runWriteOperation(ctx, 'update', (ref) => updateDoc(ref, changes as DocumentData)),
+    deleteDoc: () => runWriteOperation(ctx, 'delete', (ref) => deleteDoc(ref)),
   };
 }

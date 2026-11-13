@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { StoreCollection } from '@core/types/store';
-import { AuthService } from '@core/firebase/auth';
-import { createFirestoreCollection } from '@core/firebase/firestore-collection';
+import { createFirestoreCollection } from '../../core/firebase-adapter/firestore-collection';
 import { isValidRecurrency, Recurrency } from './recurrency.model';
+import { StoreCollection } from '@core/data-types';
+import { AuthStore } from '@core/auth-store';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecurrencyService implements StoreCollection<Recurrency> {
-  private readonly auth = inject(AuthService);
+  private readonly auth = inject(AuthStore);
 
   private readonly collection = createFirestoreCollection<Recurrency>(
     () => {
@@ -19,10 +19,10 @@ export class RecurrencyService implements StoreCollection<Recurrency> {
   );
 
   readonly items = this.collection.items;
-  readonly loading = this.collection.loading;
+  readonly isLoading = this.collection.isLoading;
   readonly error = this.collection.error;
 
-  getList = () => this.collection.getList();
+  getList = () => this.collection.items;
   addItem = (item: Recurrency) => this.collection.addItem(item);
   updateItem = (id: string, changes: Partial<Recurrency>) => this.collection.updateItem(id, changes);
   deleteItem = (id: string) => this.collection.deleteItem(id);

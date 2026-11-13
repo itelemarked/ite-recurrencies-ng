@@ -1,5 +1,5 @@
 import { FirebaseError } from 'firebase/app';
-import { StoreError, StoreErrorCode, StoreOperation } from '../types/store';
+import { StoreError, StoreErrorCode, StoreOperation } from '../data-types';
 
 function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: string } {
   if (error instanceof FirebaseError) {
@@ -19,30 +19,30 @@ function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: s
 
   return {
     code: 'UNKNOWN_STORE_ERROR',
-    details: error instanceof Error ? error.message : 'unknown-error'
+    details: error instanceof Error ? error.message : 'unknown-error',
   };
 }
 
 export function createStoreError(
   error: unknown,
   operation: StoreOperation,
-  collection: string
+  collection: string,
 ): StoreError {
   return {
     ...mapToStoreErrorCode(error),
     operation,
-    collection
+    collection,
   };
 }
 
 export function createInvalidDocumentError(
   invalidIds: string[],
-  collection: string
+  collection: string,
 ): StoreError {
   return {
     code: 'INVALID_DOCUMENT_FOUND',
     operation: 'read',
     collection,
-    details: invalidIds.join(', ')
+    details: invalidIds.join(', '),
   };
 }
