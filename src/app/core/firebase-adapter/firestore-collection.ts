@@ -10,9 +10,9 @@ import {
   Firestore,
   onSnapshot,
   updateDoc,
-  WithFieldValue,
 } from 'firebase/firestore';
 import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
+import { AuthStore } from '../auth-store';
 import {
   Identifiable,
   StoreCollection,
@@ -22,6 +22,12 @@ import {
 } from '../data-types';
 import { FIRESTORE } from './firebase-config';
 import { createInvalidDocumentError, createStoreError } from './firestore-error';
+
+const COLLECTION_PATH_BUILDERS = {
+  recurrencies: (userId: string | undefined) => (userId ? `users/${userId}/recurrencies` : null),
+} as const;
+
+export type FirestoreCollectionKey = keyof typeof COLLECTION_PATH_BUILDERS;
 
 interface CollectionContext<T> {
   firestore: Firestore;
@@ -119,11 +125,12 @@ function runWriteOperation<T>(
 }
 
 export function createFirestoreCollection<T extends object>(
-  pathFactory: () => string | null,
+  name: FirestoreCollectionKey,
   validator?: (data: unknown) => data is T,
 ): StoreCollection<T> {
   const firestore = inject(FIRESTORE);
-  const path = computed(pathFactory);
+  const auth = inject(AuthStore);
+  const path = computed(() => COLLECTION_PATH_BUILDERS[name](auth.user()?.uid));
 
   const ctx: CollectionContext<T> = {
     firestore,

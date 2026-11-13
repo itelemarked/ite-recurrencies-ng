@@ -1,6 +1,7 @@
-import { computed, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, map, Observable, of, switchMap } from 'rxjs';
+import { AuthStore } from '../auth-store';
 import {
   Identifiable,
   StoreCollection,
@@ -8,12 +9,18 @@ import {
   StoreOperation,
   StoreWriteOperation,
 } from '../data-types';
+import { MOCK_STORE_DATA } from './mock-store-data';
 import {
   createInvalidDocumentError,
   createStoreError,
   MockStoreException,
 } from './mock-store-error';
-import { MOCK_STORE_DATA } from './mock-store-data';
+
+const COLLECTION_PATH_BUILDERS = {
+  recurrencies: (userId: string | undefined) => (userId ? `users/${userId}/recurrencies` : null),
+} as const;
+
+export type MockCollectionKey = keyof typeof COLLECTION_PATH_BUILDERS;
 
 interface CollectionContext<T> {
   path: Signal<string | null>;
@@ -135,10 +142,11 @@ function runWriteOperation<T>(
 }
 
 export function createMockStoreCollection<T extends object>(
-  pathFactory: () => string | null,
+  name: MockCollectionKey,
   validator?: (data: unknown) => data is T,
 ): StoreCollection<T> {
-  const path = computed(pathFactory);
+  const auth = inject(AuthStore);
+  const path = computed(() => COLLECTION_PATH_BUILDERS[name](auth.user()?.uid));
 
   const ctx: CollectionContext<T> = {
     path,
@@ -180,4 +188,3 @@ export function createMockStoreCollection<T extends object>(
       }),
   };
 }
-

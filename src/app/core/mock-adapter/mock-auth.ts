@@ -9,6 +9,20 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+function getAuthUsers(): Record<string, Record<string, unknown>> {
+  const users = MOCK_AUTH_DATA['users'];
+  return typeof users === 'object' && users !== null
+    ? (users as Record<string, Record<string, unknown>>)
+    : {};
+}
+
+function getStoreUsers(): Record<string, Record<string, unknown>> {
+  const users = MOCK_STORE_DATA['users'];
+  return typeof users === 'object' && users !== null
+    ? (users as Record<string, Record<string, unknown>>)
+    : {};
+}
+
 export function createMockAuth(): AuthInterface {
   const _user = signal<AuthUser | null | undefined>(undefined);
   const _isLoading = signal(true);
@@ -47,16 +61,16 @@ export function createMockAuth(): AuthInterface {
           throw new MockAuthException('INVALID_EMAIL', 'auth/invalid-email');
         }
 
-        const entry = Object.entries(MOCK_AUTH_DATA.users).find(
-          ([, u]) => u.email === email && u.password === password,
+        const entry = Object.entries(getAuthUsers()).find(
+          ([, u]) => u['email'] === email && u['password'] === password,
         );
 
         if (!entry) {
           throw new MockAuthException('INVALID_CREDENTIALS', 'auth/invalid-credential');
         }
 
-        const [uid, userData] = entry;
-        _user.set({ uid, email: userData.email });
+        const [uid] = entry;
+        _user.set({ uid, email });
       });
     },
 
@@ -70,14 +84,15 @@ export function createMockAuth(): AuthInterface {
           throw new MockAuthException('WEAK_PASSWORD', 'auth/weak-password');
         }
 
-        const exists = Object.values(MOCK_AUTH_DATA.users).some((u) => u.email === email);
+        const authUsers = getAuthUsers();
+        const exists = Object.values(authUsers).some((u) => u['email'] === email);
         if (exists) {
           throw new MockAuthException('EMAIL_ALREADY_IN_USE', 'auth/email-already-in-use');
         }
 
         const uid = `user-${crypto.randomUUID().slice(0, 8)}`;
-        MOCK_AUTH_DATA.users[uid] = { email, password };
-        MOCK_STORE_DATA.users[uid] = { recurrencies: {} };
+        authUsers[uid] = { email, password };
+        getStoreUsers()[uid] = { recurrencies: {} };
 
         _user.set({ uid, email });
       });

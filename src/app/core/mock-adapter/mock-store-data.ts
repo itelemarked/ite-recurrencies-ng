@@ -1,13 +1,4 @@
-export interface MockStoreDatabase {
-  users: Record<
-    string,
-    {
-      recurrencies: Record<string, unknown>;
-    }
-  >;
-}
-
-export const MOCK_STORE_DATA: MockStoreDatabase = {
+export const MOCK_STORE_DATA: Record<string, unknown> = {
   users: {
     'user-1': {
       recurrencies: {
@@ -26,6 +17,10 @@ export const MOCK_STORE_DATA: MockStoreDatabase = {
           category: 'health',
         },
       },
+      settings: {
+        timezone: 'Europe/Zurich',
+        dateFormat: 'CH_DATE_TIME',
+      },
     },
     'user-2': {
       recurrencies: {
@@ -43,6 +38,10 @@ export const MOCK_STORE_DATA: MockStoreDatabase = {
           periodUnit: 'month',
           category: 'home',
         },
+      },
+      settings: {
+        timezone: 'Indian/Mauritius',
+        dateFormat: 'ISO',
       },
     },
   },

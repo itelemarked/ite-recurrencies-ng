@@ -3,10 +3,16 @@ import { AuthInterface } from './auth-types';
 import { createFirebaseAuth } from './firebase-adapter/firebase-auth';
 import { createMockAuth } from './mock-adapter/mock-auth';
 
+const ADAPTERS = {
+  firebase: createFirebaseAuth,
+  mock: createMockAuth,
+};
+
+const ACTIVE_ADAPTER = ADAPTERS['mock'];
+
 @Injectable({ providedIn: 'root' })
 export class AuthStore implements AuthInterface {
-  private readonly adapter = createMockAuth();
-  // private readonly adapter = createFirebaseAuth();
+  private readonly adapter = ACTIVE_ADAPTER();
 
   readonly user = this.adapter.user;
   readonly isLoading = this.adapter.isLoading;

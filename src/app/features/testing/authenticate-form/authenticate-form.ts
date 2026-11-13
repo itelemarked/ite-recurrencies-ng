@@ -38,6 +38,8 @@ import { AuthStore } from '@core/auth-store';
 
     <div class="ion-margin-top">
       <ion-button class="ion-padding-horizontal" size="small" (click)="onLogin()"> Login </ion-button>
+      <ion-button class="ion-padding-horizontal" size="small" (click)="onLogin('aaa')"> Login aaa</ion-button>
+      <ion-button class="ion-padding-horizontal" size="small" (click)="onLogin('bbb')"> Login bbb</ion-button>
       <ion-button class="ion-padding-horizontal" fill="outline" size="small" (click)="onSignup()"> Signup </ion-button>
       <ion-button class="ion-padding-horizontal" color="danger" size="small" (click)="onLogout()"> Logout </ion-button>
     </div>
@@ -61,8 +63,14 @@ export class AuthenticateFormComponent {
     return err ? `${err.code} - ${err.details}` : 'null';
   });
 
-  protected onLogin(): void {
-    this.authStore.login(this.email(), this.password());
+  protected onLogin(user?: 'aaa'|'bbb'): void {
+    if(user === undefined) {
+      this.authStore.login(this.email(), this.password());
+    } else if(user === 'aaa') {
+      this.authStore.login('aaa@aaa.com', '111111')
+    } else {
+      this.authStore.login('bbb@bbb.com', '222222')
+    }
   }
 
   protected onSignup(): void {

@@ -11,9 +11,16 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { catchError, EMPTY, map, Observable, of, switchMap, tap } from 'rxjs';
+import { AuthStore } from '../auth-store';
 import { StoreDocument, StoreError, StoreOperation, StoreWriteOperation } from '../data-types';
 import { FIRESTORE } from './firebase-config';
 import { createInvalidDocumentError, createStoreError } from './firestore-error';
+
+const DOCUMENT_PATH_BUILDERS = {
+  settings: (userId: string | undefined) => (userId ? `users/${userId}/settings/SETTINGS_UID` : null),
+} as const;
+
+export type FirestoreDocumentKey = keyof typeof DOCUMENT_PATH_BUILDERS;
 
 interface DocumentContext<T> {
   firestore: Firestore;
@@ -118,11 +125,12 @@ function runWriteOperation<T>(
 }
 
 export function createFirestoreDocument<T extends object>(
-  pathFactory: () => string | null,
+  name: FirestoreDocumentKey,
   validator?: (data: unknown) => data is T,
 ): StoreDocument<T> {
   const firestore = inject(FIRESTORE);
-  const path = computed(pathFactory);
+  const auth = inject(AuthStore);
+  const path = computed(() => DOCUMENT_PATH_BUILDERS[name](auth.user()?.uid));
 
   const ctx: DocumentContext<T> = {
     firestore,

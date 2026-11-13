@@ -1,13 +1,4 @@
-export interface MockAuthEntry {
-  email: string;
-  password: string;
-}
-
-export interface MockAuthDatabase {
-  users: Record<string, MockAuthEntry>;
-}
-
-export const MOCK_AUTH_DATA: MockAuthDatabase = {
+export const MOCK_AUTH_DATA: Record<string, unknown> = {
   users: {
     'user-1': {
       email: 'aaa@aaa.com',
