@@ -1,7 +1,7 @@
 import { FirebaseError } from 'firebase/app';
-import { StoreError, StoreErrorCode, StoreOperation } from '../data-types';
+import { StoreErrorInfo } from '../adapters.types';
 
-function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: string } {
+export function mapFirestoreError(error: unknown): StoreErrorInfo {
   if (error instanceof FirebaseError) {
     switch (error.code) {
       case 'permission-denied':
@@ -20,29 +20,5 @@ function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: s
   return {
     code: 'UNKNOWN_STORE_ERROR',
     details: error instanceof Error ? error.message : 'unknown-error',
-  };
-}
-
-export function createStoreError(
-  error: unknown,
-  operation: StoreOperation,
-  collection: string,
-): StoreError {
-  return {
-    ...mapToStoreErrorCode(error),
-    operation,
-    collection,
-  };
-}
-
-export function createInvalidDocumentError(
-  invalidIds: string[],
-  collection: string,
-): StoreError {
-  return {
-    code: 'INVALID_DOCUMENT_FOUND',
-    operation: 'read',
-    collection,
-    details: invalidIds.join(', '),
   };
 }

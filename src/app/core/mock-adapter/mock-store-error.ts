@@ -1,4 +1,5 @@
-import { StoreError, StoreErrorCode, StoreOperation } from '../data-types';
+import { StoreErrorCode } from '../data-types';
+import { StoreErrorInfo } from '../adapters.types';
 
 export class MockStoreException extends Error {
   constructor(
@@ -9,7 +10,7 @@ export class MockStoreException extends Error {
   }
 }
 
-function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: string } {
+export function mapMockError(error: unknown): StoreErrorInfo {
   if (error instanceof MockStoreException) {
     return { code: error.code, details: error.message };
   }
@@ -17,29 +18,5 @@ function mapToStoreErrorCode(error: unknown): { code: StoreErrorCode; details: s
   return {
     code: 'UNKNOWN_STORE_ERROR',
     details: error instanceof Error ? error.message : 'unknown-error',
-  };
-}
-
-export function createStoreError(
-  error: unknown,
-  operation: StoreOperation,
-  collection: string,
-): StoreError {
-  return {
-    ...mapToStoreErrorCode(error),
-    operation,
-    collection,
-  };
-}
-
-export function createInvalidDocumentError(
-  invalidIds: string[],
-  collection: string,
-): StoreError {
-  return {
-    code: 'INVALID_DOCUMENT_FOUND',
-    operation: 'read',
-    collection,
-    details: invalidIds.join(', '),
   };
 }

@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { initializeFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCH5hQQ-umEKcyfISQJ-JaM8Bi22Q3VYlk",
@@ -13,7 +13,7 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
-const firestoreInstance = getFirestore(app);
+const firestoreInstance = initializeFirestore(app, { ignoreUndefinedProperties: true });
 const authInstance = getAuth(app);
 
 export const FIRESTORE = new InjectionToken<Firestore>('Firebase Firestore Instance', {

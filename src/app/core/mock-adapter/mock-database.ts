@@ -20,3 +20,18 @@ export class MockDatabase {
     this.changes.next();
   }
 }
+
+/** Mirrors Firestore's ignoreUndefinedProperties: undefined = "not provided". */
+export function stripUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map(stripUndefined) as T;
+  }
+  if (value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, v]) => v !== undefined)
+        .map(([k, v]) => [k, stripUndefined(v)]),
+    ) as T;
+  }
+  return value;
+}
