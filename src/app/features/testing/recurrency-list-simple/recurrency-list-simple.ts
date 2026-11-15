@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { PERIOD_UNITS, PeriodUnit, Recurrency } from '../../../features/recurrencies/recurrency.model';
-import { RecurrencyService } from '../../../features/recurrencies/recurrency';
+import { toNewRecurrency, toRecurrency } from '../../../features/recurrencies/recurrency.model';
+import { RecurrencyService } from '../../recurrencies/recurrency.service';
+import { PERIOD_UNITS, PeriodUnit, Recurrency } from '../../recurrencies/recurrency.types';
 
 @Component({
   selector: 'app-recurrency-list',
@@ -206,13 +207,13 @@ export class RecurrencyListComponent {
       return;
     }
 
-    this.recurrencyService.addItem({
+    this.recurrencyService.addItem(toNewRecurrency({
       title,
       lastEvent,
       periodNb,
       periodUnit,
       category,
-    });
+    }));
 
     // Reset inputs
     this.newTitle.set('');
