@@ -25,3 +25,8 @@ export type RecurrencyChanges = Partial<NewRecurrency>;
 export type RecurrencyDataChanges = Partial<NewRecurrencyData>;
 
 export type RecurrencySchedule = Pick<Recurrency, 'lastEvent' | 'periodNb' | 'periodUnit'>;
+
+export interface RecurrencyDateUtils {
+  getNextDueDate: (schedule: RecurrencySchedule) => Date;
+  isOverdue: (schedule: RecurrencySchedule, referenceDate?: Date) => boolean;
+}
