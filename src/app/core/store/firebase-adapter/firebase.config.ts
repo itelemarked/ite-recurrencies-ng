@@ -1,7 +1,12 @@
 import { InjectionToken } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { initializeFirestore, Firestore } from 'firebase/firestore';
+import {
+  Firestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCH5hQQ-umEKcyfISQJ-JaM8Bi22Q3VYlk",
@@ -13,7 +18,14 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig);
-const firestoreInstance = initializeFirestore(app, { ignoreUndefinedProperties: true });
+// Settings must be set here, before any Firestore read or write.
+// - ignoreUndefinedProperties: undefined = "not provided" (the mock does the same).
+// - localCache: offline cache in IndexedDB, shared between browser tabs. It stays on the
+//   device after logout (accepted on purpose, see Persist 8).
+const firestoreInstance = initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+});
 const authInstance = getAuth(app);
 
 export const FIRESTORE = new InjectionToken<Firestore>('Firebase Firestore Instance', {

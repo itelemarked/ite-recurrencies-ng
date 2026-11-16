@@ -1,7 +1,17 @@
+import { inject } from '@angular/core';
 import { FirebaseError } from 'firebase/app';
-import { AuthError, AuthErrorCode, AuthOperation } from '../auth-types';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import { AuthDriver } from '../adapters/adapters.types';
+import { AuthErrorInfo } from '../store-auth.types';
+import { FIREBASE_AUTH } from './firebase.config';
 
-function mapToAuthErrorCode(error: unknown): { code: AuthErrorCode; details: string } {
+/** Firebase Auth error codes -> auth error codes. */
+function mapAuthError(error: unknown): AuthErrorInfo {
   if (error instanceof FirebaseError) {
     switch (error.code) {
       case 'auth/invalid-email':
@@ -31,9 +41,22 @@ function mapToAuthErrorCode(error: unknown): { code: AuthErrorCode; details: str
   };
 }
 
-export function createAuthError(error: unknown, operation: AuthOperation): AuthError {
+/** Must be called in an injection context. */
+export function createFirebaseAuth(): AuthDriver {
+  const auth = inject(FIREBASE_AUTH);
+
   return {
-    ...mapToAuthErrorCode(error),
-    operation,
+    watch: (next, fail) =>
+      onAuthStateChanged(
+        auth,
+        (firebaseUser) => next(firebaseUser ? { uid: firebaseUser.uid, email: firebaseUser.email } : null),
+        (err) => fail(err),
+      ),
+
+    login: (email, password) => signInWithEmailAndPassword(auth, email, password),
+    signup: (email, password) => createUserWithEmailAndPassword(auth, email, password),
+    logout: () => signOut(auth),
+
+    mapError: mapAuthError,
   };
 }

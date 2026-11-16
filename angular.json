@@ -65,10 +65,7 @@
           "configurations": {
             "production": {
               "fileReplacements": [
-                { 
-                  "replace": "src/app/core/adapters.ts", 
-                  "with": "src/app/core/adapters.prod.ts" 
-                }
+                { "replace": "src/app/core/store/adapters/adapters.ts", "with": "src/app/core/store/adapters/adapters.prod.ts" }
               ],
               "budgets": [
                 {

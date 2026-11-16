@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { DataStore } from '@core/data-store';
-import { StoreDocument } from '@core/data-types';
+
 import { isValidSettings, Settings } from './settings.model';
+import { StoreDocument } from '@core/store/store-data.types';
+import { DataStore } from '@core/store/store';
 
 @Injectable({
   providedIn: 'root',

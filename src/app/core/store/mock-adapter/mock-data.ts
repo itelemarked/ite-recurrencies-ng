@@ -1,11 +1,28 @@
 import { inject } from '@angular/core';
-import { map, startWith } from 'rxjs';
-import { CollectionDriver, DocumentDriver } from '../adapters.types';
-import { MockDatabase, stripUndefined } from './mock-database';
-import { mapMockError, MockStoreException } from './mock-store-error';
+import { concat, map, timer } from 'rxjs';
+import {
+  CollectionDriver,
+  CollectionPaths,
+  DocumentDriver,
+  DocumentPaths,
+  RawItem,
+} from '../adapters/adapters.types';
+import { mapMockError, MockStoreException } from './mock.error';
+import { MockDatabase, stripUndefined } from './mock.utils';
 
-// Paths are declared in adapters.config.ts. In the mock, a path like "users/{id}/recurrencies"
-// is walked through the nested objects of MockDatabase.store.
+// Simulated network delays, in milliseconds.
+const READ_DELAY_MS = 400; // first emission of every listener (later changes arrive at once)
+const WRITE_DELAY_MS = 250; // the promise of a write settles after this; listeners see it at once
+
+// Mock paths: walked through the nested objects of MockDatabase.store.
+// One entry per key: a missing key is a compile error.
+const COLLECTION_PATHS: CollectionPaths = {
+  recurrencies: (user) => (user ? `users/${user.uid}/recurrencies` : null),
+};
+
+const DOCUMENT_PATHS: DocumentPaths = {
+  settings: (user) => (user ? `users/${user.uid}/settings` : null),
+};
 
 type MockRecord = Record<string, unknown>;
 type Slot = { parent: MockRecord; key: string };
@@ -31,15 +48,22 @@ function notFound(): MockStoreException {
   return new MockStoreException('NOT_FOUND', 'not-found');
 }
 
-/** Runs a synchronous change, notifies all listeners, and reports errors as a rejected Promise. */
+/**
+ * Applies a synchronous change and notifies listeners at once (like Firestore's local write).
+ * The returned promise settles after WRITE_DELAY_MS, rejecting if the change failed.
+ */
 function mutate(db: MockDatabase, action: () => void): Promise<void> {
+  let failure: { error: unknown } | null = null;
   try {
     action();
     db.notify();
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (error) {
+    failure = { error };
   }
+
+  return new Promise((resolve, reject) =>
+    setTimeout(() => (failure ? reject(failure.error) : resolve()), WRITE_DELAY_MS),
+  );
 }
 
 /** Must be called in an injection context. */
@@ -54,11 +78,16 @@ export function createMockCollectionDriver(): CollectionDriver {
     return record;
   };
 
+  const read = (path: string): RawItem[] =>
+    Object.entries(find(path) ?? {}).map(([id, data]) => ({ id, data }));
+
   return {
+    paths: COLLECTION_PATHS,
+
     watch: (path) =>
-      db.changes$.pipe(
-        startWith(undefined),
-        map(() => Object.entries(find(path) ?? {}).map(([id, data]) => ({ id, data }))),
+      concat(
+        timer(READ_DELAY_MS).pipe(map(() => read(path))),
+        db.changes$.pipe(map(() => read(path))),
       ),
 
     add: (path, data) =>
@@ -100,16 +129,20 @@ export function createMockDocumentDriver(): DocumentDriver {
     return slot;
   };
 
+  const read = (path: string): RawItem | null => {
+    const slot = find(path);
+    if (!slot) return null;
+    const data = slot.parent[slot.key];
+    return data === undefined || data === null ? null : { id: slot.key, data };
+  };
+
   return {
+    paths: DOCUMENT_PATHS,
+
     watch: (path) =>
-      db.changes$.pipe(
-        startWith(undefined),
-        map(() => {
-          const slot = find(path);
-          if (!slot) return null;
-          const data = slot.parent[slot.key];
-          return data === undefined || data === null ? null : { id: slot.key, data };
-        }),
+      concat(
+        timer(READ_DELAY_MS).pipe(map(() => read(path))),
+        db.changes$.pipe(map(() => read(path))),
       ),
 
     set: (path, data) =>

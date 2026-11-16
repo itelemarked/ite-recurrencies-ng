@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { AuthStore } from '@core/store/store';
 import { IonicModule } from '@ionic/angular';
-import { AuthStore } from '@core/auth-store';
 
 @Component({
   selector: 'app-authenticate-form',

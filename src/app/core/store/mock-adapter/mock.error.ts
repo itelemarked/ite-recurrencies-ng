@@ -1,5 +1,5 @@
-import { StoreErrorCode } from '../data-types';
-import { StoreErrorInfo } from '../adapters.types';
+import { StoreErrorInfo } from '../adapters/adapters.types';
+import { StoreErrorCode } from '../store.types';
 
 export class MockStoreException extends Error {
   constructor(
@@ -10,6 +10,7 @@ export class MockStoreException extends Error {
   }
 }
 
+/** Mock errors -> store error codes. */
 export function mapMockError(error: unknown): StoreErrorInfo {
   if (error instanceof MockStoreException) {
     return { code: error.code, details: error.message };

@@ -10,21 +10,39 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { Observable } from 'rxjs';
-import { CollectionDriver, DocumentDriver, RawItem } from '../adapters.types';
-import { FIRESTORE } from './firebase-config';
-import { mapFirestoreError } from './firestore-error';
+import {
+  CollectionDriver,
+  CollectionPaths,
+  DocumentDriver,
+  DocumentPaths,
+  RawItem,
+} from '../adapters/adapters.types';
+import { FIRESTORE } from './firebase.config';
+import { mapFirestoreError } from './firebase.error';
 
-/** Paths are declared in adapters.config.ts. Must be called in an injection context. */
+// Firestore paths. One entry per key: a missing key is a compile error.
+// A path outside users/{uid}/ also needs its own Security Rule (Firebase console).
+const COLLECTION_PATHS: CollectionPaths = {
+  recurrencies: (user) => (user ? `users/${user.uid}/recurrencies` : null),
+};
+
+const DOCUMENT_PATHS: DocumentPaths = {
+  settings: (user) => (user ? `users/${user.uid}/settings/SETTINGS_UID` : null),
+};
+
+/** Must be called in an injection context. */
 export function createFirestoreCollectionDriver(): CollectionDriver {
   const firestore = inject(FIRESTORE);
 
   return {
+    paths: COLLECTION_PATHS,
+
     watch: (path) =>
-      new Observable<RawItem[]>((sub) =>
+      new Observable<RawItem[]>((subscriber) =>
         onSnapshot(
           collection(firestore, path),
-          (snap) => sub.next(snap.docs.map((d) => ({ id: d.id, data: d.data() }))),
-          (err) => sub.error(err),
+          (snap) => subscriber.next(snap.docs.map((d) => ({ id: d.id, data: d.data() }))),
+          (err) => subscriber.error(err),
         ),
       ),
 
@@ -36,20 +54,22 @@ export function createFirestoreCollectionDriver(): CollectionDriver {
   };
 }
 
-/** Paths are declared in adapters.config.ts. Must be called in an injection context. */
+/** Must be called in an injection context. */
 export function createFirestoreDocumentDriver(): DocumentDriver {
   const firestore = inject(FIRESTORE);
 
   return {
+    paths: DOCUMENT_PATHS,
+
     watch: (path) =>
-      new Observable<RawItem | null>((sub) =>
+      new Observable<RawItem | null>((subscriber) =>
         onSnapshot(
           doc(firestore, path),
           (snap) => {
             const data = snap.data();
-            sub.next(data ? { id: snap.id, data } : null);
+            subscriber.next(data ? { id: snap.id, data } : null);
           },
-          (err) => sub.error(err),
+          (err) => subscriber.error(err),
         ),
       ),
 

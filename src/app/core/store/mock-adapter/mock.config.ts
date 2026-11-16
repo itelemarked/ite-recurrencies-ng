@@ -1,3 +1,24 @@
+/**
+ * Seed data of the mock backend. Nothing here is ever modified: each MockDatabase
+ * (see mock.utils.ts) works on its own deep copy.
+ *
+ * The bundle check (npm run check:bundle) searches the production build for the e-mail
+ * address 'aaa@aaa.com' below. If you change that address, change the script too.
+ */
+
+export const MOCK_AUTH_DATA: Record<string, unknown> = {
+  users: {
+    'user-1': {
+      email: 'aaa@aaa.com',
+      password: '111111',
+    },
+    'user-2': {
+      email: 'bbb@bbb.com',
+      password: '222222',
+    },
+  },
+};
+
 export const MOCK_STORE_DATA: Record<string, unknown> = {
   users: {
     'user-1': {

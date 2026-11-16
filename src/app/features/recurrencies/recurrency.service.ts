@@ -1,6 +1,4 @@
 import { Injectable, inject, computed } from '@angular/core';
-import { DataStore } from '@core/data-store';
-import { StoreCollection } from '@core/data-types';
 import { Recurrency } from './recurrency.types';
 import {
   isValidRecurrencyData,
@@ -8,6 +6,8 @@ import {
   toRecurrency,
   toRecurrencyData,
 } from './recurrency.model';
+import { StoreCollection } from '@core/store/store-data.types';
+import { DataStore } from '@core/store/store';
 
 @Injectable({ providedIn: 'root' })
 export class RecurrencyService implements StoreCollection<Recurrency> {
@@ -30,3 +30,4 @@ export class RecurrencyService implements StoreCollection<Recurrency> {
     this.collection.deleteItem(id);
   }
 }
+

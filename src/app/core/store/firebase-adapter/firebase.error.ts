@@ -1,6 +1,7 @@
 import { FirebaseError } from 'firebase/app';
-import { StoreErrorInfo } from '../adapters.types';
+import { StoreErrorInfo } from '../adapters/adapters.types';
 
+/** Firestore error codes -> store error codes. */
 export function mapFirestoreError(error: unknown): StoreErrorInfo {
   if (error instanceof FirebaseError) {
     switch (error.code) {
